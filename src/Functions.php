@@ -86,7 +86,7 @@ function config(string $name): mixed
     // There could be a warning if $attribute
     // is not set, so let's silence it
     @[$file, $key] = explode(".", $name);
-    $config_path = __DIR__ . "/../app/config/$file.php";
+    $config_path = __DIR__ . "/../app/Config/$file.php";
     if (file_exists($config_path)) {
         $config = require $config_path;
         if (!is_array($config)) throw new Error("config: must be an array");
