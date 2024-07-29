@@ -1,14 +1,14 @@
 <?php
 
 use Helios\Application;
-use Helios\Kernel\{HTTPKernel, ConsoleKernel};
+use Helios\Kernel\{HTTP, Console};
 
 /**
  * Return a web application
  */
 function app()
 {
-    $app = new Application(new HTTPKernel);
+    $app = new Application(new HTTP);
     return $app;
 }
 
@@ -17,7 +17,7 @@ function app()
  */
 function console()
 {
-    $app = new Application(new ConsoleKernel);
+    $app = new Application(new Console);
     return $app;
 }
 
@@ -86,10 +86,11 @@ function config(string $name): mixed
     // There could be a warning if $attribute
     // is not set, so let's silence it
     @[$file, $key] = explode(".", $name);
-    $config_path = __DIR__ . "/../config/$file.php";
+    $config_path = __DIR__ . "/../app/config/$file.php";
     if (file_exists($config_path)) {
         $config = require $config_path;
-        return is_array($config) && $key && key_exists($key, $config)
+        if (!is_array($config)) throw new Error("config: must be an array");
+        return $key && key_exists($key, $config)
             ? $config[$key]
             : $config;
     }
@@ -97,7 +98,7 @@ function config(string $name): mixed
 }
 
 /**
-* Return application database class
+* Return application mysql class
 */
 function db()
 {
