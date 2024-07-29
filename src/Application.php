@@ -12,4 +12,9 @@ class Application
     {
         $this->kernel->main();
     }
+
+    public function container()
+    {
+        return $this->kernel->container();
+    }
 }

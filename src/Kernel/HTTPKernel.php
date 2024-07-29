@@ -2,7 +2,7 @@
 
 namespace Helios\Kernel;
 
-class HTTPKernel implements Kernel
+class HTTPKernel extends Kernel implements IKernel
 {
     public function main()
     {

@@ -9,6 +9,7 @@ services:
       - .:/app/
     depends_on:
       - php
+      - mysql
     networks:
       - app-network
 
@@ -26,7 +27,23 @@ services:
       timeout: 10s
       retries: 3
 
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOTPASS:?err}
+      MYSQL_DATABASE: ${DB_NAME:?err}
+      MYSQL_USER: ${DB_USERNAME:?err}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?err}
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker/mysql:/var/lib/mysql
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge
 
+volumes:
+  mysql_data:
