@@ -6,6 +6,6 @@ class ConsoleKernel extends Kernel implements IKernel
 {
     public function main()
     {
-        echo "Hi from console kernel";
+        echo "Hi from console kernel" . PHP_EOL;
     }
 }

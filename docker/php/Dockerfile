@@ -1,5 +1,8 @@
 FROM php:8.2-fpm-alpine
 
+# Install bash
+RUN apk add --no-cache bash
+
 # Install system dependencies and PHP extensions
 RUN apk update && apk add --no-cache \
     # Required for building PHP extensions
@@ -9,6 +12,9 @@ RUN apk update && apk add --no-cache \
 
 # Copy the php config file
 COPY ./docker/php/php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
+
+# Set the working directory to /app
+WORKDIR /app
 
 # Copy the application code
 COPY . /app
