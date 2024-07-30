@@ -1,15 +1,16 @@
 <?php
 
 use Helios\Application;
-use Helios\Kernel\{HTTP, Console};
+use App\Http\Kernel as HttpKernel;
+use App\Console\Kernel as ConsoleKernel;
+use Lunar\Connection\MySQL;
 
 /**
  * Return a web application
  */
 function app()
 {
-    $app = new Application(new HTTP);
-    return $app;
+    return Application::getInstance(new HttpKernel);
 }
 
 /**
@@ -17,8 +18,7 @@ function app()
  */
 function console()
 {
-    $app = new Application(new Console);
-    return $app;
+    return Application::getInstance(new ConsoleKernel);
 }
 
 /**
@@ -26,7 +26,7 @@ function console()
  */
 function dump(...$data)
 {
-    $debug = debug_backtrace()[0];
+    $debug = debug_backtrace()[1];
     $pre_style =
         "overflow-x: auto; font-size: 0.6rem; border-radius: 10px; padding: 10px; background: #133; color: azure; border: 3px dotted azure;";
     $scrollbar_style =
@@ -98,9 +98,17 @@ function config(string $name): mixed
 }
 
 /**
+* Return application DI container
+*/
+function container()
+{
+    return app()->container();
+}
+
+/**
 * Return application mysql class
 */
 function db()
 {
-    return app()->container()->get("mysql");
+    return container()->get(MySQL::class);
 }

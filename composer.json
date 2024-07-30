@@ -7,7 +7,8 @@
             "src/Functions.php"
         ],
         "psr-4": {
-            "Helios\\": "src/"
+            "Helios\\": "src/",
+            "App\\": "app/"
         }
     },
     "authors": [

@@ -1,7 +1,10 @@
 <?php
 
-$app_root = __DIR__ . "/../";
+$root = __DIR__ . "/../../";
+$app_root = $root . "app/";
+$src_root = $root . "src/";
 
 return [
-    "env" => $app_root,
+    "env" => $root,
+    "controllers" => $app_root . "Controllers/",
 ];

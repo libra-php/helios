@@ -1,10 +1,13 @@
 <?php
 
 use Lunar\Connection\{MySQL, SQLite};
+use Symfony\Component\HttpFoundation\Request;
 
 return [
-    'mysql' => function() {
+    Request::class => Request::createFromGlobals(),
+    MySQL::class => function() {
         $config = config("database");
+        dd($config);
         if (!$config["enabled"]) return;
         return new MySQL(
             $config["dbname"],
@@ -16,7 +19,7 @@ return [
             $config["options"]
         );
     },
-    'sqlite' => function() {
+    SQLite::class => function() {
         $config = config("database");
         if (!$config["enabled"]) return;
         return new SQLite(

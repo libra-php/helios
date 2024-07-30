@@ -13,13 +13,8 @@ RUN apk update && apk add --no-cache \
 # Copy the php config file
 COPY ./docker/php/php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
 
-# Set the working directory to /app
-WORKDIR /app
-
-# Copy the application code
-COPY . /app
-
-VOLUME ["/app"]
+# Custom php.ini config
+COPY ./docker/php/php.ini /usr/local/etc/php/
 
 # Expose port 9000 (default for PHP-FPM)
 EXPOSE 9000

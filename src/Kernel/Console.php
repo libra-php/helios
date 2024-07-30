@@ -2,7 +2,7 @@
 
 namespace Helios\Kernel;
 
-class Console extends Kernel implements IKernel
+class Console implements IKernel
 {
     public function main()
     {
