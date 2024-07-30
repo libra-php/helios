@@ -4,7 +4,4 @@ namespace App\Console;
 
 use Helios\Kernel\Console;
 
-class Kernel extends Console
-{
-
-}
+class Kernel extends Console {}
