@@ -6,7 +6,7 @@ use Composer\ClassMapGenerator\ClassMapGenerator;
 use Helios\Middleware\Middleware;
 use StellarRouter\Route;
 use StellarRouter\Router;
-use Symfony\Component\HttpFoundation\{Response, Request};
+use Symfony\Component\HttpFoundation\{Response, JsonResponse, Request};
 
 class Http implements IKernel
 {
@@ -26,6 +26,7 @@ class Http implements IKernel
         $this->request = container()->get(Request::class);
         $this->route = $this->router
             ->handleRequest($this->request->getMethod(), $this->request->getPathInfo());
+        $this->request->attributes->add(["route" => $this->route]);
         $middleware = container()->get(Middleware::class);
         $response = $middleware->layer($this->middleware)
             ->handle($this->request, fn() => $this->resolve());
@@ -47,8 +48,14 @@ class Http implements IKernel
             } elseif ($routePayload) {
                 $content = $routePayload(...$routeParameters);
             }
+            // JSON response for API endpoint
             if (in_array("api", $routeMiddleware)) {
-                return $content;
+                return new JsonResponse([
+                    "request_id" => $this->request->get("request_uuid"),
+                    "data" => $content,
+                    "ts" => time(),
+                    "version" => config("app.version"),
+                ]);
             }
             // Serve controller response
             return new Response($content, 200);

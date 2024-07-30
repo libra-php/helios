@@ -12,4 +12,10 @@ class WelcomeController extends Controller
     {
         return render("welcome.html");
     }
+
+    #[Get("/test", "welcome.test", ["api"])]
+    public function test()
+    {
+        return 42;
+    }
 }

@@ -2,7 +2,7 @@
 
 namespace Helios\Middleware;
 
-use Symfony\Component\HttpFoundation\{Response, Request};
+use Symfony\Component\HttpFoundation\Request;
 
 use Closure;
 
@@ -30,7 +30,7 @@ class Middleware
 
         if (!is_array($layers)) {
             throw new \InvalidArgumentException(
-                get_class($layers) . " is not Nebula middleware."
+                get_class($layers) . " is not compatible middleware"
             );
         }
 
