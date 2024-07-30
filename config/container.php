@@ -10,6 +10,7 @@ return [
         $loader = new \Twig\Loader\FilesystemLoader($templates_path);
         $twig = new \Twig\Environment($loader, [
             'cache' => $cache_path,
+            'debug' => config("app.debug"),
         ]);
         return $twig;
     },
