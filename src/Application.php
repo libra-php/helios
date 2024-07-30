@@ -32,7 +32,7 @@ class Application
 
     private function initEnvironment()
     {
-        $path = config("paths.env");
+        $path = config("paths.root");
         if (!file_exists($path)) {
             throw new Error(".env doesn't exist");
         }

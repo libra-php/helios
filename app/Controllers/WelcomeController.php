@@ -10,6 +10,6 @@ class WelcomeController extends Controller
     #[Get("/", "welcome.index")]
     public function index()
     {
-        return 'hi';
+        return render("welcome.twig");
     }
 }

@@ -4,6 +4,7 @@ use Helios\Application;
 use App\Http\Kernel as HttpKernel;
 use App\Console\Kernel as ConsoleKernel;
 use Lunar\Connection\MySQL;
+use Twig\Environment;
 
 /**
  * Return a web application
@@ -111,4 +112,13 @@ function container()
 function db()
 {
     return container()->get(MySQL::class);
+}
+
+/**
+* Render a twig template
+*/
+function render(string $path, array $data = [])
+{
+    $twig = container()->get(Environment::class);
+    return $twig->render($path, $data);
 }
