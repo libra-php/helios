@@ -1,0 +1,9 @@
+{% for field,messages in request_errors %}
+	{% if field == validate %}
+		<div class="d-flex flex-column">
+		{% for message in messages %}
+			<span class="text-danger">{{ message }}</span>
+		{% endfor %}
+		</div>
+	{% endif %}
+{% endfor %}

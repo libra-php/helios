@@ -4,6 +4,7 @@ use Helios\Application;
 use App\Http\Kernel as HttpKernel;
 use App\Console\Kernel as ConsoleKernel;
 use Lunar\Connection\MySQL;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Return a web application
@@ -111,4 +112,9 @@ function container()
 function db()
 {
     return container()->get(MySQL::class);
+}
+
+function request()
+{
+    return container()->get(Request::class);
 }

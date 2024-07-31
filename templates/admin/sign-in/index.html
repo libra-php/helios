@@ -2,17 +2,27 @@
 
 {% block content %}
 <section id="sign-in" class="h-100">
-	<form class="d-flex flex-column align-items-center justify-content-center h-100">
+	<form hx-post="/admin/sign-in" hx-swap="outerHTML" class="d-flex flex-column align-items-center justify-content-center h-100">
 		<div class="form-floating mb-3 w-100">
-			<input type="email" class="form-control w-100" id="email" placeholder="name@example.com">
+			<input type="input" class="form-control w-100" name="email" id="email" placeholder="">
 			<label for="email">Email address</label>
+			{% include 'errors/validation.html' with {'validate': 'email'} %}
 		</div>
 		<div class="form-floating mb-3 w-100">
-			<input type="password" class="form-control w-100" id="password" placeholder="Password">
+			<input type="password" class="form-control w-100" name="password" id="password" placeholder="">
 			<label for="password">Password</label>
+			{% include 'errors/validation.html' with {'validate': 'password'} %}
 		</div>
-		<div class="w-100">
-			<button type="submit" class="btn btn-primary w-100 btn-lg">Sign in</button>
+		<div class="w-100 mb-3">
+			<button type="submit" class="btn btn-primary fw-bold w-100 btn-lg">Sign in</button>
+		</div>
+		<!-- <div class="mb-3"> -->
+		<!-- 	<a href="#">Forgotten password?</a> -->
+		<!-- </div> -->
+		<div class="d-flex align-items-center">
+			<img width="14" height="14" src="/images/nebula.jpeg" />
+			<img width="14" height="14" src="/images/lock.png" />
+			<small>256-Bit SSL Encryption (AES-256)</small>
 		</div>
 	</form>
 </section>
