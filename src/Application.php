@@ -27,7 +27,7 @@ class Application
 
     public function __call($name, $arguments)
     {
-        $this->kernel->$name(...$arguments);
+        return $this->kernel->$name(...$arguments);
     }
 
     private function initEnvironment()

@@ -16,8 +16,9 @@ return new class implements IMigration
             $table->varchar("email");
             $table->binary("password", 96);
             $table->timestamp("login_at")->default("CURRENT_TIMESTAMP");
-            $table->char("secret_key", 16)->nullable();
-            $table->unsignedTinyInteger("enable_2fa")->default(1);
+            $table->unsignedTinyInteger("2fa_enabled")->default(1);
+            $table->unsignedTinyInteger("2fa_confirmed")->default(0);
+            $table->char("2fa_secret", 16)->nullable();
             $table->timestamps();
             $table->unique("email");
             $table->primaryKey("id");
@@ -32,14 +33,14 @@ return new class implements IMigration
                 "name",
                 "email",
                 "password",
-                "secret_key",
-                "enable_2fa",
+                "2fa_secret",
+                "2fa_enabled",
             ],
             [
                 "Administrator",
                 "administrator@localhost",
                 Auth::hashPassword("admin2024!"),
-                Auth::generateSecretKey(),
+                Auth::google2FASecret(),
                 0,
             ]
         );

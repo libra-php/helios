@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Controllers\Admin;
+namespace App\Controllers\Admin\Auth;
 
 use Helios\Web\Controller;
+use Helios\Admin\Auth;
 use StellarRouter\{Get, Group, Post};
 
 #[Group(prefix: "/admin")]
@@ -16,12 +17,15 @@ class SignInController extends Controller
     #[Post("/sign-in", "sign-in.post")]
     public function post() {
         $valid = $this->validateRequest([
-            'email' => ['required', 'email'],
+            'email' => ['required'],
             'password' => ['required'],
         ]);
 
         if ($valid) {
-            die('wip: good job');
+            if (Auth::authenticateUser($valid->email, $valid->password)) {
+                redirect(route("profile.index"));
+            }
+            $this->addRequestError("password", "Invalid email or password");
         }
 
         return $this->index();

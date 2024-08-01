@@ -3,14 +3,14 @@
 namespace App\Controllers\Admin;
 
 use Helios\Web\Controller;
-use StellarRouter\{Post, Group};
+use StellarRouter\{Get, Group};
 
 #[Group(prefix: "/admin")]
 class AdminController extends Controller
 {
-    #[Post("/validate", "admin.validate")]
-    function validate()
+    #[Get("/profile", "profile.index")]
+    public function profile()
     {
-        return 'hi';
+        return $this->render("admin/profile/index.html");
     }
 }

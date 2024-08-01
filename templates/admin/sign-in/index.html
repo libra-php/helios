@@ -2,7 +2,7 @@
 
 {% block content %}
 <section id="sign-in" class="h-100">
-	<form hx-post="/admin/sign-in" hx-swap="outerHTML" class="d-flex flex-column align-items-center justify-content-center h-100">
+	<form hx-post="{{ f.route('sign-in.index') }}" hx-swap="outerHTML" class="d-flex flex-column align-items-center justify-content-center h-100">
 		<div class="form-floating mb-3 w-100">
 			<input type="input" class="form-control w-100" name="email" id="email" placeholder="">
 			<label for="email">Email address</label>

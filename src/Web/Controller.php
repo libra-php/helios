@@ -18,7 +18,15 @@ class Controller
     public function render(string $path, array $data = []): string
     {
         $twig = container()->get(Environment::class);
+        // Request error array
         $data["request_errors"] = $this->request_errors;
+        // Template functions
+        $data["f"] = new class {
+            public function route(string $name)
+            {
+                return route($name);
+            }
+        };
         return $twig->render($path, $data);
     }
 
@@ -47,11 +55,16 @@ class Controller
                 if ($result) {
                     $validated[$key] = $value;
                 } else {
-                    $this->request_errors[$key][] = $this->error_messages[$rule];
+                    $this->addRequestError($key, $this->error_messages[$rule]);
                 }
             }
         }
 
         return $validated ? (object)$validated : false;
+    }
+
+    protected function addRequestError(string $field, string $message)
+    {
+        $this->request_errors[$field][] = $message;
     }
 }

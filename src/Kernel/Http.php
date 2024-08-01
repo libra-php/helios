@@ -4,12 +4,15 @@ namespace Helios\Kernel;
 
 use Composer\ClassMapGenerator\ClassMapGenerator;
 use Helios\Middleware\Middleware;
+use Helios\Trait\Singleton;
 use StellarRouter\Route;
 use StellarRouter\Router;
 use Symfony\Component\HttpFoundation\{Response, JsonResponse, Request};
 
 class Http implements IKernel
 {
+    use Singleton;
+
     protected array $middleware = [];
     private ?Route $route;
     private Request $request;
@@ -17,8 +20,14 @@ class Http implements IKernel
 
     public function __construct()
     {
+        $this->initRouter();
         $this->initMiddleware();
         $this->registerControllers();
+    }
+
+    public function router(): Router
+    {
+        return $this->router;
     }
 
     public function main()
@@ -64,6 +73,11 @@ class Http implements IKernel
         return new Response(null, 404);
     }
 
+    private function initRouter()
+    {
+        $this->router = new Router;
+    }
+
     private function initMiddleware()
     {
         foreach ($this->middleware as $i => $class) {
@@ -73,7 +87,6 @@ class Http implements IKernel
 
     private function registerControllers()
     {
-        $this->router = new Router;
         $controller_path = config("paths.controllers");
         $map = ClassMapGenerator::createMap($controller_path);
         foreach ($map as $class => $path) {

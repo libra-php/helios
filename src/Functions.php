@@ -11,7 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 function app()
 {
-    return Application::getInstance(new HttpKernel);
+    $kernel = HttpKernel::getInstance();
+    return Application::getInstance($kernel);
 }
 
 /**
@@ -19,7 +20,8 @@ function app()
  */
 function console()
 {
-    return Application::getInstance(new ConsoleKernel);
+    $kernel = ConsoleKernel::getInstance();
+    return Application::getInstance($kernel);
 }
 
 /**
@@ -99,22 +101,40 @@ function config(string $name): mixed
 }
 
 /**
-* Return application DI container
-*/
+ * Return application DI container
+ */
 function container()
 {
     return app()->container();
 }
 
 /**
-* Return application mysql class
-*/
+ * Return application mysql class
+ */
 function db()
 {
     return container()->get(MySQL::class);
 }
 
+/**
+ * Return http request
+ */
 function request()
 {
     return container()->get(Request::class);
+}
+
+function route(string $name)
+{
+    $router = app()->router();
+    $route = $router->findRouteByName($name);
+    return $route?->getPath();
+}
+
+function redirect(string $path, array $options = [])
+{
+    $options['path'] = $path;
+    $header =  sprintf("HX-Location:%s", json_encode($options));
+    header($header);
+    exit;
 }
