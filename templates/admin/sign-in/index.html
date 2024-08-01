@@ -3,22 +3,23 @@
 {% block content %}
 <section id="sign-in" class="h-100">
 	<form hx-post="{{ f.route('sign-in.index') }}" hx-swap="outerHTML" class="d-flex flex-column align-items-center justify-content-center h-100">
+		{{ f.csrf()|raw }}
 		<div class="form-floating mb-3 w-100">
 			<input type="input" class="form-control w-100" name="email" id="email" placeholder="">
 			<label for="email">Email address</label>
 			{% include 'errors/validation.html' with {'validate': 'email'} %}
 		</div>
 		<div class="form-floating mb-3 w-100">
-			<input type="password" class="form-control w-100" name="password" id="password" placeholder="">
+			<input type="password" class="form-control w-100" name="password" id="password" placeholder="" autocomplete="new-password">
 			<label for="password">Password</label>
 			{% include 'errors/validation.html' with {'validate': 'password'} %}
 		</div>
 		<div class="w-100 mb-3">
 			<button type="submit" class="btn btn-primary fw-bold w-100 btn-lg">Sign in</button>
 		</div>
-		<!-- <div class="mb-3"> -->
-		<!-- 	<a href="#">Forgotten password?</a> -->
-		<!-- </div> -->
+		<div class="mb-3">
+			<a href="#">Forgotten password?</a>
+		</div>
 		<div class="d-flex align-items-center">
 			<img width="12" height="12" src="/images/nebula.jpeg" />
 			<img width="12" height="12" src="/images/lock.png" />

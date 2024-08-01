@@ -1,10 +1,18 @@
 <?php
 
+/**
+ * Helper functions
+ */
+
 use Helios\Application;
 use App\Http\Kernel as HttpKernel;
 use App\Console\Kernel as ConsoleKernel;
+use App\Models\User;
+use Helios\Admin\Auth;
+use Helios\Session\Session;
 use Lunar\Connection\MySQL;
 use Symfony\Component\HttpFoundation\Request;
+use Twig\Environment;
 
 /**
  * Return a web application
@@ -93,9 +101,13 @@ function config(string $name): mixed
     if (file_exists($config_path)) {
         $config = require $config_path;
         if (!is_array($config)) throw new Error("config: must be an array");
-        return $key && key_exists($key, $config)
-            ? $config[$key]
-            : $config;
+        if ($key && key_exists($key, $config)) {
+            return $config[$key];
+        } else if ($key && !key_exists($key, $config)) {
+            throw new Error("config: key doesn't exist");
+        } else {
+            return $config;
+        }
     }
     throw new Error("config: name: $name doesn't exist");
 }
@@ -103,7 +115,7 @@ function config(string $name): mixed
 /**
  * Return application DI container
  */
-function container()
+function container(): DI\Container
 {
     return app()->container();
 }
@@ -111,7 +123,7 @@ function container()
 /**
  * Return application mysql class
  */
-function db()
+function db(): MySQL
 {
     return container()->get(MySQL::class);
 }
@@ -119,12 +131,31 @@ function db()
 /**
  * Return http request
  */
-function request()
+function request(): Request
 {
     return container()->get(Request::class);
 }
 
-function route(string $name, ...$replacements)
+/**
+ * Return app session
+ */
+function session(): Session
+{
+    return Session::getInstance();
+}
+
+/**
+ * Return app user
+ */
+function user(): ?User
+{
+    return Auth::user();
+}
+
+/**
+ * Find a route by name
+ */
+function route(string $name, ...$replacements): ?string
 {
     $router = app()->router();
     $route = $router->findRouteByName($name);
@@ -142,10 +173,36 @@ function route(string $name, ...$replacements)
     return $path;
 }
 
-function redirect(string $path, array $options = [])
+/**
+ * Redirect to an enpoint (htmx)
+ */
+function redirect(string $path, array $options = [
+    "target" => "main",
+    "select" => "main",
+    "swap" => "outerHTML"
+]): void
 {
     $options['path'] = $path;
     $header =  sprintf("HX-Location:%s", json_encode($options));
     header($header);
     exit;
+}
+
+/**
+ * Change location
+ */
+function location(string $path)
+{
+    $header =  sprintf("Location:%s", $path);
+    header($header);
+    exit;
+}
+
+/**
+ * Return a template string
+ */
+function template(string $path, array $data = []): string
+{
+    $twig = container()->get(Environment::class);
+    return $twig->render($path, $data);
 }

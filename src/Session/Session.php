@@ -12,7 +12,7 @@ class Session
 
     public function __construct()
     {
-        $this->data = $this->getAll();
+        $this->data = $this->all();
     }
 
     /**
@@ -64,7 +64,7 @@ class Session
     /**
      * Get all session variables
      */
-    public function getAll(): array
+    public function all(): array
     {
         @session_start();
         session_write_close();

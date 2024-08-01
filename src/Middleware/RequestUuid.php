@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\{Response, Request};
 use Ramsey\Uuid\Uuid;
 
 /**
+ * Middleware
  * Adds a UUID to request
  */
 class RequestUuid implements IMiddleware

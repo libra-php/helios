@@ -26,6 +26,11 @@ class Controller
             {
                 return route($name, ...$replacements);
             }
+            public function csrf()
+            {
+                $token = session()->get("csrf_token");
+                return template("components/csrf.html", ["token" => $token]);
+            }
         };
         return $twig->render($path, $data);
     }
