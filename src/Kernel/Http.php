@@ -70,7 +70,7 @@ class Http implements IKernel
             return new Response($content, 200);
         }
         // Page not found
-        return new Response(null, 404);
+        redirect(route("error.page-not-found"));
     }
 
     private function initRouter()

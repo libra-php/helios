@@ -18,12 +18,7 @@ class RouteAuth implements IMiddleware
         $middleware = $request->get("route")?->getMiddleware();
 
         if ($middleware && in_array("auth", $middleware) && !$this->userAuth($request)) {
-            if ($request->headers->get("hx-request")) {
-                // HTMX redirect to sign in
-                http_response_code(401);
-            } else {
-                location(route("sign-in.index"));
-            }
+            redirect(route("sign-in.index"));
         }
 
         $response = $next($request);
