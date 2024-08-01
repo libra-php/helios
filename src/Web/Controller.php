@@ -22,9 +22,9 @@ class Controller
         $data["request_errors"] = $this->request_errors;
         // Template functions
         $data["f"] = new class {
-            public function route(string $name)
+            public function route(string $name, ...$replacements)
             {
-                return route($name);
+                return route($name, ...$replacements);
             }
         };
         return $twig->render($path, $data);
@@ -35,6 +35,7 @@ class Controller
      */
     public function validateRequest(array $rules): object|false
     {
+        $valid = true;
         $request = request()->request;
         $validated = [];
 
@@ -55,16 +56,17 @@ class Controller
                 if ($result) {
                     $validated[$key] = $value;
                 } else {
-                    $this->addRequestError($key, $this->error_messages[$rule]);
+                    $valid = false;
+                    $this->addRequestError($key, $this->error_messages[$rule] ?? '');
                 }
             }
         }
 
-        return $validated ? (object)$validated : false;
+        return $valid ? (object)$validated : false;
     }
 
     protected function addRequestError(string $field, string $message)
     {
-        $this->request_errors[$field][] = $message;
+        if (trim($message) != '') $this->request_errors[$field][] = $message;
     }
 }

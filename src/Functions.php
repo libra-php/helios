@@ -124,11 +124,22 @@ function request()
     return container()->get(Request::class);
 }
 
-function route(string $name)
+function route(string $name, ...$replacements)
 {
     $router = app()->router();
     $route = $router->findRouteByName($name);
-    return $route?->getPath();
+
+    if ($route === null) {
+        return null;
+    }
+
+    $path = $route->getPath();
+
+    foreach ($replacements as $replacement) {
+        $path = preg_replace('/\{\w+\}/', $replacement, $path, 1);
+    }
+
+    return $path;
 }
 
 function redirect(string $path, array $options = [])
