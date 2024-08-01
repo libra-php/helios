@@ -20,12 +20,17 @@ class Auth
     /**
      * Authenticate a user by email and password
      */
-    public static function authenticateUser(string $email, string $password): bool
+    public static function authenticateUser(string $email, string $password, bool $remember_me): bool
     {
         $user = User::findByAttribute("email", $email);
         $result = $user && password_verify($password, $user->password);
         if ($result) {
-            session()->set("user_id", $user->id);
+            if ($remember_me) {
+                $future_time = time() + 86400 * 30;
+                setcookie("user_uuid", $user->uuid, $future_time, "/");
+            } else {
+                session()->set("user_id", $user->id);
+            }
         }
         return $result;
     }
@@ -37,6 +42,8 @@ class Auth
     {
         session()->delete("user_id");
         session()->destroy();
+        unset($_COOKIE["user_uuid"]);
+        setcookie("user_uuid", "", -1, "/");
     }
 
     /**

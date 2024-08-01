@@ -17,7 +17,7 @@ class EncryptCookies implements IMiddleware
         // Application key is required
         $app_key = config("app.key");
         if (!$app_key) {
-            return new Response("Application key is not set", 500);
+            return new Response("Application key is not set!", 500);
         }
 
         // All cookies except PHPSESSID will be encrypted/decrypted
@@ -66,7 +66,7 @@ class EncryptCookies implements IMiddleware
 
     function encryptValue(mixed $value)
     {
-        $app_key = config("application.key");
+        $app_key = config("app.key");
         $encrypted = openssl_encrypt(
             $value,
             "AES-256-CBC",
@@ -81,7 +81,7 @@ class EncryptCookies implements IMiddleware
 
     function decryptValue(mixed $value)
     {
-        $app_key = config("application.key");
+        $app_key = config("app.key");
         return openssl_decrypt(
             str_replace("|crypt|", "", $value),
             "AES-256-CBC",

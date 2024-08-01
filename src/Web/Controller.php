@@ -51,6 +51,12 @@ class Controller
                 $ruleset = explode("|", $ruleset);
             }
 
+            // Empty rulesets are valid
+            if (empty($ruleset)) {
+                $validated[$key] = $value;
+                continue;
+            }
+
             foreach ($ruleset as $rule) {
                 // Is request value valid?
                 $result = match (strtolower($rule)) {
