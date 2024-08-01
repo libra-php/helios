@@ -8,8 +8,8 @@ class Kernel extends Http
 {
     protected array $middleware = [
         \Helios\Middleware\EncryptCookies::class,
-        \Helios\Middleware\RequestUuid::class,
         \Helios\Middleware\RouteAuth::class,
         \Helios\Middleware\CSRF::class,
+        \Helios\Middleware\RequestUuid::class,
     ];
 }
