@@ -32,6 +32,7 @@ class ModuleController extends Controller
     public function index($module)
     {
         $this->module->configure(new Table);
+        dump($this->module);
         return $this->render($this->module->getTemplate(), $this->module->getData());
     }
 

@@ -8,9 +8,11 @@ return [
         $cache_path = config("paths.template-cache");
         $templates_path = config("paths.templates");
         $loader = new \Twig\Loader\FilesystemLoader($templates_path);
+        $debug = config("app.debug");
         $twig = new \Twig\Environment($loader, [
-            'cache' => $cache_path,
-            'debug' => config("app.debug"),
+            'cache' => $debug ? false : $cache_path,
+            'auto_reload' => $debug,
+            'debug' => $debug,
         ]);
         return $twig;
     },

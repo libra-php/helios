@@ -4,8 +4,19 @@ namespace Helios\Module;
 
 class View implements IView
 {
-    public string $sql_table = "";
+    /** Template properties */
     public string $template = "";
+
+
+    /** SQL properties */
+    public string $sql_table = "";
     public array $data = [];
-    public array $table_columns = [];
+
+
+    /** Table Properties */
+    public array $table = [];
+
+
+    /** Form Properties */
+    public array $form = [];
 }

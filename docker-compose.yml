@@ -19,7 +19,9 @@ services:
       context: .
       dockerfile: docker/php/Dockerfile
     volumes:
-      - .:/var/www/html/
+      - type: bind
+        source: .
+        target: /var/www/html/
     networks:
       - app-network
     healthcheck:

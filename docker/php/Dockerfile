@@ -10,6 +10,9 @@ RUN apk update && apk add --no-cache \
     mysql-client \
     && docker-php-ext-install pdo_mysql
 
+# Install and enable OpCache
+RUN docker-php-ext-install opcache
+
 # Copy the php config file
 COPY ./docker/php/php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
 
