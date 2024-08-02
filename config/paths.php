@@ -12,6 +12,8 @@ return [
     "root" => $root,
     "bin" => $bin,
     "controllers" => $app . "Controllers/",
+    "models" => $app . "Models/",
+    "modules" => $app . "Modules/",
     "storage" => $storage,
     "templates" => $templates,
     "template-cache" => $storage . "templates/.cache/",

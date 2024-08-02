@@ -12,6 +12,7 @@ return new class implements IMigration
         return Schema::create("users", function (Blueprint $table) {
             $table->bigIncrements("id");
             $table->uuid("uuid")->default("(UUID())");
+            $table->unsignedTinyInteger("type")->default(2);
             $table->varchar("name");
             $table->varchar("email");
             $table->binary("password", 96);

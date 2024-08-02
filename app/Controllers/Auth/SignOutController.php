@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Controllers\Admin\Auth;
+namespace App\Controllers\Auth;
 
 use Helios\Admin\Auth;
-use StellarRouter\{Get, Group};
+use StellarRouter\Get;
 
-#[Group(prefix: "/admin")]
 class SignOutController
 {
     #[Get("/sign-out", "sign-out.index")]

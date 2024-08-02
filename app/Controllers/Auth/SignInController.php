@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Controllers\Admin\Auth;
+namespace App\Controllers\Auth;
 
 use Helios\Web\Controller;
 use Helios\Admin\Auth;
-use StellarRouter\{Get, Group, Post};
+use StellarRouter\{Get, Post};
 
-#[Group(prefix: "/admin")]
 class SignInController extends Controller
 {
     #[Get("/sign-in", "sign-in.index")]
@@ -24,7 +23,9 @@ class SignInController extends Controller
 
         if ($valid) {
             if (Auth::authenticateUser($valid->email, $valid->password, isset($valid->remember_me))) {
-                redirect(route("profile.index"));
+                //redirect(route("profile.index"));
+                // FIXME: redirect module route
+                redirect("/admin/profile");
             }
             $this->addRequestError("password", "Invalid email or password");
         }
