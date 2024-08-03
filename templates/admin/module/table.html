@@ -1,5 +1,24 @@
-{% extends "base.html" %}
+{% extends "layouts/admin.html" %}
 
-{% block content %}
-	<p>wip: table</p>
+{% block module %}
+<section id="table" class="w-100">
+	<table class="table table-sm">
+		<head>
+			<tr>
+				{% for title in table.columns %}
+				<td>{{ title }}</td>
+				{% endfor %}
+			</tr>
+		</thead>
+		<tbody>
+			{% for row in table.rows %}
+			<tr>
+				{% for col in row %}
+				<td>{{ col }}</td>
+				{% endfor %}
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</section>
 {% endblock %}

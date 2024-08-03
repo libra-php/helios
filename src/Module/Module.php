@@ -4,6 +4,8 @@ namespace Helios\Module;
 
 class Module
 {
+    protected string $name;
+    protected string $path;
     protected View $view;
 
     public function configure(View $view)
@@ -11,13 +13,18 @@ class Module
         $this->view = $view;
     }
 
-    public function getTemplate()
+    public function getName()
     {
-        return $this->view->template;
+        return $this->name;
     }
 
-    public function getData()
+    public function getPath()
     {
-        return $this->view->data;
+        return $this->path;
+    }
+
+    public function getView()
+    {
+        return $this->view;
     }
 }

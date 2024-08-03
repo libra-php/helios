@@ -7,3 +7,25 @@ html, body {
 	max-width: 364px;
 	margin: auto;
 }
+
+#app {
+	overflow: hidden;
+}
+
+#app #sidebar {
+	width: 150px;
+}
+
+#app #module #top {
+}
+
+#app #module #middle {
+	overflow: auto;
+}
+
+#app #module #bottom {
+	overflow: auto;
+}
+
+#app #module #top #title {
+}

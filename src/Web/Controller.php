@@ -22,6 +22,10 @@ class Controller
         $data["request_errors"] = $this->request_errors;
         // Template functions
         $data["f"] = new class {
+            public function dump(...$args)
+            {
+                dump(...$args);
+            }
             public function route(string $name, ...$replacements)
             {
                 return route($name, ...$replacements);

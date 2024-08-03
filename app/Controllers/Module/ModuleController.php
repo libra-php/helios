@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\Admin;
+namespace App\Controllers\Module;
 
 use Helios\Module\{Form, Module, Table};
 use Helios\Web\Controller;
@@ -17,8 +17,19 @@ class ModuleController extends Controller
         $this->init($module);
     }
 
+    public function renderView()
+    {
+        $template = $this->module->getView()->getTemplate();
+        $data = $this->module->getView()->getData();
+        // Adding module specific data
+        $data['module_name'] = $this->module->getName();
+        $data['module_path'] = $this->module->getPath();
+        return $this->render($template, $data);
+    }
+
     private function init(string $module): void
     {
+        // FIXME: this is unreliable
         $module = ucfirst($module);
         $class = "\\App\\Modules\\$module";
         if (class_exists($class)) {
@@ -32,22 +43,21 @@ class ModuleController extends Controller
     public function index($module)
     {
         $this->module->configure(new Table);
-        dump($this->module);
-        return $this->render($this->module->getTemplate(), $this->module->getData());
+        return $this->renderView();
     }
 
     #[Get("/{module}/create", "module.create")]
     public function create($module)
     {
         $this->module->configure(new Form);
-        return $this->render($this->module->getTemplate(), $this->module->getData());
+        return $this->renderView();
     }
 
     #[Get("/{module}/{id}/edit", "module.edit")]
     public function edit($module, $id)
     {
         $this->module->configure(new Form);
-        return $this->render($this->module->getTemplate(), $this->module->getData());
+        return $this->renderView();
     }
 
     #[Post("/{module}", "module.store")]

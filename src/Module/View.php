@@ -5,12 +5,12 @@ namespace Helios\Module;
 class View implements IView
 {
     /** Template properties */
-    public string $template = "";
+    protected string $template = "";
 
 
     /** SQL properties */
     public string $sql_table = "";
-    public array $data = [];
+    public string $primary_key = "";
 
 
     /** Table Properties */
@@ -19,4 +19,24 @@ class View implements IView
 
     /** Form Properties */
     public array $form = [];
+
+    public function getTemplate(): string
+    {
+        return $this->template;
+    }
+
+    protected function getQuery(): string
+    {
+        return "";
+    }
+
+    private function getResult(): array
+    {
+        return [];
+    }
+
+    public function getData(): array
+    {
+        return [];
+    }
 }
