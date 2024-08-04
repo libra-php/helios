@@ -1,24 +1,22 @@
 {% extends "layouts/admin.html" %}
 
 {% block module %}
-<section id="table" class="w-100">
-	<table class="table table-sm">
-		<head>
-			<tr>
-				{% for title in table.columns %}
-				<td>{{ title }}</td>
-				{% endfor %}
-			</tr>
-		</thead>
-		<tbody>
-			{% for row in table.rows %}
-			<tr>
-				{% for col in row %}
-				<td>{{ col|raw }}</td>
-				{% endfor %}
-			</tr>
+<table class="table table-striped table-sm">
+	<thead class="sticky-top bg-dark text-light p-0">
+		<tr>
+			{% for title in table.columns %}
+			<th scope="col">{{ title }}</th>
 			{% endfor %}
-		</tbody>
-	</table>
-</section>
+		</tr>
+	</thead>
+	<tbody>
+		{% for row in table.rows %}
+		<tr>
+			{% for col in row %}
+			<td>{{ col|raw }}</td>
+			{% endfor %}
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
 {% endblock %}
