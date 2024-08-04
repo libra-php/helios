@@ -15,6 +15,7 @@ class View implements IView
 
     /** Table Properties */
     public array $table = [];
+    public array $format = [];
 
 
     /** Form Properties */
@@ -25,17 +26,17 @@ class View implements IView
         return $this->template;
     }
 
+    public function getData(): array
+    {
+        return [];
+    }
+
     protected function getQuery(): string
     {
         return "";
     }
 
-    private function getResult(): array
-    {
-        return [];
-    }
-
-    public function getData(): array
+    protected function getResult(): array|false
     {
         return [];
     }

@@ -14,7 +14,7 @@
 			{% for row in table.rows %}
 			<tr>
 				{% for col in row %}
-				<td>{{ col }}</td>
+				<td>{{ col|raw }}</td>
 				{% endfor %}
 			</tr>
 			{% endfor %}

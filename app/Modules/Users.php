@@ -22,6 +22,10 @@ class Users extends Module
             "Created" => "created_at",
         ];
 
+        $view->format = [
+            "name" => fn($column, $value) => template("components/format/span.html", compact("column", "value"))
+        ];
+
         $view->form = [
             "Name" => "name",
             "Email" => "email",
