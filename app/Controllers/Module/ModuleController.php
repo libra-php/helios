@@ -2,7 +2,7 @@
 
 namespace App\Controllers\Module;
 
-use Helios\Module\{Form, Module, Table};
+use Helios\Module\{Form, Module, Table, View};
 use Helios\Web\Controller;
 use StellarRouter\{Get, Post, Put, Patch, Delete, Group};
 
@@ -17,8 +17,9 @@ class ModuleController extends Controller
         $this->init($module);
     }
 
-    public function renderView()
+    public function renderView(View $view)
     {
+        $this->module->configure($view);
         $template = $this->module->getView()->getTemplate();
         $data = $this->module->getView()->getData();
         // Adding module specific data
@@ -42,22 +43,19 @@ class ModuleController extends Controller
     #[Get("/{module}", "module.index")]
     public function index($module)
     {
-        $this->module->configure(new Table);
-        return $this->renderView();
+        return $this->renderView(new Table);
     }
 
     #[Get("/{module}/create", "module.create")]
     public function create($module)
     {
-        $this->module->configure(new Form);
-        return $this->renderView();
+        return $this->renderView(new Form);
     }
 
     #[Get("/{module}/{id}/edit", "module.edit")]
     public function edit($module, $id)
     {
-        $this->module->configure(new Form);
-        return $this->renderView();
+        return $this->renderView(new Form);
     }
 
     #[Post("/{module}", "module.store")]
