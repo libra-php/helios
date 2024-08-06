@@ -2,6 +2,7 @@
 
 namespace App\Modules;
 
+use Helios\Module\Format;
 use Helios\Module\View;
 use Helios\Module\Module;
 
@@ -12,24 +13,23 @@ class Users extends Module
 
     public function configure(View $view)
     {
-        $view->sql_table = "users";
+        $view->setTable("users");
 
-        $view->table = [
-            "ID" => "id",
-            "UUID" => "uuid",
-            "Name" => "name",
-            "Email" => "email",
-            "Created" => "created_at",
-        ];
+        $view->addTable("ID", "id")
+            ->addTable("UUID", "uuid")
+            ->addTable("Name", "name")
+            ->addTable("Email", "email")
+            ->addTable("Created", "created_at");
 
-        // $view->format = [
-        //     "name" => fn($column, $value) => template("components/format/span.html", compact("column", "value"))
-        // ];
+        $user = user();
+        $view->addFilterLink("Me", "id = $user->id")
+            ->addFilterLink("Others", "id != $user->id")
+            ->addFilterLink("All", "1=1");
 
-        $view->form = [
-            "Name" => "name",
-            "Email" => "email",
-        ];
+        $view->tableFormat("created_at", fn($column, $value) => Format::ago($column, $value));
+
+        $view->addForm("Name", "email")
+            ->addForm("Email", "email");
 
         parent::configure($view);
     }

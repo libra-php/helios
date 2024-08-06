@@ -9,28 +9,29 @@ class View implements IView
 
 
     /** SQL properties */
-    public string $sql_table = "";
-    public string $primary_key = "";
-    public array $where = [];
-    public array $group_by = [];
-    public array $having = [];
-    public string $order_column = "";
-    public bool $ascending = true;
+    protected string $sql_table = "";
+    protected string $primary_key = "";
+    protected array $where = [];
+    protected array $group_by = [];
+    protected array $having = [];
+    protected string $order_column = "";
+    protected bool $ascending = true;
 
     /** Pagination */
-    public int $total_results = 0;
-    public int $total_pages = 0;
-    public int $per_page = 5;
-    public int $page = 1;
+    protected int $total_results = 0;
+    protected int $total_pages = 0;
+    protected int $per_page = 5;
+    protected int $page = 1;
 
 
     /** Table Properties */
-    public array $table = [];
-    public array $format = [];
+    protected array $table = [];
+    protected array $format = [];
+    protected array $filter_links = [];
 
 
     /** Form Properties */
-    public array $form = [];
+    protected array $form = [];
 
     public function __construct(private string $module)
     {
@@ -51,13 +52,43 @@ class View implements IView
         return [];
     }
 
-    protected function getSession(string $name)
+    public function setTable(string $name)
+    {
+        $this->sql_table = $name;
+        return $this;
+    }
+
+    public function addTable(string $title, string $subquery)
+    {
+        $this->table[$title] = $subquery;
+        return $this;
+    }
+
+    public function tableFormat(string $column, callable $callback)
+    {
+        $this->format[$column] = $callback;
+        return $this;
+    }
+
+    public function addFilterLink(string $title, string $subquery)
+    {
+        $this->filter_links[$title] = $subquery;
+        return $this;
+    }
+
+    public function addForm(string $title, string $subquery)
+    {
+        $this->form[$title] = $subquery;
+        return $this;
+    }
+
+    public function getSession(string $name)
     {
         $module_session = session()->get($this->module) ?? [];
         return key_exists($name, $module_session) ? $module_session[$name] : null;
     }
 
-    protected function setSession(string $name, mixed $value)
+    public function setSession(string $name, mixed $value)
     {
         $module_session = session()->get($this->module) ?? [];
         $module_session[$name] = $value;

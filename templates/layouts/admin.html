@@ -10,6 +10,13 @@
 			<h2 id="title" class="fw-bold">{{ module_name }}</h2>
 		</section>
 		<section id="middle" class="flex-grow-1">
+			<section id="filters" class="my-1">
+				<div id="links">
+					{% for i,link in filters.links %}
+					<span class="badge bg-dark">{{ link }} [<span class='count' hx-trigger="load" hx-get="?filter_count={{ i }}">...</span>]</span>
+					{% endfor %}
+				</div>
+			</section>
 			{% block module %}
 			{% endblock %}
 		</section>

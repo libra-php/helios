@@ -15,6 +15,27 @@ class Table extends View
     public function processRequest(): void
     {
         $this->handlePage();
+        $this->handleFilterCount();
+    }
+
+    public function getData(): array
+    {
+        $rows = $this->getPayload();
+        return [
+            "table" => [
+                "columns" => array_keys($this->table),
+                "rows" => $this->format($rows)
+            ],
+            "pagination" => [
+                "total_results" => $this->total_results,
+                "total_pages" => $this->total_pages,
+                "page" => $this->page,
+                "per_page" => $this->per_page,
+            ],
+            "filters" => [
+                "links" => array_keys($this->filter_links),
+            ],
+        ];
     }
 
     private function handlePage()
@@ -25,6 +46,19 @@ class Table extends View
             $page = $this->getSession("page") ?? 1;
         }
         $this->setPage($page);
+    }
+
+    private function handleFilterCount()
+    {
+        if (request()->query->has("filter_count")) {
+            $filters = array_values($this->filter_links);
+            $index = request()->query->get("filter_count");
+            if (key_exists($index, $filters)) {
+                $this->addClause($this->where, $filters[$index]);
+                echo $this->getTotalResults();
+                exit;
+            }
+        }
     }
 
     private function setPage(int $page)
@@ -43,19 +77,6 @@ class Table extends View
         }
 
         $this->setSession("page", $this->page);
-    }
-
-    protected function getQuery($limit_query = true): string
-    {
-        return sprintf("SELECT %s FROM %s %s %s %s %s %s",
-            $this->getSelect(),
-            $this->getSqlTable(),
-            $this->getWhere(),
-            $this->getGroupBy(),
-            $this->getHaving(),
-            $this->getOrderBy(),
-            $limit_query ? $this->getLimitOffset() : ''
-        );
     }
 
     private function getSelect()
@@ -144,22 +165,18 @@ class Table extends View
         return [...$where_params, ...$having_params];
     }
 
-    protected function getPayload(): array|false
+    protected function getQuery($limit_query = true): string
     {
-        $this->processRequest();
-        $sql = $this->getQuery();
-        $params = $this->getAllParams();
-        $stmt = db()->run($sql, $params);
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $results;
-    }
-
-    protected function getTotalResults(): int
-    {
-        $sql = $this->getQuery(false);
-        $params = $this->getAllParams();
-        $stmt = db()->run($sql, $params);
-        return $stmt ? $stmt->rowCount() : 0;
+        return sprintf(
+            "SELECT %s FROM %s %s %s %s %s %s",
+            $this->getSelect(),
+            $this->getSqlTable(),
+            $this->getWhere(),
+            $this->getGroupBy(),
+            $this->getHaving(),
+            $this->getOrderBy(),
+            $limit_query ? $this->getLimitOffset() : ''
+        );
     }
 
     private function format(array $data): array
@@ -176,20 +193,21 @@ class Table extends View
         return $data;
     }
 
-    public function getData(): array
+    protected function getPayload(): array|false
     {
-        $rows = $this->getPayload();
-        return [
-            "table" => [
-                "columns" => array_keys($this->table),
-                "rows" => $this->format($rows)
-            ],
-            "pagination" => [
-                "total_results" => $this->total_results,
-                "total_pages" => $this->total_pages,
-                "page" => $this->page,
-                "per_page" => $this->per_page,
-            ],
-        ];
+        $this->processRequest();
+        $sql = $this->getQuery();
+        $params = $this->getAllParams();
+        $stmt = db()->run($sql, $params);
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $results;
+    }
+
+    protected function getTotalResults(): int
+    {
+        $sql = $this->getQuery(false);
+        $params = $this->getAllParams();
+        $stmt = db()->run($sql, $params);
+        return $stmt ? $stmt->rowCount() : 0;
     }
 }
