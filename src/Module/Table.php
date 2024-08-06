@@ -12,18 +12,75 @@ class Table extends View
 {
     public string $template = "admin/module/table.html";
 
-    protected function getQuery(): string
+    public function processRequest(): void
     {
-        $select = array_values($this->table);
-        $columns = implode(", ", $select);
-        return sprintf("SELECT $columns FROM %s", $this->sql_table);
+        $this->handlePage();
     }
 
-    protected function getResult(): array|false
+    private function handlePage()
     {
+        if (request()->query->has("page")) {
+            $page = request()->query->get("page");
+        } else {
+            $page = $this->getSession("page") ?? 1;
+        }
+        $this->setPage($page);
+    }
+
+    private function setPage(int $page)
+    {
+        $this->total_results = $this->getTotalResults();
+        $this->total_pages = ceil($this->total_results / $this->per_page);
+
+        if ($page > 0 && $page <= $this->total_pages) {
+            $this->page = $page;
+        } else {
+            if ($page < 1) {
+                $this->page = 1;
+            } elseif ($page > $this->total_pages) {
+                $this->page = $this->total_pages;
+            }
+        }
+
+        $this->setSession("page", $this->page);
+    }
+
+    protected function getQuery($limit_query = true): string
+    {
+        $columns = array_values($this->table);
+        $select = implode(", ", $columns);
+        $where = "";
+        $group_by = "";
+        $having = "";
+        $order_by = "";
+        $page = $this->page;
+        $per_page = $this->per_page;
+        $limit = $limit_query ? "LIMIT $page, $per_page" : '';
+        return sprintf("SELECT %s FROM %s %s %s %s %s %s",
+            $select,
+            $this->sql_table,
+            $where,
+            $group_by,
+            $having,
+            $order_by,
+            $limit
+        );
+    }
+
+    protected function getPayload(): array|false
+    {
+        $this->processRequest();
         $sql = $this->getQuery();
-        $results = db()->run($sql)->fetchAll(PDO::FETCH_ASSOC);
+        $stmt = db()->run($sql);
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $results;
+    }
+
+    protected function getTotalResults(): int
+    {
+        $sql = $this->getQuery(false);
+        $stmt = db()->run($sql);
+        return $stmt ? $stmt->rowCount() : 0;
     }
 
     private function format(array $data): array
@@ -42,12 +99,18 @@ class Table extends View
 
     public function getData(): array
     {
-        $rows = $this->getResult();
+        $rows = $this->getPayload();
         return [
             "table" => [
                 "columns" => array_keys($this->table),
                 "rows" => $this->format($rows)
-            ]
+            ],
+            "pagination" => [
+                "total_results" => $this->total_results,
+                "total_pages" => $this->total_pages,
+                "page" => $this->page,
+                "per_page" => $this->per_page,
+            ],
         ];
     }
 }

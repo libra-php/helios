@@ -43,19 +43,19 @@ class ModuleController extends Controller
     #[Get("/{module}", "module.index")]
     public function index($module)
     {
-        return $this->renderView(new Table);
+        return $this->renderView(new Table($module));
     }
 
     #[Get("/{module}/create", "module.create")]
     public function create($module)
     {
-        return $this->renderView(new Form);
+        return $this->renderView(new Form($module));
     }
 
     #[Get("/{module}/{id}/edit", "module.edit")]
     public function edit($module, $id)
     {
-        return $this->renderView(new Form);
+        return $this->renderView(new Form($module));
     }
 
     #[Post("/{module}", "module.store")]

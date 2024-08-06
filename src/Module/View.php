@@ -11,6 +11,10 @@ class View implements IView
     /** SQL properties */
     public string $sql_table = "";
     public string $primary_key = "";
+    public int $total_results = 0;
+    public int $total_pages = 0;
+    public int $per_page = 5;
+    public int $page = 1;
 
 
     /** Table Properties */
@@ -20,6 +24,15 @@ class View implements IView
 
     /** Form Properties */
     public array $form = [];
+
+    public function __construct(private string $module)
+    {
+    }
+
+    public function processRequest(): void
+    {
+
+    }
 
     public function getTemplate(): string
     {
@@ -31,12 +44,25 @@ class View implements IView
         return [];
     }
 
+    protected function getSession(string $name)
+    {
+        $module_session = session()->get($this->module);
+        return key_exists($name, $module_session) ? $module_session[$name] : [];
+    }
+
+    protected function setSession(string $name, mixed $value)
+    {
+        $module_session = session()->get($this->module);
+        $module_session[$name] = $value;
+        session()->set($this->module, $module_session);
+    }
+
     protected function getQuery(): string
     {
         return "";
     }
 
-    protected function getResult(): array|false
+    protected function getPayload(): array|false
     {
         return [];
     }
