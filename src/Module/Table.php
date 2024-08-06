@@ -47,31 +47,109 @@ class Table extends View
 
     protected function getQuery($limit_query = true): string
     {
+        return sprintf("SELECT %s FROM %s %s %s %s %s %s",
+            $this->getSelect(),
+            $this->getSqlTable(),
+            $this->getWhere(),
+            $this->getGroupBy(),
+            $this->getHaving(),
+            $this->getOrderBy(),
+            $limit_query ? $this->getLimitOffset() : ''
+        );
+    }
+
+    private function getSelect()
+    {
         $columns = array_values($this->table);
-        $select = implode(", ", $columns);
-        $where = "";
-        $group_by = "";
-        $having = "";
-        $order_by = "";
+        return implode(", ", $columns);
+    }
+
+    private function getSqlTable()
+    {
+        return $this->sql_table;
+    }
+
+    private function getWhere()
+    {
+        return $this->where
+            ? "WHERE " . $this->formatClause($this->where)
+            : '';
+    }
+
+    private function getHaving()
+    {
+        return $this->where
+            ? $this->formatClause($this->having)
+            : '';
+    }
+
+    private function getGroupBy()
+    {
+        return '';
+    }
+
+    private function getOrderBy()
+    {
+        $sort = $this->ascending ? "ASC" : "DESC";
+        return $this->order_column
+            ? "ORDER BY {$this->order_column} $sort"
+            : '';
+    }
+
+    private function getLimitOffset()
+    {
         $page = $this->page;
         $per_page = $this->per_page;
-        $limit = $limit_query ? "LIMIT $page, $per_page" : '';
-        return sprintf("SELECT %s FROM %s %s %s %s %s %s",
-            $select,
-            $this->sql_table,
-            $where,
-            $group_by,
-            $having,
-            $order_by,
-            $limit
-        );
+        return $this->total_results > $this->per_page
+            ? "LIMIT $page, $per_page"
+            : '';
+    }
+
+    private function formatClause(array $clauses)
+    {
+        $out = [];
+        foreach ($clauses as $clause) {
+            [$clause, $params] = $clause;
+            // Add parens to clause for order of ops
+            $out[] = "(" . $clause . ")";
+        }
+        return sprintf("%s", implode(" AND ", $out));
+    }
+
+    private function addClause(
+        array &$clauses,
+        string $clause,
+        int|string ...$replacements
+    ): void {
+        $clauses[] = [$clause, [...$replacements]];
+    }
+
+    private function getParams(array $clauses): array
+    {
+        if (!$clauses) {
+            return [];
+        }
+        $params = [];
+        foreach ($clauses as $clause) {
+            [$clause, $param_array] = $clause;
+            $params = [...$params, ...$param_array];
+        }
+        return $param_array;
+    }
+
+    private function getAllParams()
+    {
+        $where_params = $this->getParams($this->where);
+        $having_params = $this->getParams($this->having);
+        return [...$where_params, ...$having_params];
     }
 
     protected function getPayload(): array|false
     {
         $this->processRequest();
         $sql = $this->getQuery();
-        $stmt = db()->run($sql);
+        $params = $this->getAllParams();
+        $stmt = db()->run($sql, $params);
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $results;
     }
@@ -79,7 +157,8 @@ class Table extends View
     protected function getTotalResults(): int
     {
         $sql = $this->getQuery(false);
-        $stmt = db()->run($sql);
+        $params = $this->getAllParams();
+        $stmt = db()->run($sql, $params);
         return $stmt ? $stmt->rowCount() : 0;
     }
 

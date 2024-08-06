@@ -11,6 +11,13 @@ class View implements IView
     /** SQL properties */
     public string $sql_table = "";
     public string $primary_key = "";
+    public array $where = [];
+    public array $group_by = [];
+    public array $having = [];
+    public string $order_column = "";
+    public bool $ascending = true;
+
+    /** Pagination */
     public int $total_results = 0;
     public int $total_pages = 0;
     public int $per_page = 5;
@@ -46,13 +53,13 @@ class View implements IView
 
     protected function getSession(string $name)
     {
-        $module_session = session()->get($this->module);
-        return key_exists($name, $module_session) ? $module_session[$name] : [];
+        $module_session = session()->get($this->module) ?? [];
+        return key_exists($name, $module_session) ? $module_session[$name] : null;
     }
 
     protected function setSession(string $name, mixed $value)
     {
-        $module_session = session()->get($this->module);
+        $module_session = session()->get($this->module) ?? [];
         $module_session[$name] = $value;
         session()->set($this->module, $module_session);
     }
