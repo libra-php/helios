@@ -49,6 +49,14 @@ a:active {
 #app #module .table {
 	border-collapse: collapse;
 }
+#app #module .page-item.active {
+	--bs-pagination-color: white;
+	--bs-pagination-hover-color: white;
+	--bs-pagination-focus-color: white;
+	--bs-pagination-active-bg: #222;
+	--bs-pagination-active-border-color: #dee2e6;
+}
+
 
 #app #module #top #title {
 	margin: 0;
