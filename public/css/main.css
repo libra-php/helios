@@ -57,6 +57,10 @@ a:active {
 	--bs-pagination-active-border-color: #dee2e6;
 }
 
+#app #module #per-page {
+	width: 70px;
+	padding: 2;
+}
 
 #app #module #top #title {
 	margin: 0;

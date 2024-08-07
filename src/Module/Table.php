@@ -17,6 +17,7 @@ class Table extends View
         $this->handleFilterCount();
         $this->handleLinkFilter();
         $this->handlePage();
+        $this->handlePerPage();
     }
 
     public function getData(): array
@@ -32,11 +33,30 @@ class Table extends View
                 "total_pages" => $this->total_pages,
                 "page" => $this->page,
                 "per_page" => $this->per_page,
+                "page_options" => [
+                    5,
+                    10,
+                    50,
+                    100,
+                    500,
+                    1000,
+                ],
             ],
             "filters" => [
                 "links" => array_keys($this->filter_links),
             ],
         ];
+    }
+
+    private function handlePerPage()
+    {
+        if (request()->query->has("per_page")) {
+            $per_page = request()->query->get("per_page");
+            $this->setPage(1);
+        } else {
+            $per_page = $this->getSession("per_page") ?? 10;
+        }
+        $this->setPerPage($per_page);
     }
 
     private function handlePage()
@@ -100,6 +120,13 @@ class Table extends View
         }
 
         $this->setSession("page", $this->page);
+    }
+
+    private function setPerPage(int $per_page)
+    {
+        $this->per_page = $per_page;
+
+        $this->setSession("per_page", $this->per_page);
     }
 
     private function getSelect()
