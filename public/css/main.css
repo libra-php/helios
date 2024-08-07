@@ -38,16 +38,19 @@ a:active {
 }
 
 #app #module #top {
+	margin: 0;
 }
 
 #app #module #middle {
 	overflow: auto;
+	border: none !important;
 }
 
-#app #module #bottom {
-	overflow: auto;
-
+#app #module .table {
+	border-collapse: collapse;
 }
 
 #app #module #top #title {
+	margin: 0;
+	font-size: 2rem;
 }
