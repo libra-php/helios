@@ -39,7 +39,6 @@ class View implements IView
 
     public function processRequest(): void
     {
-
     }
 
     public function getTemplate(): string
@@ -52,13 +51,13 @@ class View implements IView
         return [];
     }
 
-    public function setTable(string $name)
+    public function sqlTable(string $name)
     {
         $this->sql_table = $name;
         return $this;
     }
 
-    public function addTable(string $title, string $subquery)
+    public function table(string $title, string $subquery)
     {
         $this->table[$title] = $subquery;
         return $this;
@@ -70,13 +69,13 @@ class View implements IView
         return $this;
     }
 
-    public function addFilterLink(string $title, string $subquery)
+    public function filterLink(string $title, string $subquery)
     {
         $this->filter_links[$title] = $subquery;
         return $this;
     }
 
-    public function addForm(string $title, string $subquery)
+    public function form(string $title, string $subquery)
     {
         $this->form[$title] = $subquery;
         return $this;

@@ -13,23 +13,28 @@ class Users extends Module
 
     public function configure(View $view)
     {
-        $view->setTable("users");
+        /** SQL Table */
+        $view->sqlTable("users");
 
-        $view->addTable("ID", "id")
-            ->addTable("UUID", "uuid")
-            ->addTable("Name", "name")
-            ->addTable("Email", "email")
-            ->addTable("Created", "created_at");
+        /** Table definition (index view) */
+        $view->table("ID", "id")
+            ->table("UUID", "uuid")
+            ->table("Name", "name")
+            ->table("Email", "email")
+            ->table("Created", "created_at");
 
+        /** Filters */
         $user = user();
-        $view->addFilterLink("Me", "id = $user->id")
-            ->addFilterLink("Others", "id != $user->id")
-            ->addFilterLink("All", "1=1");
+        $view->filterLink("Me", "id = $user->id")
+            ->filterLink("Others", "id != $user->id")
+            ->filterLink("All", "1=1");
 
+        /** Table formatting */
         $view->tableFormat("created_at", fn($column, $value) => Format::ago($column, $value));
 
-        $view->addForm("Name", "email")
-            ->addForm("Email", "email");
+        /** Form definition (edit & create view) */
+        $view->form("Name", "email")
+            ->form("Email", "email");
 
         parent::configure($view);
     }
