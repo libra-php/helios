@@ -26,4 +26,15 @@
 		{% endfor %}
 	</tbody>
 </table>
+<nav aria-label="page navigation">
+	<ul class="pagination pagination-sm">
+		<li class="page-item {% if pagination.page < 2 %}disabled{% endif %}"><a class="page-link" href="?page={{ pagination.page - 1 }}">Previous</a></li>
+		{% for i in 1..pagination.total_pages %}
+			{% if i <= pagination.total_pages and i > pagination.page - 3 and i < pagination.page + 3 %}
+			<li class="page-item {% if i == pagination.page %}active{% endif %}"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+			{% endif %}
+		{% endfor %}
+		<li class="page-item {% if pagination.page >= pagination.total_pages %}disabled{% endif %}"><a class="page-link" href="?page={{ pagination.page + 1 }}">Next</a></li>
+	</ul>
+</nav>
 {% endblock %}

@@ -14,9 +14,9 @@ class Table extends View
 
     public function processRequest(): void
     {
-        $this->handlePage();
         $this->handleFilterCount();
         $this->handleLinkFilter();
+        $this->handlePage();
     }
 
     public function getData(): array
@@ -66,6 +66,7 @@ class Table extends View
     {
         if (request()->query->has("filter_link")) {
             $index = request()->query->get("filter_link");
+            $this->setPage(1);
         } else {
             $index = $this->getSession("filter_link") ?? 0;
         }
@@ -141,7 +142,7 @@ class Table extends View
 
     private function getLimitOffset()
     {
-        $page = $this->page;
+        $page = max(($this->page - 1) * $this->per_page, 0);
         $per_page = $this->per_page;
         return $this->total_results > $this->per_page
             ? "LIMIT $page, $per_page"
@@ -218,7 +219,7 @@ class Table extends View
     protected function getPayload(): array|false
     {
         $this->processRequest();
-        $sql = $this->getQuery(false);
+        $sql = $this->getQuery();
         $params = $this->getAllParams();
         $stmt = db()->run($sql, $params);
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
