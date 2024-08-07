@@ -3,6 +3,27 @@ html, body {
 	width: 100%;
 }
 
+body {
+	color: #222;
+}
+
+a:link {
+	color: #222;
+}
+
+a:visited {
+	color: #222;
+}
+
+a:hover {
+	color: #222;
+	text-decoration: underline;
+}
+
+a:active {
+	color: #222;
+}
+
 #sign-in {
 	max-width: 364px;
 	margin: auto;

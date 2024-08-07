@@ -16,6 +16,7 @@ class Table extends View
     {
         $this->handlePage();
         $this->handleFilterCount();
+        $this->handleLinkFilter();
     }
 
     public function getData(): array
@@ -59,6 +60,27 @@ class Table extends View
                 exit;
             }
         }
+    }
+
+    private function handleLinkFilter()
+    {
+        if (request()->query->has("filter_link")) {
+            $index = request()->query->get("filter_link");
+        } else {
+            $index = $this->getSession("filter_link") ?? 0;
+        }
+
+        $this->setFilterLink($index);
+    }
+
+    private function setFilterLink(int $index)
+    {
+        $filters = array_values($this->filter_links);
+        if (isset($filters[$index])) {
+            $this->addClause($this->where, $filters[$index]);
+        }
+
+        $this->setSession("filter_link", $index);
     }
 
     private function setPage(int $page)
@@ -196,7 +218,7 @@ class Table extends View
     protected function getPayload(): array|false
     {
         $this->processRequest();
-        $sql = $this->getQuery();
+        $sql = $this->getQuery(false);
         $params = $this->getAllParams();
         $stmt = db()->run($sql, $params);
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);

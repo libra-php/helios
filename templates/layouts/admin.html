@@ -3,20 +3,13 @@
 {% block content %}
 <section id="app" class="d-flex h-100 w-100">
 	<nav id="sidebar" class="nav">
-		<a class="nav-link" href="{{ f.route("sign-out.index") }}">Sign out</a>
+		<a class="nav-link link-dark" href="{{ f.route("sign-out.index") }}">Sign out</a>
 	</nav>
 	<section id="module" class="d-flex flex-column flex-grow-1">
 		<section id="top">
 			<h2 id="title" class="fw-bold">{{ module_name }}</h2>
 		</section>
 		<section id="middle" class="flex-grow-1">
-			<section id="filters" class="my-1">
-				<div id="links">
-					{% for i,link in filters.links %}
-					<span class="badge bg-dark">{{ link }} [<span class='count' hx-trigger="load" hx-get="?filter_count={{ i }}">...</span>]</span>
-					{% endfor %}
-				</div>
-			</section>
 			{% block module %}
 			{% endblock %}
 		</section>

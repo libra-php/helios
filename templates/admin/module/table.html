@@ -1,6 +1,13 @@
 {% extends "layouts/admin.html" %}
 
 {% block module %}
+<section id="filters" class="my-1">
+	<div id="links">
+		{% for i,link in filters.links %}
+		<span class="badge bg-dark" ><a class="link-light" href="?filter_link={{ i }}">{{ link }} [<span class='count' hx-trigger="load" hx-get="?filter_count={{ i }}">...</span>]</a></span>
+		{% endfor %}
+	</div>
+</section>
 <table class="table table-striped table-sm">
 	<thead class="sticky-top bg-dark text-light p-0">
 		<tr>

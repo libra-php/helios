@@ -20,7 +20,7 @@ class View implements IView
     /** Pagination */
     protected int $total_results = 0;
     protected int $total_pages = 0;
-    protected int $per_page = 5;
+    protected int $per_page = 10;
     protected int $page = 1;
 
 
@@ -86,6 +86,12 @@ class View implements IView
     {
         $module_session = session()->get($this->module) ?? [];
         return key_exists($name, $module_session) ? $module_session[$name] : null;
+    }
+
+    public function hasSession(string $name)
+    {
+        $module_session = session()->get($this->module) ?? [];
+        return key_exists($name, $module_session);
     }
 
     public function setSession(string $name, mixed $value)
