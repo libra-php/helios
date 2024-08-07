@@ -1,49 +1,50 @@
 {% extends "layouts/admin.html" %}
 
 {% block module %}
-<table class="table {% if table.rows|length > 1 %}table-hover{% endif %} table-sm caption-top">
-	<caption hx-boost="true">
-		<div id="links" class="w-100">
-			{% for i,link in filters.links %}
-			<span class="badge bg-dark" ><a class="link-light" href="?filter_link={{ i }}" hx-target="#middle" hx-select="#middle">{{ link }} [<span class='count'>...</span>]</a></span>
-			<span hx-trigger="load" hx-get="?filter_count={{ i }}" hx-target="previous .count"></span>
+<div class="table-responsive" hx-boost="true" hx-select="#middle" hx-target="#middle" hx-swap="outerHTML">
+	<table class="table {% if table.rows|length > 1 %}table-hover{% endif %} table-sm caption-top">
+		<caption>
+			<div id="links" class="w-100">
+				{% for i,link in filters.links %}
+				<span class="badge bg-dark" ><a class="link-light" href="?filter_link={{ i }}">{{ link }} [<span hx-swap="textContent" hx-trigger="load" hx-get="?filter_count={{ i }}" hx-target="this">...</span>]</a></span>
+				{% endfor %}
+			</div>
+		</caption>
+		<thead class="bg-dark text-light p-0">
+			<tr class="p-0">
+				{% for title in table.columns %}
+				<th>{{ title }}</th>
+				{% endfor %}
+			</tr>
+		</thead>
+		<tbody>
+			{% for row in table.rows %}
+			<tr>
+				{% for col in row %}
+				<td>{{ col|raw }}</td>
+				{% endfor %}
+			</tr>
 			{% endfor %}
-		</div>
-	</caption>
-	<thead class="sticky-top bg-dark text-light p-0">
-		<tr class="p-0">
-			{% for title in table.columns %}
-			<th>{{ title }}</th>
+		</tbody>
+	</table>
+	<div class="d-flex align-items-center">
+		<nav class="flex-grow-1" aria-label="page navigation">
+			<ul class="pagination pagination-sm mb-0">
+				<li class="page-item {% if pagination.page < 2 %}disabled{% endif %}"><a class="page-link" href="?page={{ pagination.page - 1 }}">Previous</a></li>
+				{% for i in 1..pagination.total_pages %}
+					{% if i <= pagination.total_pages and i > pagination.page - 3 and i < pagination.page + 3 %}
+					<li class="page-item {% if i == pagination.page %}active{% endif %}"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+					{% endif %}
+				{% endfor %}
+				<li class="page-item {% if pagination.page >= pagination.total_pages %}disabled{% endif %}"><a class="page-link" href="?page={{ pagination.page + 1 }}">Next</a></li>
+			</ul>
+		</nav>
+		<select hx-get="" hx-trigger="change" class="form-select form-select-sm" name="per_page" id="per-page">
+			<option disabled>Results per page</option>
+			{% for i in pagination.page_options %}
+			<option value="{{ i }}" {% if i == pagination.per_page %}selected{% endif %}>{{ i }}</option>
 			{% endfor %}
-		</tr>
-	</thead>
-	<tbody>
-		{% for row in table.rows %}
-		<tr>
-			{% for col in row %}
-			<td>{{ col|raw }}</td>
-			{% endfor %}
-		</tr>
-		{% endfor %}
-	</tbody>
-</table>
-<div class="d-flex align-items-center" hx-boost="true" hx-select="#middle" hx-target="#middle">
-	<nav class="flex-grow-1" aria-label="page navigation">
-		<ul class="pagination pagination-sm">
-			<li class="page-item {% if pagination.page < 2 %}disabled{% endif %}"><a class="page-link" href="?page={{ pagination.page - 1 }}">Previous</a></li>
-			{% for i in 1..pagination.total_pages %}
-				{% if i <= pagination.total_pages and i > pagination.page - 3 and i < pagination.page + 3 %}
-				<li class="page-item {% if i == pagination.page %}active{% endif %}"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-				{% endif %}
-			{% endfor %}
-			<li class="page-item {% if pagination.page >= pagination.total_pages %}disabled{% endif %}"><a class="page-link" href="?page={{ pagination.page + 1 }}">Next</a></li>
-		</ul>
-	</nav>
-	<select hx-get="" hx-trigger="change" class="form-select form-select-sm" name="per_page" id="per-page">
-		<option disabled>Results per page</option>
-		{% for i in pagination.page_options %}
-		<option value="{{ i }}" {% if i == pagination.per_page %}selected{% endif %}>{{ i }}</option>
-		{% endfor %}
-	</select>
+		</select>
+	</div>
 </div>
 {% endblock %}

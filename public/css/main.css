@@ -34,7 +34,9 @@ a:active {
 }
 
 #app #sidebar {
-	width: 150px;
+	width: 100%;
+	min-width: 150px;
+	max-width: 150px;
 }
 
 #app #module #top {
