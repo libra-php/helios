@@ -58,6 +58,9 @@ a:active {
 	border-collapse: collapse;
 	overflow: auto;
 }
+#app #module .table tbody tr:hover {
+	background-color: #FFF5CC;
+}
 
 #app #module .page-item.active a {
 	font-weight: 900;
