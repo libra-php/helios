@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
 	height: 100%;
 	width: 100%;
 }
@@ -55,13 +56,12 @@ a:active {
 #app #module .table {
 	border-collapse: collapse;
 }
+
 #app #module .page-item.active {
-	--bs-pagination-color: white;
-	--bs-pagination-hover-color: white;
-	--bs-pagination-focus-color: white;
 	--bs-pagination-active-bg: #222;
 	--bs-pagination-active-border-color: #dee2e6;
 }
+
 #app #module .filter-link.active {
 	color: yellow !important;
 }
