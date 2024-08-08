@@ -54,16 +54,18 @@ a:active {
 }
 
 #app #module .table {
+	border-spacing: 0;
 	border-collapse: collapse;
+	overflow: auto;
 }
 
-#app #module .page-item.active {
+#app #module .page-item.active a {
+	font-weight: 900;
 	--bs-pagination-active-bg: #222;
 	--bs-pagination-active-border-color: #dee2e6;
 }
-
 #app #module .filter-link.active {
-	color: yellow !important;
+	font-weight: 900;
 }
 
 #app #module #per-page {

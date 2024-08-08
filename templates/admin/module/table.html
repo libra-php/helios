@@ -1,15 +1,15 @@
 {% extends "layouts/admin.html" %}
 
 {% block top  %}
-	<div id="links" class="w-100 my-1" hx-boost="true" hx-select="#module" hx-target="#module" hx-swap="outerHTML">
+	<div id="filter-links" class="w-100 my-1">
 		{% for i,link in filters.links %}
-		<span class="badge bg-dark" ><a class="link-light filter-link {% if filters.filter_link == i %}active{% endif %}" href="?filter_link={{ i }}">{{ link }} [<span hx-swap="textContent" hx-trigger="load" hx-get="?filter_count={{ i }}" hx-target="this">...</span>]</a></span>
+		<span class="badge {% if filters.filter_link == i %}bg-dark{% else %}bg-light{% endif %}" ><a class="filter-link {% if filters.filter_link == i %}active link-light{% else %}link-dark{% endif %}" href="?filter_link={{ i }}">{{ link }} [<span hx-swap="textContent" hx-trigger="load" hx-get="?filter_count={{ i }}" hx-target="this">...</span>]</a></span>
 		{% endfor %}
 	</div>
 {% endblock %}
 
 {% block middle %}
-<table class="table {% if table.rows|length > 1 %}table-hover{% endif %} table-sm caption-top">
+<table class="table table-sm caption-top mb-2 {% if table.rows|length > 1 %}table-hover{% endif %}">
 	<thead class="sticky-top bg-dark text-light p-0">
 		<tr class="p-0">
 			{% for title in table.columns %}
@@ -30,7 +30,7 @@
 {% endblock %}
 
 {% block bottom %}
-<div class="d-flex align-items-center">
+<div class="d-flex align-items-center mt-2">
 	<nav class="flex-grow-1" aria-label="page navigation">
 		<ul class="pagination pagination-sm mb-0">
 			<li class="page-item {% if pagination.page < 2 %}disabled{% endif %}"><a class="page-link" href="?page={{ pagination.page - 1 }}">Previous</a></li>
