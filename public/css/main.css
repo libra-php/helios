@@ -40,8 +40,8 @@ a:active {
 
 #app #sidebar {
 	width: 100%;
-	min-width: 150px;
-	max-width: 150px;
+	min-width: 120px;
+	max-width: 120px;
 }
 
 #app #module #top {

@@ -14,6 +14,7 @@ class Table extends View
 
     public function processRequest(): void
     {
+        $this->handleSearch();
         $this->handleFilterCount();
         $this->handleLinkFilter();
         $this->handlePerPage();
@@ -33,20 +34,21 @@ class Table extends View
                 "total_pages" => $this->total_pages,
                 "page" => $this->page,
                 "per_page" => $this->per_page,
-                "page_options" => [
-                    5,
-                    10,
-                    50,
-                    100,
-                    500,
-                    1000,
-                ],
+                "page_options" => [ 5, 10, 50, 100, 500, 1000],
             ],
             "filters" => [
                 "filter_link" => $this->filter_link_index,
                 "links" => array_keys($this->filter_links),
+                "search_term" => $this->search_term,
             ],
         ];
+    }
+
+    private function handleSearch()
+    {
+        #FIXME: implement me!
+
+        $this->setSearchTerm("");
     }
 
     private function handlePerPage(): void
@@ -93,6 +95,11 @@ class Table extends View
         }
 
         $this->setFilterLink($index);
+    }
+
+    private function setSearchTerm(string $term)
+    {
+        #FIXME: implement me!
     }
 
     private function setFilterLink(int $index): void

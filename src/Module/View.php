@@ -17,6 +17,7 @@ class View implements IView
     protected string $order_column = "";
     protected bool $ascending = true;
 
+
     /** Pagination */
     protected int $total_results = 0;
     protected int $total_pages = 0;
@@ -29,6 +30,8 @@ class View implements IView
     protected array $format = [];
     protected array $filter_links = [];
     protected int $filter_link_index = 0;
+    protected array $searchable = [];
+    protected string $search_term = "";
 
 
     /** Form Properties */
