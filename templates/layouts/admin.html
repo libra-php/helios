@@ -5,7 +5,7 @@
 	<nav id="sidebar" class="nav d-none d-sm-block">
 		<a class="nav-link link-dark" href="{{ f.route("sign-out.index") }}">Sign out</a>
 	</nav>
-	<section id="module" class="d-flex flex-column flex-grow-1">
+	<section id="module" class="d-flex flex-column flex-grow-1 p-2">
 		<section id="top">
 			<h2 id="title" class="fw-bold">{{ module_name }}</h2>
 			{% block top %}
@@ -15,7 +15,7 @@
 			{% block middle %}
 			{% endblock %}
 		</section>
-		<section id="bottom" class="pb-1">
+		<section id="bottom">
 			{% block bottom %}
 			{% endblock %}
 		</section>
