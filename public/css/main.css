@@ -30,7 +30,11 @@ a:active {
 }
 
 #app {
-	overflow: hidden;
+	overflow: auto;
+}
+
+#module {
+	overflow: inherit;
 }
 
 #app #sidebar {
@@ -57,6 +61,9 @@ a:active {
 	--bs-pagination-focus-color: white;
 	--bs-pagination-active-bg: #222;
 	--bs-pagination-active-border-color: #dee2e6;
+}
+#app #module .filter-link.active {
+	color: yellow !important;
 }
 
 #app #module #per-page {

@@ -43,18 +43,21 @@ class ModuleController extends Controller
     #[Get("/{module}", "module.index")]
     public function index($module)
     {
+        header("HX-Push-Url: /admin/$module");
         return $this->renderView(new Table($module));
     }
 
     #[Get("/{module}/create", "module.create")]
     public function create($module)
     {
+        header("HX-Push-Url: /admin/$module/create");
         return $this->renderView(new Form($module));
     }
 
-    #[Get("/{module}/{id}/edit", "module.edit")]
+    #[Get("/{module}/{id}", "module.edit")]
     public function edit($module, $id)
     {
+        header("HX-Push-Url: /admin/$module");
         return $this->renderView(new Form($module));
     }
 

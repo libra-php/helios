@@ -16,8 +16,8 @@ class Table extends View
     {
         $this->handleFilterCount();
         $this->handleLinkFilter();
-        $this->handlePage();
         $this->handlePerPage();
+        $this->handlePage();
     }
 
     public function getData(): array
@@ -43,12 +43,13 @@ class Table extends View
                 ],
             ],
             "filters" => [
+                "filter_link" => $this->filter_link_index,
                 "links" => array_keys($this->filter_links),
             ],
         ];
     }
 
-    private function handlePerPage()
+    private function handlePerPage(): void
     {
         if (request()->query->has("per_page")) {
             $per_page = request()->query->get("per_page");
@@ -59,7 +60,7 @@ class Table extends View
         $this->setPerPage($per_page);
     }
 
-    private function handlePage()
+    private function handlePage(): void
     {
         if (request()->query->has("page")) {
             $page = request()->query->get("page");
@@ -69,7 +70,7 @@ class Table extends View
         $this->setPage($page);
     }
 
-    private function handleFilterCount()
+    private function handleFilterCount(): void
     {
         if (request()->query->has("filter_count")) {
             $filters = array_values($this->filter_links);
@@ -82,7 +83,7 @@ class Table extends View
         }
     }
 
-    private function handleLinkFilter()
+    private function handleLinkFilter(): void
     {
         if (request()->query->has("filter_link")) {
             $index = request()->query->get("filter_link");
@@ -94,17 +95,17 @@ class Table extends View
         $this->setFilterLink($index);
     }
 
-    private function setFilterLink(int $index)
+    private function setFilterLink(int $index): void
     {
         $filters = array_values($this->filter_links);
         if (isset($filters[$index])) {
+            $this->filter_link_index = $index;
             $this->addClause($this->where, $filters[$index]);
+            $this->setSession("filter_link", $index);
         }
-
-        $this->setSession("filter_link", $index);
     }
 
-    private function setPage(int $page)
+    private function setPage(int $page): void
     {
         $this->total_results = $this->getTotalResults();
         $this->total_pages = ceil($this->total_results / $this->per_page);
@@ -122,44 +123,45 @@ class Table extends View
         $this->setSession("page", $this->page);
     }
 
-    private function setPerPage(int $per_page)
+    private function setPerPage(int $per_page): void
     {
         $this->per_page = $per_page;
 
         $this->setSession("per_page", $this->per_page);
     }
 
-    private function getSelect()
+    private function getSelect(): string
     {
         $columns = array_values($this->table);
         return implode(", ", $columns);
     }
 
-    private function getSqlTable()
+    private function getSqlTable(): string
     {
         return $this->sql_table;
     }
 
-    private function getWhere()
+    private function getWhere(): string
     {
         return $this->where
             ? "WHERE " . $this->formatClause($this->where)
             : '';
     }
 
-    private function getHaving()
+    private function getHaving():  string
     {
         return $this->where
             ? $this->formatClause($this->having)
             : '';
     }
 
-    private function getGroupBy()
+    private function getGroupBy(): string
     {
+        #FIXME: implement me!
         return '';
     }
 
-    private function getOrderBy()
+    private function getOrderBy(): string
     {
         $sort = $this->ascending ? "ASC" : "DESC";
         return $this->order_column
@@ -167,7 +169,7 @@ class Table extends View
             : '';
     }
 
-    private function getLimitOffset()
+    private function getLimitOffset(): string
     {
         $page = max(($this->page - 1) * $this->per_page, 0);
         $per_page = $this->per_page;
@@ -176,7 +178,7 @@ class Table extends View
             : '';
     }
 
-    private function formatClause(array $clauses)
+    private function formatClause(array $clauses): string
     {
         $out = [];
         foreach ($clauses as $clause) {
@@ -208,7 +210,7 @@ class Table extends View
         return $param_array;
     }
 
-    private function getAllParams()
+    private function getAllParams(): array
     {
         $where_params = $this->getParams($this->where);
         $having_params = $this->getParams($this->having);

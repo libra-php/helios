@@ -1,16 +1,22 @@
 {% extends "layouts/base.html" %}
 
 {% block content %}
-<section id="app" class="d-flex h-100 w-100 bg-light">
-	<nav id="sidebar" class="nav">
+<section id="app" class="d-flex h-100 w-100 bg-light" hx-boost="true" hx-select="#module" hx-target="#module" hx-swap="outerHTML">
+	<nav id="sidebar" class="nav d-none d-sm-block">
 		<a class="nav-link link-dark" href="{{ f.route("sign-out.index") }}">Sign out</a>
 	</nav>
 	<section id="module" class="d-flex flex-column flex-grow-1">
 		<section id="top">
 			<h2 id="title" class="fw-bold">{{ module_name }}</h2>
+			{% block top %}
+			{% endblock %}
 		</section>
-		<section id="middle" class="flex-grow-1">
-			{% block module %}
+		<section id="middle">
+			{% block middle %}
+			{% endblock %}
+		</section>
+		<section id="bottom">
+			{% block bottom %}
 			{% endblock %}
 		</section>
 	</section>

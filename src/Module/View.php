@@ -28,6 +28,7 @@ class View implements IView
     protected array $table = [];
     protected array $format = [];
     protected array $filter_links = [];
+    protected int $filter_link_index = 0;
 
 
     /** Form Properties */
