@@ -9,11 +9,11 @@
 {% endblock %}
 
 {% block middle %}
-<table class="table table-sm caption-top mb-2 {% if table.rows|length > 1 %}table-hover{% endif %}">
+<table class="table table-sm caption-top mb-2 {% if table.rows|length > 1 %}table-striped{% endif %}">
 	<thead class="sticky-top bg-dark text-light p-0">
-		<tr class="p-0">
+		<tr>
 			{% for title in table.columns %}
-			<th>{{ title }}</th>
+			<th class="p-1" nowrap>{{ title }}</th>
 			{% endfor %}
 		</tr>
 	</thead>
@@ -21,7 +21,7 @@
 		{% for row in table.rows %}
 		<tr>
 			{% for col in row %}
-			<td>{{ col|raw }}</td>
+			<td class="p-1" nowrap>{{ col|raw }}</td>
 			{% endfor %}
 		</tr>
 		{% endfor %}
