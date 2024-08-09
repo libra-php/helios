@@ -12,5 +12,7 @@ class Kernel extends Http
         \Helios\Middleware\CSRF::class,
         \Helios\Middleware\RequestUuid::class,
         \Helios\Middleware\RequestLimit::class,
+        \Helios\Middleware\XSSProtection::class,
+        \Helios\Middleware\ContentSecurityPolicy::class,
     ];
 }
