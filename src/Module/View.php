@@ -30,7 +30,13 @@ class View implements IView
     protected array $format = [];
     protected array $filter_links = [];
     protected int $filter_link_index = 0;
+    /**
+     * @var array Searchable table columns
+     */
     protected array $searchable = [];
+    /**
+     * @var string Table search term
+     */
     protected string $search_term = "";
 
 
@@ -61,7 +67,7 @@ class View implements IView
         return $this;
     }
 
-    public function table(string $title, string $subquery)
+    public function addTable(string $title, string $subquery)
     {
         $this->table[$title] = $subquery;
         return $this;
@@ -79,9 +85,15 @@ class View implements IView
         return $this;
     }
 
-    public function form(string $title, string $subquery)
+    public function addForm(string $title, string $subquery)
     {
         $this->form[$title] = $subquery;
+        return $this;
+    }
+
+    public function addSearch(string $column)
+    {
+        $this->searchable[] = $column;
         return $this;
     }
 

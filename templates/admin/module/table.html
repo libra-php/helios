@@ -1,11 +1,23 @@
 {% extends "layouts/admin.html" %}
 
 {% block top  %}
-	<div id="filter-links" class="w-100 my-1">
-		{% for i,link in filters.links %}
-		<span class="badge {% if filters.filter_link == i %}bg-dark{% else %}bg-light{% endif %}" ><a class="filter-link {% if filters.filter_link == i %}active link-light{% else %}link-dark{% endif %}" href="?filter_link={{ i }}">{{ link }} [<span hx-swap="textContent" hx-trigger="load" hx-get="?filter_count={{ i }}" hx-target="this">...</span>]</a></span>
-		{% endfor %}
-	</div>
+	<section id="filters" class="my-2">
+		{% if filters.searchable|length > 0 %}
+		<div id="search" class="mb-1">
+			<form>
+				<div class="input-group">
+					<input type="search" class="form-control" name="search_term" placeholder="..." value="{{ filters.search_term }}" />
+					<button type="submit" class="btn btn-primary">Search</button>
+				</div>
+			</form>
+		</div>
+		{% endif %}
+		<div id="filter-links" class="w-100">
+			{% for i,link in filters.links %}
+			<span class="badge {% if filters.filter_link == i %}bg-dark{% else %}bg-light{% endif %}" ><a class="filter-link {% if filters.filter_link == i %}active link-light{% else %}link-dark{% endif %}" href="?filter_link={{ i }}">{{ link }} [<span hx-swap="textContent" hx-trigger="load" hx-get="?filter_count={{ i }}" hx-target="this">...</span>]</a></span>
+			{% endfor %}
+		</div>
+	</section>
 {% endblock %}
 
 {% block middle %}

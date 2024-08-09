@@ -39,6 +39,7 @@ class Table extends View
             "filters" => [
                 "filter_link" => $this->filter_link_index,
                 "links" => array_keys($this->filter_links),
+                "searchable" => $this->searchable,
                 "search_term" => $this->search_term,
             ],
         ];
@@ -46,9 +47,13 @@ class Table extends View
 
     private function handleSearch()
     {
-        #FIXME: implement me!
-
-        $this->setSearchTerm("");
+        if (request()->query->has("search_term")) {
+            $term = request()->query->get("search_term");
+            $this->setPage(1);
+        } else {
+            $term = $this->getSession("search_term") ?? "";
+        }
+        $this->setSearchTerm($term);
     }
 
     private function handlePerPage(): void
@@ -93,13 +98,21 @@ class Table extends View
         } else {
             $index = $this->getSession("filter_link") ?? 0;
         }
-
         $this->setFilterLink($index);
     }
 
     private function setSearchTerm(string $term)
     {
-        #FIXME: implement me!
+        if (trim($term)) {
+            $this->search_term = $term;
+            $clause = [];
+            foreach ($this->searchable as $column) {
+                $clause[] = "($column LIKE ?)";
+            }
+            $replacements = array_fill(0, count($clause), "%{$this->search_term}%");
+            $this->addClause($this->where, implode(" OR ", $clause), ...$replacements);
+        }
+        $this->setSession("search_term", $this->search_term);
     }
 
     private function setFilterLink(int $index): void
@@ -214,7 +227,7 @@ class Table extends View
             [$clause, $param_array] = $clause;
             $params = [...$params, ...$param_array];
         }
-        return $param_array;
+        return $params;
     }
 
     private function getAllParams(): array
