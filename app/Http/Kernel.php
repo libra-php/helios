@@ -7,6 +7,7 @@ use Helios\Kernel\Http;
 class Kernel extends Http
 {
     protected array $middleware = [
+        // \Helios\Middleware\Whitelist::class,
         \Helios\Middleware\EncryptCookies::class,
         \Helios\Middleware\RouteAuth::class,
         \Helios\Middleware\CSRF::class,
