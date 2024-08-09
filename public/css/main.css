@@ -78,8 +78,7 @@ a:active {
 }
 
 #app #module .table {
-	border-spacing: 0;
-	border-collapse: collapse;
+	border: 1px solid #ccc;
 	overflow: auto;
 }
 #app #module .table tbody tr:hover {
