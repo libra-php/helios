@@ -11,5 +11,6 @@ class Kernel extends Http
         \Helios\Middleware\RouteAuth::class,
         \Helios\Middleware\CSRF::class,
         \Helios\Middleware\RequestUuid::class,
+        \Helios\Middleware\RequestLimit::class,
     ];
 }
