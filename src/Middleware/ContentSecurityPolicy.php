@@ -14,14 +14,12 @@ class ContentSecurityPolicy implements IMiddleware
     private $policy;
     private $nonce;
 
-    public function __construct(array $directives = [])
-    {
-        $this->nonce = bin2hex(random_bytes(16)); // Generate a secure nonce
-        $this->policy = $this->buildPolicy($directives);
-    }
-
     public function handle(Request $request, Closure $next): Response
     {
+        $csp_directives = config("security.csp_directives");
+        $this->nonce = bin2hex(random_bytes(16)); // Generate a secure nonce
+        $this->policy = $this->buildPolicy($csp_directives);
+
         // Store nonce in attr bag
         $request->attributes->add(["nonce" => $this->nonce]);
 
