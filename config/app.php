@@ -1,6 +1,7 @@
 <?php
 
 return [
+    "maintenance_mode" => env("APP_MAINTENANCE_MODE"),
     "debug" => env("APP_DEBUG"),
     "key" => env("APP_KEY"),
     "name" => env("APP_NAME"),

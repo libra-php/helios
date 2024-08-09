@@ -6,7 +6,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>{% block title %}Helios{% endblock %}</title>
-	<link rel="icon" href="favicon.ico">
+	<link rel="icon" href="/favicon.ico">
 	<link href="/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="/css/main.css">
 </head>
@@ -15,9 +15,9 @@
 	<main id="content" class="h-100">
 		{% block content %}{% endblock %}
 	</main>
-	<script src="/js/bootstrap.bundle.min.js" nonce="{{ nonce }}"></script>
-	<script src="/js/htmx.min.js" nonce="{{ nonce }}"></script>
-	<script src="/js/main.js" nonce="{{ nonce }}"></script>
+	<script src="/js/bootstrap.bundle.min.js"></script>
+	<script src="/js/htmx.min.js"></script>
+	<script src="/js/main.js"></script>
 </body>
 
 </html>

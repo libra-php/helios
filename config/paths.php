@@ -15,6 +15,7 @@ return [
     "models" => $app . "Models/",
     "modules" => $app . "Modules/",
     "storage" => $storage,
+    "logs" => $storage . "logs/",
     "templates" => $templates,
     "template-cache" => $storage . "templates/.cache/",
     "migrations" => $migrations,
