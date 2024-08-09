@@ -41,7 +41,7 @@ class ContentSecurityPolicy implements IMiddleware
             'script-src' => "'self' 'nonce-{$this->nonce}'",  // Allow scripts from same origin and inline scripts with nonce
             // 'style-src' => "'self' 'nonce-{$this->nonce}'",   // Allow styles from same origin and inline styles with nonce
             'style-src' => "'self' 'unsafe-inline'", // Fix for HTMX indicator, but less secure
-            'img-src' => "'self'",               // Only allow images from the same origin
+            'img-src' => "'self' data:",               // Only allow images from the same origin
             'object-src' => "'none'",            // Disallow <object>, <embed>, <applet> elements
         ];
 

@@ -11,16 +11,8 @@ use Symfony\Component\HttpFoundation\{Response, Request};
  */
 class HSTS implements IMiddleware
 {
-    private $maxAge;
-    private $includeSubDomains;
-    private $preload;
-
-    public function __construct(int $maxAge = 31536000, bool $includeSubDomains = true, bool $preload = true)
-    {
-        $this->maxAge = $maxAge;
-        $this->includeSubDomains = $includeSubDomains;
-        $this->preload = $preload;
-    }
+    public function __construct(private int $maxAge = 31536000, private bool $includeSubDomains = true, private bool $preload = true)
+    {}
 
     public function handle(Request $request, Closure $next): Response
     {
