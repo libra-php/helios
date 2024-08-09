@@ -22,18 +22,22 @@ class Controller
         $data["request_errors"] = $this->request_errors;
         // Template functions
         $data["f"] = new class {
-            public function dump(...$args)
+            public function dump(...$args): void
             {
                 dump(...$args);
             }
-            public function route(string $name, ...$replacements)
+            public function route(string $name, ...$replacements): ?string
             {
                 return route($name, ...$replacements);
             }
-            public function csrf()
+            public function csrf(): string
             {
                 $token = session()->get("csrf_token");
                 return template("components/csrf.html", ["token" => $token]);
+            }
+            public function old(string $name): string
+            {
+                return request()->request->get($name, "");
             }
         };
         return $twig->render($path, $data);

@@ -5,7 +5,7 @@ namespace Helios\Module;
 class View implements IView
 {
     /** Template properties */
-    protected string $template = "";
+    protected string $template = "/admin/module/view.html";
 
 
     /** SQL properties */

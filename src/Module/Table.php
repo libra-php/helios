@@ -23,7 +23,7 @@ class Table extends View
 
     public function getData(): array
     {
-        $rows = $this->getPayload();
+        $rows = !empty($this->table) ? $this->getPayload() : [];
         return [
             "table" => [
                 "columns" => array_keys($this->table),
@@ -34,7 +34,7 @@ class Table extends View
                 "total_pages" => $this->total_pages,
                 "page" => $this->page,
                 "per_page" => $this->per_page,
-                "page_options" => [ 5, 10, 50, 100, 500, 1000],
+                "page_options" => [5, 10, 50, 100, 500, 1000],
             ],
             "filters" => [
                 "filter_link" => $this->filter_link_index,
@@ -45,7 +45,7 @@ class Table extends View
         ];
     }
 
-    private function handleSearch()
+    private function handleSearch(): void
     {
         if (request()->query->has("search_term")) {
             $term = request()->query->get("search_term");
@@ -101,7 +101,7 @@ class Table extends View
         $this->setFilterLink($index);
     }
 
-    private function setSearchTerm(string $term)
+    private function setSearchTerm(string $term): void
     {
         if (trim($term)) {
             $this->search_term = $term;
@@ -139,14 +139,12 @@ class Table extends View
                 $this->page = $this->total_pages;
             }
         }
-
         $this->setSession("page", $this->page);
     }
 
     private function setPerPage(int $per_page): void
     {
         $this->per_page = $per_page;
-
         $this->setSession("per_page", $this->per_page);
     }
 
@@ -168,7 +166,7 @@ class Table extends View
             : '';
     }
 
-    private function getHaving():  string
+    private function getHaving(): string
     {
         return $this->where
             ? $this->formatClause($this->having)
@@ -209,11 +207,8 @@ class Table extends View
         return sprintf("%s", implode(" AND ", $out));
     }
 
-    private function addClause(
-        array &$clauses,
-        string $clause,
-        int|string ...$replacements
-    ): void {
+    private function addClause(array &$clauses, string $clause, int|string ...$replacements): void
+    {
         $clauses[] = [$clause, [...$replacements]];
     }
 
@@ -267,6 +262,7 @@ class Table extends View
 
     protected function getPayload(): array|false
     {
+        if (empty($this->table)) return false;
         $this->processRequest();
         $sql = $this->getQuery();
         $params = $this->getAllParams();
