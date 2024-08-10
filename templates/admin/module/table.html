@@ -37,6 +37,11 @@
 			{% endfor %}
 		</tr>
 		{% endfor %}
+		{% if table.rows|length == 0 %}
+		<tr>
+			<td class="text-center" colspan="{{ table.columns|length }}"><em>No results found</em></td>
+		</tr>
+		{% endif %}
 	</tbody>
 </table>
 {% endblock %}
