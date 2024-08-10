@@ -11,4 +11,6 @@ return [
     "csp_directives" => [
 
     ],
+    "max_requests" => 120,
+    "decay_seconds" => 25,
 ];

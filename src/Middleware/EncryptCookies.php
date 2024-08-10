@@ -17,7 +17,7 @@ class EncryptCookies implements IMiddleware
         // Application key is required
         $app_key = config("app.key");
         if (!$app_key) {
-            return new Response("Application key is not set!", 500);
+            return new Response("Application key is not set!", Response::HTTP_BAD_REQUEST);
         }
 
         // All cookies except PHPSESSID will be encrypted/decrypted

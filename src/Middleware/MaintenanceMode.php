@@ -14,10 +14,9 @@ class MaintenanceMode implements IMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         $isMaintenanceMode = config("app.maintenance_mode");
-        $maintenanceMessage = "The application is currently undergoing maintenance. Please check back later.";
 
         if ($isMaintenanceMode) {
-            return new Response($maintenanceMessage, Response::HTTP_SERVICE_UNAVAILABLE);
+            return new Response( "The application is currently undergoing maintenance. Please check back later.", Response::HTTP_SERVICE_UNAVAILABLE);
         }
 
         return $next($request);

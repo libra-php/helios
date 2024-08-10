@@ -4,7 +4,7 @@ namespace Helios\Middleware;
 
 use Closure;
 use Helios\Middleware\IMiddleware;
-use Symfony\Component\HttpFoundation\{Response, Request};
+use Symfony\Component\HttpFoundation\{JsonResponse, Response, Request};
 
 /**
  * Middleware
@@ -13,10 +13,10 @@ use Symfony\Component\HttpFoundation\{Response, Request};
 class RequestLimit implements IMiddleware
 {
 
-    public function __construct(private $maxRequests = 120, private $decaySeconds = 25) {}
-
     public function handle(Request $request, Closure $next): Response
     {
+        $maxRequests = config("security.max_requests");
+        $decaySeconds = config("security.decay_seconds");
         $clientIdentifier = $request->getClientIp();
         $cacheKey = 'request_limit_' . $clientIdentifier;
 
@@ -29,18 +29,18 @@ class RequestLimit implements IMiddleware
 
         $limit = session()->get($cacheKey);
 
-        if (time() - $limit['timestamp'] > $this->decaySeconds) {
+        if (time() - $limit['timestamp'] > $decaySeconds) {
             $limit['count'] = 0;
             $limit['timestamp'] = time();
         }
 
         $limit['count']++;
 
-        if ($limit['count'] > $this->maxRequests) {
-            return new Response(
-                "Too many requests. Try again later.",
-                Response::HTTP_TOO_MANY_REQUESTS
-            );
+        if ($limit['count'] > $maxRequests) {
+            $middleware = $request->get("route")?->getMiddleware();
+            return in_array("api", $middleware) ?
+                new JsonResponse(["message" => "Too many requests. Try again later."], Response::HTTP_TOO_MANY_REQUESTS) :
+                new Response("Too many requests. Try again later.", Response::HTTP_TOO_MANY_REQUESTS);
         }
 
         session()->set($cacheKey, $limit);

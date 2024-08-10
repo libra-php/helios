@@ -67,7 +67,7 @@ class Http implements IKernel
                 ]);
             }
             // Serve controller response
-            return new Response($content, 200);
+            return new Response($content, Response::HTTP_OK);
         }
         // Page not found
         redirect(route("error.page-not-found"));

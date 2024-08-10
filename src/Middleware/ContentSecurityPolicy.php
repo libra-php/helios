@@ -35,12 +35,12 @@ class ContentSecurityPolicy implements IMiddleware
     {
         // Default directives
         $defaultDirectives = [
-            'default-src' => "'self'",           // Default policy: Only allow resources from the same origin
-            'script-src' => "'self' 'nonce-{$this->nonce}'",  // Allow scripts from same origin and inline scripts with nonce
-            // 'style-src' => "'self' 'nonce-{$this->nonce}'",   // Allow styles from same origin and inline styles with nonce
-            'style-src' => "'self' 'unsafe-inline'", // Fix for HTMX indicator, but less secure
-            'img-src' => "'self' data:",               // Only allow images from the same origin
-            'object-src' => "'none'",            // Disallow <object>, <embed>, <applet> elements
+            'default-src' => "'self'",                          // Default policy: Only allow resources from the same origin
+            'script-src' => "'self' 'nonce-{$this->nonce}'",    // Allow scripts from same origin and inline scripts with nonce
+            // 'style-src' => "'self' 'nonce-{$this->nonce}'",     // Allow styles from same origin and inline styles with nonce
+            'style-src' => "'self' 'unsafe-inline'",            // Allow styles from same origin and inline styles, but less secure
+            'img-src' => "'self' data:",                        // Only allow images from the same origin
+            'object-src' => "'none'",                           // Disallow <object>, <embed>, <applet> elements
         ];
 
         // Merge user-defined directives with defaults
@@ -53,10 +53,4 @@ class ContentSecurityPolicy implements IMiddleware
 
         return implode('; ', $policyParts);
     }
-
-    public function getNonce(): string
-    {
-        return $this->nonce;
-    }
 }
-
