@@ -12,7 +12,7 @@ return new class implements IMigration
         return Schema::create("users", function (Blueprint $table) {
             $table->bigIncrements("id");
             $table->uuid("uuid")->default("(UUID())");
-            $table->unsignedTinyInteger("type")->default(2);
+            $table->unsignedBigInteger("user_type_id")->default(3);
             $table->varchar("name");
             $table->varchar("email");
             $table->binary("password", 96);
@@ -23,14 +23,15 @@ return new class implements IMigration
             $table->timestamps();
             $table->unique("email");
             $table->primaryKey("id");
+            $table->foreignKey("user_type_id")->references("user_types", "id");
         });
     }
 
     public function afterUp(): string
     {
-        return Schema::insert(
-            "users",
+        return Schema::insert("users",
             [
+                "user_type_id",
                 "name",
                 "email",
                 "password",
@@ -38,6 +39,7 @@ return new class implements IMigration
                 "2fa_enabled",
             ],
             [
+                1,
                 "Administrator",
                 "administrator@localhost",
                 Auth::hashPassword("admin2024!"),
