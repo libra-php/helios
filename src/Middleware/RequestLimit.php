@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\{Response, Request};
 class RequestLimit implements IMiddleware
 {
 
-    public function __construct(private $maxRequests = 60, private $decaySeconds = 25) {}
+    public function __construct(private $maxRequests = 120, private $decaySeconds = 25) {}
 
     public function handle(Request $request, Closure $next): Response
     {
