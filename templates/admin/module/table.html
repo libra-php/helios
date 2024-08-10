@@ -37,7 +37,7 @@
 			{% endfor %}
 		</tr>
 		{% endfor %}
-		{% if table.rows|length == 0 %}
+		{% if table.columns|length > 0 and table.rows|length == 0 %}
 		<tr>
 			<td class="text-center" colspan="{{ table.columns|length }}"><em>No results found</em></td>
 		</tr>
