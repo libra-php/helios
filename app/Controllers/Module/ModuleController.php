@@ -13,7 +13,7 @@ class ModuleController extends Controller
 
     public function __construct()
     {
-        $module = request()->get("route")?->getParameters()['module'];
+        $module = request()->get("route")?->getParameters()['module'] ?? "";
         $this->init($module);
     }
 
@@ -30,10 +30,11 @@ class ModuleController extends Controller
 
     private function init(string $module): void
     {
-        // FIXME: this is unreliable
-        $module = ucfirst($module);
-        $class = "\\App\\Modules\\$module";
-        if (class_exists($class)) {
+        $m = db()->fetch("SELECT *
+            FROM modules
+            WHERE path = ?", $module);
+        if ($m && class_exists($m->class_name)) {
+            $class = $m->class_name;
             $this->module = new $class;
         } else {
             redirect(route("error.page-not-found"));
