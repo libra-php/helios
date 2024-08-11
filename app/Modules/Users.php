@@ -12,7 +12,7 @@ class Users extends Module
         $user = user();
 
         /** SQL Table */
-        $view->sqlTable("users");
+        $view->sqlTable($this->sql_table);
 
         /** Table definition (index view) */
         $view->addTable("ID", "id")

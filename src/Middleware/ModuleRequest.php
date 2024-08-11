@@ -23,6 +23,14 @@ class ModuleRequest implements IMiddleware
             $module = Module::findByAttribute("path", $parameters["module"]);
             // The target module class is defined in class_name
             if ($module && class_exists($module->class_name)) {
+                if (key_exists("id", $parameters)) {
+                    // See if module exists
+                    $exists = db()->fetch("SELECT * FROM {$module->sql_table} WHERE {$module->primary_key} = ?", $parameters['id']);
+                    if (!$exists) {
+                        // This module doesn't exist
+                        redirect(route("error.page-not-found"));
+                    }
+                }
                 // Store the module in the request
                 $request->attributes->add(["module" => $module]);
             } else {

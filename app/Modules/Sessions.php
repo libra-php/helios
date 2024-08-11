@@ -10,7 +10,7 @@ class Sessions extends Module
     public function configure(View $view)
     {
         $user = user();
-        $view->sqlTable("sessions");
+        $view->sqlTable($this->sql_table);
 
         $view->addTable("ID", "id")
             ->addTable("URI", "request_uri")

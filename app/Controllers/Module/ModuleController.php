@@ -4,7 +4,7 @@ namespace App\Controllers\Module;
 
 use App\Models\Module;
 use App\Models\Session;
-use Helios\View\{Form, Table, View};
+use Helios\View\{Table, View};
 use Helios\Web\Controller;
 use StellarRouter\{Get, Post, Put, Patch, Delete, Group};
 
@@ -18,7 +18,7 @@ class ModuleController extends Controller
         $module = request()->get("module");
         if ($module && class_exists($module->class_name)) {
             $class = $module->class_name;
-            $this->module = new $class;
+            $this->module = new $class($module->id);
             $this->recordSession($module);
         }
     }
@@ -45,41 +45,43 @@ class ModuleController extends Controller
     }
 
     #[Get("/{module}", "module.index")]
-    public function index($module)
+    public function index(string $module)
     {
         header("HX-Push-Url: /admin/$module");
         return $this->renderView(new Table);
     }
 
     #[Get("/{module}/create", "module.create")]
-    public function create($module)
+    public function create(string $module)
     {
-        header("HX-Push-Url: /admin/$module/create");
-        return $this->renderView(new Form);
+        // header("HX-Push-Url: /admin/$module/create");
+        // return $this->renderView(new Form);
+        die("wip: create");
     }
 
     #[Get("/{module}/{id}", "module.edit")]
-    public function edit($module, $id)
+    public function edit(string $module, int $id)
     {
-        header("HX-Push-Url: /admin/$module");
-        return $this->renderView(new Form);
+        // header("HX-Push-Url: /admin/$module");
+        // return $this->renderView(new Form);
+        die("wip: edit");
     }
 
     #[Post("/{module}", "module.store")]
-    public function store($module)
+    public function store(string $module)
     {
         die("wip: store");
     }
 
     #[Patch("/{module}/{id}", "module.update.patch")]
     #[Put("/{module}/{id}", "module.update.put")]
-    public function update($module, $id)
+    public function update(string $module, int $id)
     {
         die("wip: update");
     }
 
     #[Delete("/{module}/{id}", "module.destroy")]
-    public function destroy($module, $id)
+    public function destroy(string $module, int $id)
     {
         die("wip: destroy");
     }
