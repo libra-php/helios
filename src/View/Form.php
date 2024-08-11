@@ -1,6 +1,6 @@
 <?php
 
-namespace Helios\Module;
+namespace Helios\View;
 
 /**
  * @class Form

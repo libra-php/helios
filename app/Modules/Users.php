@@ -2,15 +2,11 @@
 
 namespace App\Modules;
 
-use Helios\Module\Format;
-use Helios\Module\View;
-use Helios\Module\Module;
+use App\Models\Module;
+use Helios\View\{Format, View};
 
 class Users extends Module
 {
-    protected string $name = "Users";
-    protected string $path = "users";
-
     public function configure(View $view)
     {
         $user = user();

@@ -1,12 +1,11 @@
 <?php
 
-namespace Helios\Module;
+namespace Helios\View;
 
-class View implements IView
+class View
 {
     /** Template properties */
     protected string $template = "/admin/module/view.html";
-
 
     /** SQL properties */
     protected string $sql_table = "";
@@ -42,10 +41,6 @@ class View implements IView
 
     /** Form Properties */
     protected array $form = [];
-
-    public function __construct(private string $module)
-    {
-    }
 
     public function processRequest(): void
     {
@@ -99,21 +94,24 @@ class View implements IView
 
     public function getSession(string $name)
     {
-        $module_session = session()->get($this->module) ?? [];
+        $module = request()->get("module");
+        $module_session = session()->get($module->path) ?? [];
         return key_exists($name, $module_session) ? $module_session[$name] : null;
     }
 
     public function hasSession(string $name)
     {
-        $module_session = session()->get($this->module) ?? [];
+        $module = request()->get("module");
+        $module_session = session()->get($module->path) ?? [];
         return key_exists($name, $module_session);
     }
 
     public function setSession(string $name, mixed $value)
     {
-        $module_session = session()->get($this->module) ?? [];
+        $module = request()->get("module");
+        $module_session = session()->get($module->path) ?? [];
         $module_session[$name] = $value;
-        session()->set($this->module, $module_session);
+        session()->set($module->path, $module_session);
     }
 
     protected function getQuery(): string

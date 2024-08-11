@@ -2,19 +2,23 @@
 
 namespace App\Controllers\Module;
 
-use Helios\Module\{Form, Module, Table, View};
+use App\Models\Module;
+use Helios\View\{Form, Table, View};
 use Helios\Web\Controller;
 use StellarRouter\{Get, Post, Put, Patch, Delete, Group};
 
-#[Group(prefix: "/admin", middleware: ['auth'])]
+#[Group(prefix: "/admin", middleware: ['auth', 'module'])]
 class ModuleController extends Controller
 {
     private Module $module;
 
     public function __construct()
     {
-        $module = request()->get("route")?->getParameters()['module'] ?? "";
-        $this->init($module);
+        $module = request()->get("module");
+        if ($module && class_exists($module->class_name)) {
+            $class = $module->class_name;
+            $this->module = new $class;
+        }
     }
 
     public function renderView(View $view)
@@ -23,43 +27,29 @@ class ModuleController extends Controller
         $template = $this->module->getView()->getTemplate();
         $data = $this->module->getView()->getData();
         // Adding module specific data
-        $data['module_name'] = $this->module->getName();
-        $data['module_path'] = $this->module->getPath();
+        $data['module'] = request()->get("module");
         return $this->render($template, $data);
-    }
-
-    private function init(string $module): void
-    {
-        $m = db()->fetch("SELECT *
-            FROM modules
-            WHERE path = ?", $module);
-        if ($m && class_exists($m->class_name)) {
-            $class = $m->class_name;
-            $this->module = new $class;
-        } else {
-            redirect(route("error.page-not-found"));
-        }
     }
 
     #[Get("/{module}", "module.index")]
     public function index($module)
     {
         header("HX-Push-Url: /admin/$module");
-        return $this->renderView(new Table($module));
+        return $this->renderView(new Table);
     }
 
     #[Get("/{module}/create", "module.create")]
     public function create($module)
     {
         header("HX-Push-Url: /admin/$module/create");
-        return $this->renderView(new Form($module));
+        return $this->renderView(new Form);
     }
 
     #[Get("/{module}/{id}", "module.edit")]
     public function edit($module, $id)
     {
         header("HX-Push-Url: /admin/$module");
-        return $this->renderView(new Form($module));
+        return $this->renderView(new Form);
     }
 
     #[Post("/{module}", "module.store")]
