@@ -3,6 +3,7 @@
 namespace App\Controllers\Module;
 
 use App\Models\Module;
+use App\Models\Session;
 use Helios\View\{Form, Table, View};
 use Helios\Web\Controller;
 use StellarRouter\{Get, Post, Put, Patch, Delete, Group};
@@ -18,8 +19,20 @@ class ModuleController extends Controller
         if ($module && class_exists($module->class_name)) {
             $class = $module->class_name;
             $this->module = new $class;
+            $this->recordSession($module);
         }
     }
+
+    private function recordSession($module)
+    {
+        Session::new([
+            "request_uri" => request()->getUri(),
+            "ip" => ip2long(request()->getClientIp()),
+            "user_id" => user()->id,
+            "module_id" => $module->id,
+        ]);
+    }
+
 
     public function renderView(View $view)
     {
