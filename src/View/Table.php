@@ -168,15 +168,16 @@ class Table extends View
 
     private function getHaving(): string
     {
-        return $this->where
-            ? $this->formatClause($this->having)
+        return $this->having
+            ? "HAVING " . $this->formatClause($this->having)
             : '';
     }
 
     private function getGroupBy(): string
     {
-        #FIXME: implement me!
-        return '';
+        return $this->group_by
+            ? "GROUP BY " . $this->formatClause($this->group_by)
+            : '';
     }
 
     private function getOrderBy(): string
@@ -266,6 +267,7 @@ class Table extends View
         $this->processRequest();
         $sql = $this->getQuery();
         $params = $this->getAllParams();
+        dump([$sql, $params]);
         $stmt = db()->run($sql, $params);
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $results;

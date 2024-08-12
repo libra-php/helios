@@ -19,7 +19,6 @@ class ModuleController extends Controller
         if ($module && class_exists($module->class_name)) {
             $class = $module->class_name;
             $this->module = new $class($module->id);
-            $this->recordSession($module);
         }
     }
 
@@ -33,7 +32,6 @@ class ModuleController extends Controller
         ]);
     }
 
-
     public function renderView(View $view)
     {
         $this->module->configure($view);
@@ -41,6 +39,7 @@ class ModuleController extends Controller
         $data = $this->module->getView()->getData();
         // Adding module specific data
         $data['module'] = request()->get("module");
+        $this->recordSession($this->module);
         return $this->render($template, $data);
     }
 

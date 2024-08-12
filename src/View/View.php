@@ -114,6 +114,18 @@ class View
         session()->set($module->path, $module_session);
     }
 
+    public function setAscending(bool $ascending = true)
+    {
+        $this->ascending = $ascending;
+        return $this;
+    }
+
+    public function setOrderByColumn(string $column)
+    {
+        $this->order_column = $column;
+        return $this;
+    }
+
     protected function getQuery(): string
     {
         return "";
