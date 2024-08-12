@@ -267,7 +267,6 @@ class Table extends View
         $this->processRequest();
         $sql = $this->getQuery();
         $params = $this->getAllParams();
-        dump([$sql, $params]);
         $stmt = db()->run($sql, $params);
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $results;

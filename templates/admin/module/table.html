@@ -47,7 +47,7 @@
 {% endblock %}
 
 {% block bottom %}
-{% if pagination.total_pages > 1 %}
+{% if pagination.total_pages >= 1 %}
 <div class="d-flex align-items-center mt-2">
 	<nav class="flex-grow-1" aria-label="page navigation">
 		<ul class="pagination pagination-sm mb-0">
