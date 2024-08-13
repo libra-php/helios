@@ -32,6 +32,55 @@ class ModuleController extends Controller
         ]);
     }
 
+    private function buildLinks(?int $parent_module_id = null): array
+    {
+        $user = user();
+        if (is_null($parent_module_id)) {
+            $modules = db()->fetchAll("SELECT *
+				FROM modules
+				WHERE parent_module_id IS NULL
+                AND enabled = 1
+				ORDER BY item_order");
+        } else {
+            $modules = db()->fetchAll(
+                "SELECT *
+				FROM modules
+				WHERE parent_module_id = ?
+                AND enabled = 1
+				ORDER BY item_order",
+                $parent_module_id
+            );
+        }
+        $sidebar_links = [];
+        foreach ($modules as $module) {
+            // Skip the modules that the user doesn't have permission to
+            if (
+                !is_null($module->max_permission_level) &&
+                $user->type()->permission_level > $module->max_permission_level
+            ) {
+                continue;
+            }
+            $link = [
+                "id" => $module->id,
+                "label" => $module->title,
+                "link" => "/admin/{$module->path}",
+                "children" => $this->buildLinks($module->id),
+            ];
+            $sidebar_links[] = $link;
+        }
+        // Add sign out link
+        if ($parent_module_id == 2) {
+            $link = [
+                "id" => null,
+                "label" => "Sign Out",
+                "link" => "/sign-out",
+                "children" => [],
+            ];
+            $sidebar_links[] = $link;
+        }
+        return $sidebar_links;
+    }
+
     public function renderView(View $view)
     {
         $this->module->configure($view);
@@ -39,6 +88,7 @@ class ModuleController extends Controller
         $data = $this->module->getView()->getData();
         // Adding module specific data
         $data['module'] = request()->get("module");
+        $data['links'] = $this->buildLinks();
         $this->recordSession($this->module);
         return $this->render($template, $data);
     }

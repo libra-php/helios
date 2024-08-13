@@ -10,4 +10,9 @@ class User extends Model
     {
         parent::__construct("users", $key);
     }
+
+    public function type(): UserType
+    {
+        return UserType::find($this->user_type_id);
+    }
 }

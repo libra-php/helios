@@ -1,0 +1,19 @@
+{% for child in links %}
+<li class="sidebar-link" {% if child.label == "Sign Out" %}hx-boost=false{% endif %}>
+	<a href="{{ child.link }}"
+		title="{{ child.label }}"
+		data-title="{{ child.label }}"
+		data-parent="{{ parent_link }}"
+		style="padding-left: {{ depth }}px;"
+		class="link link-dark rounded truncate">
+		{{ child.label }}
+	</a>
+</li>
+{% if child.children|length > 0 %}
+	{% include 'components/sidebar_links.html' with {
+		'links': child.children,
+		'parent_link': child.label,
+		'depth': depth + 10
+	}%}
+{% endif %}
+{% endfor %}

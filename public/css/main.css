@@ -64,9 +64,45 @@ a:active {
 }
 
 #app #sidebar {
+	padding: 6px;
 	width: 100%;
-	min-width: 120px;
-	max-width: 120px;
+	min-width: 180px;
+	max-width: 180px;
+}
+
+#app #sidebar .highlight {
+	background-color: yellow;
+}
+
+#app #sidebar .sidebar-links {
+	list-style-type: none;
+	line-height: 2.5rem;
+}
+
+#app #sidebar .btn-toggle {
+	display: inline-flex;
+	align-items: center;
+	font-weight: 600;
+	color: rgba(0, 0, 0, .65);
+	background-color: transparent;
+	border: 0;
+}
+
+#app #sidebar .btn-toggle::before {
+	width: 1.25em;
+	line-height: 0;
+	content: url("/images/arrow.svg");
+	transition: transform .35s ease;
+	transform-origin: .5em 50%;
+	margin-right: 10px;
+}
+
+#app #sidebar .btn-toggle[aria-expanded="true"] {
+	color: rgba(0, 0, 0, .85);
+}
+
+#app #sidebar .btn-toggle[aria-expanded="true"]::before {
+	transform: rotate(90deg);
 }
 
 #app #module #top {
