@@ -135,6 +135,13 @@ a:active {
 	font-weight: 900;
 	opacity: 1;
 }
+#app #module input[type='search'] {
+	background-image: url("/images/search_icon.png");
+	background-size: 1rem;
+	background-repeat: no-repeat;
+	background-position: left 10px center;
+	padding-left: 40px;
+}
 
 #app #module #per-page {
 	width: 70px;
