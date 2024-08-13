@@ -21,7 +21,7 @@ class View
     protected int $total_pages = 0;
     protected int $per_page = 5;
     protected int $page = 1;
-    protected array $page_options = [5, 10, 50, 100, 500, 1000];
+    protected array $page_options = [5, 10, 25, 50, 100, 250, 500, 750, 1000];
 
     /** Table Properties */
     protected array $table = [];

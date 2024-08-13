@@ -12,6 +12,7 @@ return new class implements IMigration
             $table->bigIncrements("id");
             $table->varchar("name");
             $table->tinyInteger("permission_level")->default(2); // default standard user
+            $table->unique("permission_level");
             $table->timestamps();
             $table->primaryKey("id");
         });
