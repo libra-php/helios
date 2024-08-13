@@ -119,6 +119,14 @@ a:active {
 	border: none !important;
 }
 
+#app #module #top #breadcrumbs .breadcrumb-item {
+	color: #666;
+	text-decoration: underline;
+}
+#app #module #top #breadcrumbs .breadcrumb-item.active {
+	color: #222;
+}
+
 #app #module .table {
 	border: 1px solid #ccc;
 	overflow: auto;

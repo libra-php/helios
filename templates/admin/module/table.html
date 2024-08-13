@@ -5,12 +5,12 @@
 		{% if actions.export_csv %}
 		<div id="export-csv">
 			<form method="GET" hx-disable="true">
-				<button type="submit" name="export_csv" class="btn btn-sm btn-primary link-light">Export CSV</button>
+				<button type="submit" name="export_csv" class="btn btn-sm btn-dark link-light">Export CSV</button>
 			</form>
 		</div>
 		{% endif %}
 	</section>
-	<section id="filters" class="my-2">
+	<section id="filters" class="py-2">
 		{% if filters.searchable|length > 0 %}
 		<div id="search" class="mb-1">
 			<form>

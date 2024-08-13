@@ -81,13 +81,52 @@ class ModuleController extends Controller
         return $sidebar_links;
     }
 
-    public function renderView(View $view)
+    private function buildBreadcrumbs(string $module_id, $breadcrumbs = []): array
+    {
+        $module = db()->fetch(
+            "SELECT *
+            FROM modules
+            WHERE id = ?
+            AND enabled = 1",
+            $module_id
+        );
+        $breadcrumbs[] = $module;
+        if (intval($module->parent_module_id) > 0) {
+            return $this->buildBreadcrumbs(
+                $module->parent_module_id,
+                $breadcrumbs
+            );
+        }
+        return array_reverse($breadcrumbs);
+    }
+
+    private function getBreadcrumbs(?string $id): array
+    {
+        $path = $this->module->path;
+        $breadcrumbs = $this->buildBreadcrumbs($this->module->id);
+        $route_name = request()->get("route")->getName();
+        if ($route_name === "module.create") {
+            $breadcrumbs[] = (object) [
+                "path" => "$path/create",
+                "title" => "Create",
+            ];
+        } else if (!is_null($id)) {
+            $breadcrumbs[] = (object) [
+                "path" => "$path/$id",
+                "title" => "Edit $id",
+            ];
+        }
+        return $breadcrumbs;
+    }
+
+    public function renderView(View $view, ?int $id = null)
     {
         $this->module->configure($view);
         $template = $this->module->getView()->getTemplate();
         $data = $this->module->getView()->getData();
         // Adding module specific data
         $data['module'] = request()->get("module");
+        $data['breadcrumbs'] = $this->getBreadcrumbs($id);
         $data['links'] = $this->buildLinks();
         $this->recordSession($this->module);
         return $this->render($template, $data);
@@ -112,7 +151,7 @@ class ModuleController extends Controller
     public function edit(string $module, int $id)
     {
         // header("HX-Push-Url: /admin/$module");
-        // return $this->renderView(new Form);
+        // return $this->renderView(new Form, $id);
         die("wip: edit");
     }
 

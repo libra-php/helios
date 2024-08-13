@@ -1,0 +1,14 @@
+<nav id="breadcrumbs" aria-label="breadcrumb" class="mt-2">
+  <ol class="breadcrumb">
+	{% for i,breadcrumb in breadcrumbs %}
+		{% if breadcrumb.path %}<a class="breadcrumb-link" href='/admin/{{ breadcrumb.path }}'>{% endif %}
+		<li class="breadcrumb-item {% if i == breadcrumbs|length - 1 %}active{% endif %}" {% if i == breadcrumbs|length - 1 %}aria-current="page"{% endif %}>
+			{{ breadcrumb.title }}
+		</li>
+		{% if breadcrumb.path %}</a>{% endif %}
+		{% if i != breadcrumbs|length - 1 %}
+		<span class="px-1">></span>
+		{% endif %}
+	{% endfor %}
+  </ol>
+</nav>

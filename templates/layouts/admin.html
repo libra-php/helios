@@ -5,6 +5,7 @@
 	{% include 'components/sidebar.html' %}
 	<section id="module" class="d-flex flex-column flex-grow-1 p-2">
 		<section id="top">
+			{% include 'components/breadcrumbs.html' %}
 			<h2 id="title" class="fw-bold">{{ module.title }}</h2>
 			{% block top %}
 			{% endblock %}
