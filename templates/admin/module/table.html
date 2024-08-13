@@ -1,6 +1,15 @@
 {% extends "layouts/admin.html" %}
 
 {% block top  %}
+	<section id="actions" class="py-2">
+		{% if actions.export_csv %}
+		<div id="export-csv">
+			<form method="GET" hx-disable="true">
+				<button type="submit" name="export_csv" class="btn btn-sm btn-primary link-light">Export CSV</button>
+			</form>
+		</div>
+		{% endif %}
+	</section>
 	<section id="filters" class="my-2">
 		{% if filters.searchable|length > 0 %}
 		<div id="search" class="mb-1">
@@ -48,7 +57,7 @@
 
 {% block bottom %}
 {% if pagination.total_pages >= 1 %}
-<div class="d-flex align-items-center mt-2">
+<div id="pagination" class="d-flex align-items-center mt-2">
 	<nav class="flex-grow-1" aria-label="page navigation">
 		<ul class="pagination pagination-sm mb-0">
 			<li class="page-item {% if pagination.page < 2 %}disabled{% endif %}"><a class="page-link link-dark" href="?page={{ pagination.page - 1 }}">Previous</a></li>

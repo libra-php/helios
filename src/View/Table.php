@@ -19,12 +19,16 @@ class Table extends View
         $this->handleLinkFilter();
         $this->handlePerPage();
         $this->handlePage();
+        $this->handleExportCsv();
     }
 
     public function getData(): array
     {
         $rows = !empty($this->table) ? $this->getPayload() : [];
         return [
+            "actions" => [
+                "export_csv" => !empty($this->table) && $this->export_csv,
+            ],
             "table" => [
                 "columns" => array_keys($this->table),
                 "rows" => $this->format($rows)
@@ -34,7 +38,7 @@ class Table extends View
                 "total_pages" => $this->total_pages,
                 "page" => $this->page,
                 "per_page" => $this->per_page,
-                "page_options" => [5, 10, 50, 100, 500, 1000],
+                "page_options" => $this->page_options,
             ],
             "filters" => [
                 "filter_link" => $this->filter_link_index,
@@ -75,6 +79,31 @@ class Table extends View
             $page = $this->getSession("page") ?? 1;
         }
         $this->setPage($page);
+    }
+
+    private function handleExportCsv()
+    {
+        if (request()->query->has("export_csv")) {
+            header("Content-Type: text/csv");
+            header('Content-Disposition: attachment; filename="csv_export.csv"');
+            $fp = fopen("php://output", "wb");
+            $headers = array_keys($this->table);
+            fputcsv($fp, $headers);
+            $this->per_page = 1000;
+            $this->page = 1;
+            $this->total_results = $this->getTotalResults();
+            $this->total_pages = ceil($this->total_results / $this->per_page);
+            while ($this->page <= $this->total_pages) {
+                $results = $this->getQueryResults();
+                foreach ($results as $item) {
+                    $values = array_values($item);
+                    fputcsv($fp, $values);
+                }
+                $this->page++;
+            }
+            fclose($fp);
+            exit();
+        }
     }
 
     private function handleFilterCount(): void
@@ -261,15 +290,20 @@ class Table extends View
         return $data;
     }
 
-    protected function getPayload(): array|false
+    protected function getQueryResults(): array|false
     {
-        if (empty($this->table)) return false;
-        $this->processRequest();
         $sql = $this->getQuery();
         $params = $this->getAllParams();
         $stmt = db()->run($sql, $params);
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $results;
+    }
+
+    protected function getPayload(): array|false
+    {
+        if (empty($this->table)) return false;
+        $this->processRequest();
+        return $this->getQueryResults();
     }
 
     protected function getTotalResults(): int

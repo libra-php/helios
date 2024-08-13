@@ -16,19 +16,20 @@ class View
     protected string $order_column = "";
     protected bool $ascending = true;
 
-
     /** Pagination */
     protected int $total_results = 0;
     protected int $total_pages = 0;
     protected int $per_page = 5;
     protected int $page = 1;
-
+    protected array $page_options = [5, 10, 50, 100, 500, 1000];
 
     /** Table Properties */
     protected array $table = [];
     protected array $format = [];
     protected array $filter_links = [];
     protected int $filter_link_index = 0;
+    protected bool $export_csv = true;
+
     /**
      * @var array Searchable table columns
      */
