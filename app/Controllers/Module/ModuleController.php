@@ -121,14 +121,17 @@ class ModuleController extends Controller
 
     public function renderView(View $view, ?int $id = null)
     {
+        $this->recordSession($this->module);
         $this->module->configure($view);
+
         $template = $this->module->getView()->getTemplate();
         $data = $this->module->getView()->getData();
+
         // Adding module specific data
         $data['module'] = request()->get("module");
         $data['breadcrumbs'] = $this->getBreadcrumbs($id);
         $data['links'] = $this->buildLinks();
-        $this->recordSession($this->module);
+
         return $this->render($template, $data);
     }
 
