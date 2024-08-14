@@ -85,11 +85,11 @@ class Adapter extends CLI
     private function serve(array $args): void
     {
         $bin_path = config("paths.bin");
-        $cmd = $bin_path . "/serve";
+        $cmd = $bin_path . "serve";
         if (count($args) === 2) {
             $cmd .= " " . $args[0] . " " . $args[1];
         }
-        `$cmd`;
+        `bash $cmd`;
         exit();
     }
 
