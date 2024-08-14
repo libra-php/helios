@@ -33,8 +33,13 @@
 <table class="table table-sm caption-top mb-2 {% if table.rows|length > 1 %}table-striped{% endif %}">
 	<thead class="sticky-top bg-dark text-light p-0">
 		<tr>
-			{% for title in table.columns %}
-			<th class="p-1" nowrap>{{ title }}</th>
+			{% for title,column in table.columns %}
+			<th class="p-1" nowrap>
+				<a class="link-light" href="?order_by={{ column }}&ascending={% if filters.order_by == column and filters.ascending %}DESC{% elseif filters.order_by == column and not filters.ascending %}ASC{% else %}ASC{% endif %}">
+					{{ title }}
+					{% if filters.order_by == column and filters.ascending %}▴{% elseif filters.order_by == column and not filters.ascending %}▾{% endif %}
+				</a>
+			</th>
 			{% endfor %}
 		</tr>
 	</thead>

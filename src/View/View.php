@@ -9,11 +9,11 @@ class View
 
     /** SQL properties */
     protected string $sql_table = "";
-    protected string $primary_key = "";
+    protected string $primary_key = "id";
     protected array $where = [];
     protected array $group_by = [];
     protected array $having = [];
-    protected string $order_column = "";
+    protected string $order_by = "";
     protected bool $ascending = true;
 
     /** Pagination */
@@ -60,6 +60,12 @@ class View
     public function sqlTable(string $name)
     {
         $this->sql_table = $name;
+        return $this;
+    }
+
+    public function sqlPrimaryKey(string $column)
+    {
+        $this->primary_key = $column;
         return $this;
     }
 
@@ -113,18 +119,6 @@ class View
         $module_session = session()->get($module->path) ?? [];
         $module_session[$name] = $value;
         session()->set($module->path, $module_session);
-    }
-
-    public function setAscending(bool $ascending = true)
-    {
-        $this->ascending = $ascending;
-        return $this;
-    }
-
-    public function setOrderByColumn(string $column)
-    {
-        $this->order_column = $column;
-        return $this;
     }
 
     protected function getQuery(): string

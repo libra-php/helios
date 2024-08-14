@@ -14,7 +14,7 @@ class Modules extends Module
         $view->addTable("ID", "id")
             ->addTable("Enabled", "enabled")
             ->addTable("Title", "title")
-            ->addTable("Max Permission", "(SELECT GROUP_CONCAT(name) FROM user_types WHERE permission_level = max_permission_level) as max_permission")
+            ->addTable("Max Permission", "(SELECT name FROM user_types WHERE permission_level = max_permission_level) as max_permission")
             ->addTable("Created", "created_at");
 
         $view->filterLink("Root", "parent_module_id IS NULL")

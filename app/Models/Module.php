@@ -17,6 +17,7 @@ class Module extends Model
     public function configure(View $view)
     {
         $this->view = $view;
+        $this->view->processRequest();
     }
 
     public function getView()

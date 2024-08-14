@@ -15,6 +15,7 @@ class Table extends View
     public function processRequest(): void
     {
         $this->handleSearch();
+        $this->handleSort();
         $this->handleFilterCount();
         $this->handleLinkFilter();
         $this->handlePerPage();
@@ -30,7 +31,7 @@ class Table extends View
                 "export_csv" => !empty($this->table) && $this->export_csv,
             ],
             "table" => [
-                "columns" => array_keys($this->table),
+                "columns" => $this->stripAlias($this->table),
                 "rows" => $this->format($rows)
             ],
             "pagination" => [
@@ -45,6 +46,8 @@ class Table extends View
                 "links" => array_keys($this->filter_links),
                 "searchable" => $this->searchable,
                 "search_term" => $this->search_term,
+                "order_by" => $this->order_by,
+                "ascending" => $this->ascending,
             ],
         ];
     }
@@ -60,13 +63,30 @@ class Table extends View
         $this->setSearchTerm($term);
     }
 
+    private function handleSort()
+    {
+        if (request()->query->has("order_by")) {
+            $order_by = request()->query->get("order_by");
+        } else {
+            $order_by = $this->getSession("order_by") ?? $this->primary_key;
+        }
+        if (request()->query->has("ascending")) {
+            $ascending = request()->query->get("ascending") === "ASC";
+        } else {
+            $ascending = $this->getSession("ascending") ?? $this->ascending;
+        }
+
+        $this->setOrderBy($order_by);
+        $this->setAscending($ascending);
+    }
+
     private function handlePerPage(): void
     {
         if (request()->query->has("per_page")) {
             $per_page = request()->query->get("per_page");
             $this->setPage(1);
         } else {
-            $per_page = $this->getSession("per_page") ?? 10;
+            $per_page = $this->getSession("per_page") ?? $this->per_page;
         }
         $this->setPerPage($per_page);
     }
@@ -76,7 +96,7 @@ class Table extends View
         if (request()->query->has("page")) {
             $page = request()->query->get("page");
         } else {
-            $page = $this->getSession("page") ?? 1;
+            $page = $this->getSession("page") ?? $this->page;
         }
         $this->setPage($page);
     }
@@ -154,6 +174,19 @@ class Table extends View
         }
     }
 
+    private function setAscending(bool $ascending = true)
+    {
+        $this->ascending = $ascending;
+        $this->setSession("ascending", $ascending);
+    }
+
+    private function setOrderBy(string $column)
+    {
+        $this->order_by = $column;
+        $this->setSession("order_by", $column);
+    }
+
+
     private function setPage(int $page): void
     {
         $this->total_results = $this->getTotalResults();
@@ -212,8 +245,8 @@ class Table extends View
     private function getOrderBy(): string
     {
         $sort = $this->ascending ? "ASC" : "DESC";
-        return $this->order_column
-            ? "ORDER BY {$this->order_column} $sort"
+        return $this->order_by
+            ? "ORDER BY {$this->order_by} $sort"
             : '';
     }
 
@@ -290,6 +323,16 @@ class Table extends View
         return $data;
     }
 
+    private function stripAlias(array $data)
+    {
+        $out = [];
+        foreach ($data as $title => $column) {
+            $arr = explode(" as ", $column);
+            $out[$title] = end($arr);
+        }
+        return $out;
+    }
+
     protected function getQueryResults(): array|false
     {
         $sql = $this->getQuery();
@@ -302,12 +345,12 @@ class Table extends View
     protected function getPayload(): array|false
     {
         if (empty($this->table)) return false;
-        $this->processRequest();
         return $this->getQueryResults();
     }
 
     protected function getTotalResults(): int
     {
+        if (empty($this->table)) return 0;
         $sql = $this->getQuery(false);
         $params = $this->getAllParams();
         $stmt = db()->run($sql, $params);
