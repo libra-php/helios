@@ -121,8 +121,6 @@ a:active {
 #app #module #top #filters #filter-links .filter-link.active {
 	background-color: #222;
 	color: #fff !important;
-	padding: 4px;
-	border-radius: 6px;
 }
 
 #app #module #middle {
