@@ -4,7 +4,7 @@
 <section id="actions" class="py-2">
 	{% if actions.export_csv %}
 	<div id="export-csv">
-		<form method="GET" hx-disable="true">
+		<form hx-disable="true">
 			<button type="submit" name="export_csv" class="btn btn-sm btn-dark link-light">Export CSV</button>
 		</form>
 	</div>
@@ -16,7 +16,7 @@
 		<form>
 			<div class="input-group input-group-sm">
 				<input type="search" class="form-control" name="search_term" placeholder="..." value="{{ filters.search_term }}" />
-				<button type="submit" class="btn btn-dark fw-bold">Search</button>
+				<button type="submit" class="btn btn-dark">Search</button>
 			</div>
 		</form>
 	</div>

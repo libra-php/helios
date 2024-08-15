@@ -114,6 +114,17 @@ a:active {
 	font-size: 2rem;
 }
 
+#app #module #top button {
+	font-weight: 700;
+}
+
+#app #module #top #filters #filter-links .filter-link.active {
+	background-color: #222;
+	color: #fff !important;
+	padding: 4px;
+	border-radius: 6px;
+}
+
 #app #module #middle {
 	overflow: auto;
 	border: none !important;
