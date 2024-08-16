@@ -70,6 +70,13 @@ a:active {
 	max-width: 180px;
 }
 
+#app #sidebar.active {
+	display: block !important;
+	width: 100%;
+	min-width: 100%;
+	max-width: 100%;
+}
+
 #app #sidebar .highlight {
 	background-color: yellow;
 }
@@ -179,4 +186,8 @@ a:active {
 	background-repeat: no-repeat;
 	background-position: left 10px center;
 	padding-left: 40px;
+}
+
+.hidden {
+	display: none !important;
 }

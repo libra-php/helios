@@ -20,8 +20,7 @@ class ContentSecurityPolicy implements IMiddleware
         $this->nonce = bin2hex(random_bytes(16)); // Generate a secure nonce
         $this->policy = $this->buildPolicy($csp_directives);
 
-        // Store nonce in attr bag
-        $request->attributes->add(["nonce" => $this->nonce]);
+        session()->set("nonce", $this->nonce);
 
         $response = $next($request);
 
@@ -36,9 +35,10 @@ class ContentSecurityPolicy implements IMiddleware
         // Default directives
         $defaultDirectives = [
             'default-src' => "'self'",                          // Default policy: Only allow resources from the same origin
-            'script-src' => "'self' 'nonce-{$this->nonce}'",    // Allow scripts from same origin and inline scripts with nonce
+            //'script-src' => "'self' 'nonce-{$this->nonce}'",    // Allow scripts from same origin and inline scripts with nonce
+            'script-src' => "'self' 'unsafe-inline'",
             // 'style-src' => "'self' 'nonce-{$this->nonce}'",     // Allow styles from same origin and inline styles with nonce
-            'style-src' => "'self' 'unsafe-inline'",            // Allow styles from same origin and inline styles, but less secure
+            'style-src' => "'self' 'unsafe-inline'",
             'img-src' => "'self' data:",                        // Only allow images from the same origin
             'object-src' => "'none'",                           // Disallow <object>, <embed>, <applet> elements
         ];

@@ -1,6 +1,7 @@
 {% for child in links %}
 <li class="sidebar-link" {% if child.label == "Sign Out" %}hx-boost=false{% endif %}>
 	<a href="{{ child.link }}"
+		onClick="hideSidebar()"
 		title="{{ child.label }}"
 		data-title="{{ child.label }}"
 		data-parent="{{ parent_link }}"
