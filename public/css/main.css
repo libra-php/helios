@@ -109,6 +109,12 @@ a:active {
 	margin: 0;
 }
 
+#app #module #top #mobile-toggle {
+	position: absolute;
+	top: 12px;
+	right: 10px;
+}
+
 #app #module #top #title {
 	margin: 0;
 	font-size: 2rem;
