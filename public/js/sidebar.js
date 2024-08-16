@@ -1,11 +1,11 @@
-const sidebar = document.getElementById("sidebar");
-const showSidebar = () => {
+var sidebar = document.getElementById("sidebar");
+var showSidebar = () => {
 	var mobile_toggle = document.getElementById("mobile-toggle");
 	sidebar.classList.add("active");
 	mobile_toggle.classList.add("hidden");
 }
 
-const hideSidebar = () => {
+var hideSidebar = () => {
 	var mobile_toggle = document.getElementById("mobile-toggle");
 	sidebar.classList.remove("active");
 	mobile_toggle.classList.remove("hidden");
