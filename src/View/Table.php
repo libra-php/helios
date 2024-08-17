@@ -27,6 +27,7 @@ class Table extends View
     {
         $rows = !empty($this->table) ? $this->getPayload() : [];
         return [
+            ...parent::getData(),
             "actions" => [
                 "export_csv" => !empty($this->table) && $this->export_csv,
             ],
@@ -210,96 +211,11 @@ class Table extends View
         $this->setSession("per_page", $this->per_page);
     }
 
-    private function getSelect(): string
-    {
-        $columns = array_values($this->table);
-        return implode(", ", $columns);
-    }
-
-    private function getSqlTable(): string
-    {
-        return $this->sql_table;
-    }
-
-    private function getWhere(): string
-    {
-        return $this->where
-            ? "WHERE " . $this->formatClause($this->where)
-            : '';
-    }
-
-    private function getHaving(): string
-    {
-        return $this->having
-            ? "HAVING " . $this->formatClause($this->having)
-            : '';
-    }
-
-    private function getGroupBy(): string
-    {
-        return $this->group_by
-            ? "GROUP BY " . $this->formatClause($this->group_by)
-            : '';
-    }
-
-    private function getOrderBy(): string
-    {
-        $sort = $this->ascending ? "ASC" : "DESC";
-        return $this->order_by
-            ? "ORDER BY {$this->order_by} $sort"
-            : '';
-    }
-
-    private function getLimitOffset(): string
-    {
-        $page = max(($this->page - 1) * $this->per_page, 0);
-        $per_page = $this->per_page;
-        return $this->total_results > $this->per_page
-            ? "LIMIT $page, $per_page"
-            : '';
-    }
-
-    private function formatClause(array $clauses): string
-    {
-        $out = [];
-        foreach ($clauses as $clause) {
-            [$clause, $params] = $clause;
-            // Add parens to clause for order of ops
-            $out[] = "(" . $clause . ")";
-        }
-        return sprintf("%s", implode(" AND ", $out));
-    }
-
-    private function addClause(array &$clauses, string $clause, int|string ...$replacements): void
-    {
-        $clauses[] = [$clause, [...$replacements]];
-    }
-
-    private function getParams(array $clauses): array
-    {
-        if (!$clauses) {
-            return [];
-        }
-        $params = [];
-        foreach ($clauses as $clause) {
-            [$clause, $param_array] = $clause;
-            $params = [...$params, ...$param_array];
-        }
-        return $params;
-    }
-
-    private function getAllParams(): array
-    {
-        $where_params = $this->getParams($this->where);
-        $having_params = $this->getParams($this->having);
-        return [...$where_params, ...$having_params];
-    }
-
     protected function getQuery($limit_query = true): string
     {
         return sprintf(
             "SELECT %s FROM %s %s %s %s %s %s",
-            $this->getSelect(),
+            $this->getSelect($this->table),
             $this->getSqlTable(),
             $this->getWhere(),
             $this->getGroupBy(),
@@ -321,16 +237,6 @@ class Table extends View
             }
         }
         return $data;
-    }
-
-    private function stripAlias(array $data)
-    {
-        $out = [];
-        foreach ($data as $title => $column) {
-            $arr = explode(" as ", $column);
-            $out[$title] = end($arr);
-        }
-        return $out;
     }
 
     protected function getQueryResults(): array|false

@@ -1,6 +1,9 @@
 {% extends "layouts/admin.html" %}
 
 {% block top  %}
+<img src="/images/menu.png" id="mobile-toggle" onClick="showSidebar()" class="d-block d-sm-none" />
+{% include 'components/breadcrumbs.html' %}
+<h2 id="title" class="fw-bold mb-2">{{ module.title }}</h2>
 <section id="actions" class="d-flex py-2">
 	{% if actions.export_csv %}
 	<div id="export-csv">

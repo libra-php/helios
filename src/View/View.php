@@ -2,6 +2,8 @@
 
 namespace Helios\View;
 
+use PDO;
+
 class View
 {
     /** Template properties */
@@ -41,11 +43,10 @@ class View
 
 
     /** Form Properties */
+    protected int $id;
     protected array $form = [];
 
-    public function processRequest(): void
-    {
-    }
+    public function processRequest(): void {}
 
     public function getTemplate(): string
     {
@@ -54,7 +55,11 @@ class View
 
     public function getData(): array
     {
-        return [];
+        return [
+            "module" => request()->get("module"),
+            "links" => $this->buildLinks(),
+            "breadcrumbs" => $this->getBreadcrumbs(isset($this->id) ? $this->id : null),
+        ];
     }
 
     public function sqlTable(string $name)
@@ -141,5 +146,195 @@ class View
     protected function getPayload(): array|false
     {
         return [];
+    }
+
+    protected function getSelect(array $select): string
+    {
+        $columns = array_values($select);
+        return implode(", ", $columns);
+    }
+
+    protected function getSqlTable(): string
+    {
+        return $this->sql_table;
+    }
+
+    protected function getSqlColumns()
+    {
+        $table = $this->sql_table;
+        return db()->query("DESCRIBE $table")->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    protected function getWhere(): string
+    {
+        return $this->where
+            ? "WHERE " . $this->formatClause($this->where)
+            : '';
+    }
+
+    protected function getHaving(): string
+    {
+        return $this->having
+            ? "HAVING " . $this->formatClause($this->having)
+            : '';
+    }
+
+    protected function getGroupBy(): string
+    {
+        return $this->group_by
+            ? "GROUP BY " . $this->formatClause($this->group_by)
+            : '';
+    }
+
+    protected function getOrderBy(): string
+    {
+        $sort = $this->ascending ? "ASC" : "DESC";
+        return $this->order_by
+            ? "ORDER BY {$this->order_by} $sort"
+            : '';
+    }
+
+    protected function getLimitOffset(): string
+    {
+        $page = max(($this->page - 1) * $this->per_page, 0);
+        $per_page = $this->per_page;
+        return $this->total_results > $this->per_page
+            ? "LIMIT $page, $per_page"
+            : '';
+    }
+
+
+    protected function stripAlias(array $data)
+    {
+        $out = [];
+        foreach ($data as $title => $column) {
+            $arr = explode(" as ", $column);
+            $out[$title] = end($arr);
+        }
+        return $out;
+    }
+
+    protected function formatClause(array $clauses): string
+    {
+        $out = [];
+        foreach ($clauses as $clause) {
+            [$clause, $params] = $clause;
+            // Add parens to clause for order of ops
+            $out[] = "(" . $clause . ")";
+        }
+        return sprintf("%s", implode(" AND ", $out));
+    }
+
+    protected function addClause(array &$clauses, string $clause, int|string ...$replacements): void
+    {
+        $clauses[] = [$clause, [...$replacements]];
+    }
+
+    protected function getParams(array $clauses): array
+    {
+        if (!$clauses) {
+            return [];
+        }
+        $params = [];
+        foreach ($clauses as $clause) {
+            [$clause, $param_array] = $clause;
+            $params = [...$params, ...$param_array];
+        }
+        return $params;
+    }
+
+    protected function getAllParams(): array
+    {
+        $where_params = $this->getParams($this->where);
+        $having_params = $this->getParams($this->having);
+        return [...$where_params, ...$having_params];
+    }
+
+    private function buildBreadcrumbs(string $module_id, $breadcrumbs = []): array
+    {
+        $module = db()->fetch(
+            "SELECT *
+            FROM modules
+            WHERE id = ?
+            AND enabled = 1",
+            $module_id
+        );
+        $breadcrumbs[] = $module;
+        if (intval($module->parent_module_id) > 0) {
+            return $this->buildBreadcrumbs(
+                $module->parent_module_id,
+                $breadcrumbs
+            );
+        }
+        return array_reverse($breadcrumbs);
+    }
+
+    private function getBreadcrumbs(?string $id): array
+    {
+        $module = request()->get("module");
+        $path = $module->path;
+        $breadcrumbs = $this->buildBreadcrumbs($module->id);
+        $route_name = request()->get("route")->getName();
+        if ($route_name === "module.create") {
+            $breadcrumbs[] = (object) [
+                "path" => "$path/create",
+                "title" => "Create",
+            ];
+        } else if (!is_null($id)) {
+            $breadcrumbs[] = (object) [
+                "path" => "$path/$id",
+                "title" => "Edit $id",
+            ];
+        }
+        return $breadcrumbs;
+    }
+
+    private function buildLinks(?int $parent_module_id = null): array
+    {
+        $user = user();
+        if (is_null($parent_module_id)) {
+            $modules = db()->fetchAll("SELECT *
+				FROM modules
+				WHERE parent_module_id IS NULL
+                AND enabled = 1
+				ORDER BY item_order");
+        } else {
+            $modules = db()->fetchAll(
+                "SELECT *
+				FROM modules
+				WHERE parent_module_id = ?
+                AND enabled = 1
+				ORDER BY item_order",
+                $parent_module_id
+            );
+        }
+        $sidebar_links = [];
+        foreach ($modules as $module) {
+            // Skip the modules that the user doesn't have permission to
+            if (
+                !is_null($module->max_permission_level) &&
+                $user->type()->permission_level > $module->max_permission_level
+            ) {
+                continue;
+            }
+            $link = [
+                "id" => $module->id,
+                "label" => $module->title,
+                "link" => "/admin/{$module->path}",
+                "children" => $this->buildLinks($module->id),
+            ];
+            $sidebar_links[] = $link;
+        }
+        // Add sign out link
+        if ($parent_module_id == 2) {
+            $link = [
+                "id" => null,
+                "label" => "Sign Out",
+                "link" => "/sign-out",
+                "children" => [],
+            ];
+            $sidebar_links[] = $link;
+        }
+        return $sidebar_links;
     }
 }

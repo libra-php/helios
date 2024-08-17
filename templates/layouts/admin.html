@@ -5,9 +5,6 @@
 	{% include 'components/sidebar.html' %}
 	<section id="module" class="d-flex flex-column flex-grow-1 p-2">
 		<section id="top">
-			<img src="/images/menu.png" id="mobile-toggle" onClick="showSidebar()" class="d-block d-sm-none" />
-			{% include 'components/breadcrumbs.html' %}
-			<h2 id="title" class="fw-bold mb-2">{{ module.title }}</h2>
 			{% block top %}
 			{% endblock %}
 		</section>

@@ -18,6 +18,9 @@ class UserTypes extends Module
 
         $view->tableFormat("created_at", fn($column, $value) => Format::ago($column, $value));
 
+        $view->addForm("Name", "name")
+            ->addForm("Permission Level", "permission_level");
+
         parent::configure($view);
     }
 }
