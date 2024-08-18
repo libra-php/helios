@@ -50,7 +50,6 @@ class Form extends View
         } else {
             $result = array_filter($this->getSqlColumns(), fn($column) => in_array($column, $this->form));
         }
-        dd($result);
         return $result;
     }
 

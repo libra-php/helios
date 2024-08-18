@@ -133,8 +133,10 @@ class Table extends View
             $filters = array_values($this->filter_links);
             $index = request()->query->get("filter_count");
             if (key_exists($index, $filters)) {
+                $this->per_page = 1000;
                 $this->addClause($this->where, $filters[$index]);
-                echo $this->getTotalResults();
+                $count = $this->getTotalResults();
+                echo $count >= 1000 ? '1000+' : $count;
                 exit;
             }
         }

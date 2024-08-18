@@ -32,6 +32,11 @@ class View
     protected int $filter_link_index = 0;
     protected bool $export_csv = true;
 
+    /** Permissions */
+    protected bool $has_create = true;
+    protected bool $has_edit = true;
+    protected bool $has_delete = true;
+
     /**
      * @var array Searchable table columns
      */
@@ -104,28 +109,6 @@ class View
         return $this;
     }
 
-    public function getSession(string $name)
-    {
-        $module = request()->get("module");
-        $module_session = session()->get($module->path) ?? [];
-        return key_exists($name, $module_session) ? $module_session[$name] : null;
-    }
-
-    public function hasSession(string $name)
-    {
-        $module = request()->get("module");
-        $module_session = session()->get($module->path) ?? [];
-        return key_exists($name, $module_session);
-    }
-
-    public function setSession(string $name, mixed $value)
-    {
-        $module = request()->get("module");
-        $module_session = session()->get($module->path) ?? [];
-        $module_session[$name] = $value;
-        session()->set($module->path, $module_session);
-    }
-
     public function defaultOrder(string $column)
     {
         $this->order_by = $column;
@@ -136,6 +119,28 @@ class View
     {
         $this->ascending = $ascending;
         return $this;
+    }
+
+    protected function getSession(string $name)
+    {
+        $module = request()->get("module");
+        $module_session = session()->get($module->path) ?? [];
+        return key_exists($name, $module_session) ? $module_session[$name] : null;
+    }
+
+    protected function hasSession(string $name)
+    {
+        $module = request()->get("module");
+        $module_session = session()->get($module->path) ?? [];
+        return key_exists($name, $module_session);
+    }
+
+    protected function setSession(string $name, mixed $value)
+    {
+        $module = request()->get("module");
+        $module_session = session()->get($module->path) ?? [];
+        $module_session[$name] = $value;
+        session()->set($module->path, $module_session);
     }
 
     protected function getQuery(): string
@@ -202,7 +207,6 @@ class View
             ? "LIMIT $page, $per_page"
             : '';
     }
-
 
     protected function stripAlias(array $data)
     {
