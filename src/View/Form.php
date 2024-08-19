@@ -45,25 +45,28 @@ class Form extends View
     private function control(array $data): array
     {
         foreach ($data as $column => $value) {
+            $module_class = request()->get("module")->class_name;
+            $options = [
+                "title" => array_search($column, $this->form),
+            ];
             if (isset($this->control[$column])) {
                 // A control column is set
                 $callback = $this->control[$column];
-                $module_class = request()->get("module")->class_name;
                 if (is_callable($callback)) {
                     // The callback method is the value
-                    $data[$column] = $callback($column, $value);
+                    $data[$column] = $callback($column, $value, $options);
                 } else if (is_string($callback) && method_exists($module_class, $callback)) {
                     // The module static callback method is the value
-                    $data[$column] = $module_class::$callback($column, $value);
+                    $data[$column] = $module_class::$callback($column, $value, $options);
                 } else if (
                     is_string($callback) &&
                     method_exists(Control::class, $callback)
                 ) {
                     // The control class callback is the value
-                    $data[$column] = Control::$callback($column, $value);
+                    $data[$column] = Control::$callback($column, $value, $options);
                 }
             } else {
-                $data[$column] = Control::input($column, $value);
+                $data[$column] = Control::input($column, $value, $options);
             }
         }
         return $data;

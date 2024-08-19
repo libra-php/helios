@@ -9,7 +9,6 @@ class Control
         return template("components/control/input.html", [
             "column" => $column,
             "value" => $value,
-            "title" => $value,
             ...$options
         ]);
     }

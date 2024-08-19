@@ -80,25 +80,28 @@ class Table extends View
     {
         foreach ($data as $i => $row) {
             foreach ($row as $column => $value) {
+                $module_class = request()->get("module")->class_name;
+                $options = [
+                    "title" => array_search($column, $this->table),
+                ];
                 if (isset($this->format[$column])) {
                     // A format column is set
                     $callback = $this->format[$column];
-                    $module_class = request()->get("module")->class_name;
                     if (is_callable($callback)) {
                         // The callback method is the value
-                        $data[$i][$column] = $callback($column, $value);
+                        $data[$i][$column] = $callback($column, $value, $options);
                     } else if (is_string($callback) && method_exists($module_class, $callback)) {
                         // The module static callback method is the value
-                        $data[$i][$column] = $module_class::$callback($column, $value);
+                        $data[$i][$column] = $module_class::$callback($column, $value, $options);
                     } else if (
                         is_string($callback) &&
                         method_exists(Format::class, $callback)
                     ) {
                         // The format class callback is the value
-                        $data[$i][$column] = Format::$callback($column, $value);
+                        $data[$i][$column] = Format::$callback($column, $value, $options);
                     }
                 } else {
-                    $data[$i][$column] = Format::span($column, $value);
+                    $data[$i][$column] = Format::span($column, $value, $options);
                 }
             }
         }
