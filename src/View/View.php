@@ -48,8 +48,8 @@ class View implements IView
 
 
     /** Form Properties */
-    protected int $id;
     protected array $form = [];
+    protected array $control = [];
 
     public function processRequest(): void {}
 
@@ -127,6 +127,12 @@ class View implements IView
     public function tableFormat(string $column, callable|string $callback)
     {
         $this->format[$column] = $callback;
+        return $this;
+    }
+
+    public function formControl(string $column, callable|string $callback)
+    {
+        $this->control[$column] = $callback;
         return $this;
     }
 

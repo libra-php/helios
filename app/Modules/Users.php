@@ -27,7 +27,7 @@ class Users extends Module
             ->filterLink("All", "1=1");
 
         /** Table formatting */
-        $view->tableFormat("created_at", "farts");
+        $view->tableFormat("created_at", "ago");
 
         /** Table searching */
         $view->addSearch("name")

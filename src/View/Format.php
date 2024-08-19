@@ -6,13 +6,18 @@ use Carbon\Carbon;
 
 class Format
 {
-    public static function ago($column, $value)
+    public static function ago(string $column, mixed $value, array $options = [])
     {
-        $carbon = Carbon::parse($value)->diffForHumans();
+        $ago = Carbon::parse($value)->diffForHumans();
+        return self::span($column, $ago, $options);
+    }
+
+    public static function span(string $column,  mixed $value, array $options = [])
+    {
         return template("components/format/span.html", [
             "column" => $column,
-            "value" => $carbon,
-            "title" => $value,
+            "value" => $value,
+            ...$options,
         ]);
     }
 }

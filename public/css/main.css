@@ -188,6 +188,16 @@ a:active {
 	padding-left: 40px;
 }
 
+#app #module .view-form .label {
+	width: 150px;
+}
+
+.truncate {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 .hidden {
 	display: none !important;
 }

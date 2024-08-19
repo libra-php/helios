@@ -90,11 +90,15 @@ class Table extends View
                     } else if (is_string($callback) && method_exists($module_class, $callback)) {
                         // The module static callback method is the value
                         $data[$i][$column] = $module_class::$callback($column, $value);
-                    } else if (is_string($callback) &&
-                        method_exists(Format::class, $callback)) {
+                    } else if (
+                        is_string($callback) &&
+                        method_exists(Format::class, $callback)
+                    ) {
                         // The format class callback is the value
                         $data[$i][$column] = Format::$callback($column, $value);
                     }
+                } else {
+                    $data[$i][$column] = Format::span($column, $value);
                 }
             }
         }

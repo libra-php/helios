@@ -6,14 +6,17 @@
 {% endblock %}
 
 {% block middle %}
-<form>
+<form class="view-form">
 	{{ f.csrf()|raw }}
 	{% for title,column in form  %}
-	<div class="row m-0">
-		<div class="col-sm-2"><strong>{{ title }}</strong></div>
-		<div class="col-sm-10">{{ data[column]|raw }}</div>
+	<div class="d-flex align-items-center">
+		<div class="label truncate"><strong>{{ title }}</strong></div>
+		<div class="flex-grow-1">{{ data[column]|raw }}</div>
 	</div>
 	{% endfor %}
+	<div class="m-0 mt-2">
+		<button class="btn btn-success" type="submit">{% if id %}Save{% else %}Create{% endif %}</button>
+	</div>
 </form>
 {% endblock %}
 

@@ -12,10 +12,9 @@ class Form extends View
 {
     public string $template = "admin/module/form.html";
 
-    public function __construct(?int $id = null)
+    public function __construct(private ?int $id = null)
     {
         if (!is_null($id)) {
-            $this->id = $id;
             $pk = $this->primary_key;
             $this->addClause($this->where, "$pk = ?", $this->id);
         }
@@ -27,9 +26,10 @@ class Form extends View
     {
         return [
             ...parent::getData(),
+            "id" => $this->id,
+            "form" => $this->form,
+            "data" => $this->control($this->getPayload()),
             "actions" => [],
-            "form" => $this->control($this->form),
-            "data" => $this->getPayload(),
         ];
     }
 
@@ -45,6 +45,26 @@ class Form extends View
     private function control(array $data): array
     {
         foreach ($data as $column => $value) {
+            if (isset($this->control[$column])) {
+                // A control column is set
+                $callback = $this->control[$column];
+                $module_class = request()->get("module")->class_name;
+                if (is_callable($callback)) {
+                    // The callback method is the value
+                    $data[$column] = $callback($column, $value);
+                } else if (is_string($callback) && method_exists($module_class, $callback)) {
+                    // The module static callback method is the value
+                    $data[$column] = $module_class::$callback($column, $value);
+                } else if (
+                    is_string($callback) &&
+                    method_exists(Control::class, $callback)
+                ) {
+                    // The control class callback is the value
+                    $data[$column] = Control::$callback($column, $value);
+                }
+            } else {
+                $data[$column] = Control::input($column, $value);
+            }
         }
         return $data;
     }
