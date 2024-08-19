@@ -1,5 +1,21 @@
-{% extends "layouts/base.html" %}
+{% extends "layouts/admin.html" %}
+
+{% block top  %}
+{% include 'components/breadcrumbs.html' %}
+<h2 id="title" class="fw-bold mb-2">{{ module.title }}</h2>
+{% endblock %}
 
 {% block middle %}
-	<p>wip: form</p>
+<form>
+	{{ f.csrf()|raw }}
+	{% for title,column in form  %}
+	<div class="row m-0">
+		<div class="col-sm-2"><strong>{{ title }}</strong></div>
+		<div class="col-sm-10">{{ data[column]|raw }}</div>
+	</div>
+	{% endfor %}
+</form>
+{% endblock %}
+
+{% block bottom  %}
 {% endblock %}

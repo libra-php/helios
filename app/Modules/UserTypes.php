@@ -11,15 +11,15 @@ class UserTypes extends Module
     {
         $view->sqlTable($this->sql_table);
 
-        $view->addTable("ID", "id")
-            ->addTable("Name", "name")
-            ->addTable("Permission Level", "permission_level")
-            ->addTable("Created", "created_at");
+        $view->table("ID", "id")
+            ->table("Name", "name")
+            ->table("Permission Level", "permission_level")
+            ->table("Created", "created_at");
 
-        $view->tableFormat("created_at", fn($column, $value) => Format::ago($column, $value));
+        $view->tableFormat("created_at", "ago");
 
-        $view->addForm("Name", "name")
-            ->addForm("Permission Level", "permission_level");
+        $view->form("Name", "name")
+            ->form("Permission Level", "permission_level");
 
         parent::configure($view);
     }

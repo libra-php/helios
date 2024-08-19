@@ -4,7 +4,7 @@ namespace Helios\View;
 
 use PDO;
 
-class View
+class View implements IView
 {
     /** Template properties */
     protected string $template = "/admin/module/view.html";
@@ -53,20 +53,6 @@ class View
 
     public function processRequest(): void {}
 
-    public function getTemplate(): string
-    {
-        return $this->template;
-    }
-
-    public function getData(): array
-    {
-        return [
-            "module" => request()->get("module"),
-            "links" => $this->buildLinks(),
-            "breadcrumbs" => $this->getBreadcrumbs(isset($this->id) ? $this->id : null),
-        ];
-    }
-
     public function sqlTable(string $name)
     {
         $this->sql_table = $name;
@@ -79,13 +65,66 @@ class View
         return $this;
     }
 
-    public function addTable(string $title, string $subquery)
+    public function getTemplate(): string
+    {
+        return $this->template;
+    }
+
+    protected function getQuery(): string
+    {
+        return "";
+    }
+
+    protected function getPayload(): array|false
+    {
+        return [];
+    }
+
+    public function getData(): array
+    {
+        return [
+            "module" => request()->get("module"),
+            "links" => $this->buildLinks(),
+            "breadcrumbs" => $this->getBreadcrumbs(isset($this->id) ? $this->id : null),
+            "permissions" => [
+                "has_create" => $this->has_create && !empty($this->form),
+                "has_edit" => $this->has_edit && !empty($this->form),
+                "has_delete" => $this->has_delete,
+            ],
+        ];
+    }
+
+    public function tableOnly()
+    {
+        $this->has_create = $this->has_edit = $this->has_delete = false;
+        return $this;
+    }
+
+    public function hasCreate(bool $state)
+    {
+        $this->has_create = $state;
+        return $this;
+    }
+
+    public function hasEdit(bool $state)
+    {
+        $this->has_edit = $state;
+        return $this;
+    }
+
+    public function hasDelete(bool $state)
+    {
+        $this->has_delete = $state;
+        return $this;
+    }
+
+    public function table(string $title, string $subquery)
     {
         $this->table[$title] = $subquery;
         return $this;
     }
 
-    public function tableFormat(string $column, callable $callback)
+    public function tableFormat(string $column, callable|string $callback)
     {
         $this->format[$column] = $callback;
         return $this;
@@ -97,7 +136,7 @@ class View
         return $this;
     }
 
-    public function addForm(string $title, string $subquery)
+    public function form(string $title, string $subquery)
     {
         $this->form[$title] = $subquery;
         return $this;
@@ -121,11 +160,12 @@ class View
         return $this;
     }
 
-    protected function getSession(string $name)
+    protected function setSession(string $name, mixed $value)
     {
         $module = request()->get("module");
         $module_session = session()->get($module->path) ?? [];
-        return key_exists($name, $module_session) ? $module_session[$name] : null;
+        $module_session[$name] = $value;
+        session()->set($module->path, $module_session);
     }
 
     protected function hasSession(string $name)
@@ -135,28 +175,12 @@ class View
         return key_exists($name, $module_session);
     }
 
-    protected function setSession(string $name, mixed $value)
+
+    protected function getSession(string $name)
     {
         $module = request()->get("module");
         $module_session = session()->get($module->path) ?? [];
-        $module_session[$name] = $value;
-        session()->set($module->path, $module_session);
-    }
-
-    protected function getQuery(): string
-    {
-        return "";
-    }
-
-    protected function getPayload(): array|false
-    {
-        return [];
-    }
-
-    protected function getSelect(array $select): string
-    {
-        $columns = array_values($select);
-        return implode(", ", $columns);
+        return key_exists($name, $module_session) ? $module_session[$name] : null;
     }
 
     protected function getSqlTable(): string
@@ -170,41 +194,16 @@ class View
         return db()->query("DESCRIBE $table")->fetchAll(PDO::FETCH_COLUMN);
     }
 
+    protected function getSelect(array $select): string
+    {
+        $columns = array_values($select);
+        return implode(", ", $columns);
+    }
+
     protected function getWhere(): string
     {
         return $this->where
             ? "WHERE " . $this->formatClause($this->where)
-            : '';
-    }
-
-    protected function getHaving(): string
-    {
-        return $this->having
-            ? "HAVING " . $this->formatClause($this->having)
-            : '';
-    }
-
-    protected function getGroupBy(): string
-    {
-        return $this->group_by
-            ? "GROUP BY " . $this->formatClause($this->group_by)
-            : '';
-    }
-
-    protected function getOrderBy(): string
-    {
-        $sort = $this->ascending ? "ASC" : "DESC";
-        return $this->order_by
-            ? "ORDER BY {$this->order_by} $sort"
-            : '';
-    }
-
-    protected function getLimitOffset(): string
-    {
-        $page = max(($this->page - 1) * $this->per_page, 0);
-        $per_page = $this->per_page;
-        return $this->total_results > $this->per_page
-            ? "LIMIT $page, $per_page"
             : '';
     }
 

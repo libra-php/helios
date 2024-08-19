@@ -26,36 +26,48 @@ class Form extends View
     public function getData(): array
     {
         return [
+            ...parent::getData(),
             "actions" => [],
-            "form" => $this->getPayload(),
+            "form" => $this->control($this->form),
+            "data" => $this->getPayload(),
         ];
+    }
+
+    private function defaultPayload()
+    {
+        $payload = [];
+        foreach ($this->form as $title => $column) {
+            $payload[$column] = null;
+        }
+        return $payload;
+    }
+
+    private function control(array $data): array
+    {
+        foreach ($data as $column => $value) {
+        }
+        return $data;
     }
 
     protected function getQuery(): string
     {
-        return sprintf("SELECT %s FROM %s %s",
+        return sprintf(
+            "SELECT %s FROM %s %s",
             $this->getSelect($this->form),
             $this->getSqlTable(),
             $this->getWhere()
         );
     }
 
-    protected function getQueryResult(): array|false
+    protected function getPayload(): array|false
     {
+        if (empty($this->form)) return false;
         if (isset($this->id) && $this->id) {
             $sql = $this->getQuery();
             $params = $this->getAllParams();
             $stmt = db()->run($sql, $params);
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } else {
-            $result = array_filter($this->getSqlColumns(), fn($column) => in_array($column, $this->form));
+            return $stmt->fetch(PDO::FETCH_ASSOC);
         }
-        return $result;
-    }
-
-    protected function getPayload(): array|false
-    {
-        if (empty($this->form)) return false;
-        return $this->getQueryResult();
+        return $this->defaultPayload();
     }
 }

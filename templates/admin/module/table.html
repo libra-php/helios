@@ -5,8 +5,13 @@
 {% include 'components/breadcrumbs.html' %}
 <h2 id="title" class="fw-bold mb-2">{{ module.title }}</h2>
 <section id="actions" class="d-flex py-2">
+	{% if permissions.has_edit %}
+	<div id="create-new" class="me-1">
+		<a type="submit" href="/admin/{{ module.path }}/create" class="btn btn-sm btn-success link-light">Create New</a>
+	</div>
+	{% endif %}
 	{% if actions.export_csv %}
-	<div id="export-csv">
+	<div id="export-csv" class="me-1">
 		<form hx-disable="true">
 			<button type="submit" name="export_csv" class="btn btn-sm btn-dark link-light">Export CSV</button>
 		</form>

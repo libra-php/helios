@@ -53,6 +53,54 @@ class Table extends View
         ];
     }
 
+    protected function getPayload(): array|false
+    {
+        if (empty($this->table)) return false;
+        $sql = $this->getQuery();
+        $params = $this->getAllParams();
+        $stmt = db()->run($sql, $params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    protected function getQuery($limit_query = true): string
+    {
+        return sprintf(
+            "SELECT %s FROM %s %s %s %s %s %s",
+            $this->getSelect($this->table),
+            $this->getSqlTable(),
+            $this->getWhere(),
+            $this->getGroupBy(),
+            $this->getHaving(),
+            $this->getOrderBy(),
+            $limit_query ? $this->getLimitOffset() : ''
+        );
+    }
+
+    private function format(array $data): array
+    {
+        foreach ($data as $i => $row) {
+            foreach ($row as $column => $value) {
+                if (isset($this->format[$column])) {
+                    // A format column is set
+                    $callback = $this->format[$column];
+                    $module_class = request()->get("module")->class_name;
+                    if (is_callable($callback)) {
+                        // The callback method is the value
+                        $data[$i][$column] = $callback($column, $value);
+                    } else if (is_string($callback) && method_exists($module_class, $callback)) {
+                        // The module static callback method is the value
+                        $data[$i][$column] = $module_class::$callback($column, $value);
+                    } else if (is_string($callback) &&
+                        method_exists(Format::class, $callback)) {
+                        // The format class callback is the value
+                        $data[$i][$column] = Format::$callback($column, $value);
+                    }
+                }
+            }
+        }
+        return $data;
+    }
+
     private function handleSearch(): void
     {
         if (request()->query->has("search_term")) {
@@ -115,7 +163,7 @@ class Table extends View
             $this->total_results = $this->getTotalResults();
             $this->total_pages = ceil($this->total_results / $this->per_page);
             while ($this->page <= $this->total_pages) {
-                $results = $this->getQueryResults();
+                $results = $this->getPayload();
                 foreach ($results as $item) {
                     $values = array_values($item);
                     fputcsv($fp, $values);
@@ -139,6 +187,8 @@ class Table extends View
                 echo $count >= 1000 ? '1000+' : $count;
                 exit;
             }
+            echo 0;
+            exit;
         }
     }
 
@@ -213,55 +263,43 @@ class Table extends View
         $this->setSession("per_page", $this->per_page);
     }
 
-    protected function getQuery($limit_query = true): string
-    {
-        return sprintf(
-            "SELECT %s FROM %s %s %s %s %s %s",
-            $this->getSelect($this->table),
-            $this->getSqlTable(),
-            $this->getWhere(),
-            $this->getGroupBy(),
-            $this->getHaving(),
-            $this->getOrderBy(),
-            $limit_query ? $this->getLimitOffset() : ''
-        );
-    }
-
-    private function format(array $data): array
-    {
-        foreach ($data as $i => $row) {
-            foreach ($row as $column => $value) {
-                if (isset($this->format[$column])) {
-                    // A format column is set
-                    $callback = $this->format[$column];
-                    $data[$i][$column] = $callback($column, $value);
-                }
-            }
-        }
-        return $data;
-    }
-
-    protected function getQueryResults(): array|false
-    {
-        $sql = $this->getQuery();
-        $params = $this->getAllParams();
-        $stmt = db()->run($sql, $params);
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $results;
-    }
-
-    protected function getPayload(): array|false
-    {
-        if (empty($this->table)) return false;
-        return $this->getQueryResults();
-    }
-
-    protected function getTotalResults(): int
+    private function getTotalResults(): int
     {
         if (empty($this->table)) return 0;
         $sql = $this->getQuery(false);
         $params = $this->getAllParams();
         $stmt = db()->run($sql, $params);
         return $stmt ? $stmt->rowCount() : 0;
+    }
+
+    private function getHaving(): string
+    {
+        return $this->having
+            ? "HAVING " . $this->formatClause($this->having)
+            : '';
+    }
+
+    private function getGroupBy(): string
+    {
+        return $this->group_by
+            ? "GROUP BY " . $this->formatClause($this->group_by)
+            : '';
+    }
+
+    private function getOrderBy(): string
+    {
+        $sort = $this->ascending ? "ASC" : "DESC";
+        return $this->order_by
+            ? "ORDER BY {$this->order_by} $sort"
+            : '';
+    }
+
+    private function getLimitOffset(): string
+    {
+        $page = max(($this->page - 1) * $this->per_page, 0);
+        $per_page = $this->per_page;
+        return $this->total_results > $this->per_page
+            ? "LIMIT $page, $per_page"
+            : '';
     }
 }

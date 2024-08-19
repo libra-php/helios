@@ -4,7 +4,7 @@ namespace App\Controllers\Module;
 
 use App\Models\Module;
 use App\Models\Session;
-use Helios\View\{Table, Form, View};
+use Helios\View\{Table, Form, IView};
 use Helios\Web\Controller;
 use StellarRouter\{Get, Post, Put, Patch, Delete, Group};
 
@@ -32,15 +32,12 @@ class ModuleController extends Controller
         ]);
     }
 
-    public function renderView(View $view)
+    public function renderView(IView $view)
     {
         $this->module->configure($view);
+        $view->processRequest();
         $this->recordSession($this->module);
-
-        $template = $this->module->getView()->getTemplate();
-        $data = $this->module->getView()->getData();
-
-        return $this->render($template, $data);
+        return $this->render($view->getTemplate(), $view->getData());
     }
 
     #[Get("/{module}", "module.index")]
