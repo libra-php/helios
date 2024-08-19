@@ -1,9 +1,9 @@
 {% extends "layouts/base.html" %}
 
 {% block content %}
-<section id="app" class="d-flex h-100 w-100 bg-light" hx-boost="true" hx-select="#module" hx-target="#module" hx-swap="outerHTML">
+<section id="app" class="d-flex h-100 w-100 bg-light" hx-boost="true" hx-select="#module-content" hx-target="#module-content" hx-swap="outerHTML">
 	{% include 'components/sidebar.html' %}
-	<section id="module" class="d-flex flex-column flex-grow-1 p-2">
+	<section id="module-content" class="d-flex flex-column flex-grow-1 p-2">
 		<section id="top">
 			{% block top %}
 			{% endblock %}

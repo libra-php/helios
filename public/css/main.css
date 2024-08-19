@@ -59,7 +59,7 @@ a:active {
 	overflow: auto;
 }
 
-#module {
+#module-content {
 	overflow: inherit;
 }
 
@@ -112,75 +112,75 @@ a:active {
 	transform: rotate(90deg);
 }
 
-#app #module #top {
+#app #module-content #top {
 	margin: 0;
 }
 
-#app #module #top #mobile-toggle {
+#app #module-content #top #mobile-toggle {
 	position: absolute;
 	top: 12px;
 	right: 10px;
 }
 
-#app #module #top #title {
+#app #module-content #top #title {
 	margin: 0;
 	font-size: 2rem;
 }
 
-#app #module #top button {
+#app #module-content #top button {
 	font-weight: 700;
 }
 
-#app #module #top #filters #filter-links .filter-link.active {
+#app #module-content #top #filters #filter-links .filter-link.active {
 	background-color: #222;
 	color: #fff !important;
 }
 
-#app #module #middle {
+#app #module-content #middle {
 	overflow: auto;
 	border: none !important;
 }
 
-#app #module #top #breadcrumbs .breadcrumb-item {
+#app #module-content #top #breadcrumbs .breadcrumb-item {
 	font-size: 0.85rem;
 	color: #666;
 	text-decoration: underline;
 }
-#app #module #top #breadcrumbs .breadcrumb-item.active {
+#app #module-content #top #breadcrumbs .breadcrumb-item.active {
 	color: #222;
 }
 
-#app #module .table {
+#app #module-content .table {
 	border: 1px solid #ccc;
 	overflow: auto;
 }
 
-#app #module .table tbody tr:hover {
+#app #module-content .table tbody tr:hover {
 	background-color: #FFF5CC;
 }
 
-#app #module #pagination .page-item.active a {
+#app #module-content #pagination .page-item.active a {
 	font-weight: 900;
 	--bs-pagination-active-color: #222;
 	--bs-pagination-active-bg: none;
 	--bs-pagination-active-border-color: #ddd;
 }
 
-#app #module #pagination #per-page {
+#app #module-content #pagination #per-page {
 	width: 70px;
 	padding: 2;
 }
 
-#app #module #filters .filter-link {
+#app #module-content #filters .filter-link {
 	opacity: 0.7;
 }
 
-#app #module #filters .filter-link.active {
+#app #module-content #filters .filter-link.active {
 	font-weight: 900;
 	opacity: 1;
 }
 
-#app #module #filters input[type='search'] {
+#app #module-content #filters input[type='search'] {
 	background-image: url("/images/search_icon.png");
 	background-size: 1rem;
 	background-repeat: no-repeat;
@@ -188,14 +188,13 @@ a:active {
 	padding-left: 40px;
 }
 
-#app #module .view-form .label {
+#app #module-content .view-form .label {
 	width: 150px;
 }
 
 .truncate {
 	white-space: nowrap;
 	overflow: hidden;
-	text-overflow: ellipsis;
 }
 
 .hidden {
