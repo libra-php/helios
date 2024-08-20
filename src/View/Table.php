@@ -33,7 +33,7 @@ class Table extends View
             ],
             "table" => [
                 "columns" => $this->stripAlias($this->table),
-                "rows" => $this->format($rows)
+                "rows" => $rows,
             ],
             "pagination" => [
                 "total_results" => $this->total_results,
@@ -52,6 +52,33 @@ class Table extends View
             ],
         ];
     }
+
+    public function format(string $column, mixed $value): string
+    {
+        $module_class = request()->get("module")->class_name;
+        $options = [
+            "title" => array_search($column, $this->table),
+        ];
+        if (isset($this->format[$column])) {
+            // A format column is set
+            $callback = $this->format[$column];
+            if (is_callable($callback)) {
+                // The callback method is the value
+                return $callback($column, $value, $options);
+            } else if (is_string($callback) && method_exists($module_class, $callback)) {
+                // The module static callback method is the value
+                return $module_class::$callback($column, $value, $options);
+            } else if (
+                is_string($callback) &&
+                method_exists(Format::class, $callback)
+            ) {
+                // The format class callback is the value
+                return Format::$callback($column, $value, $options);
+            }
+        }
+        return Format::span($column, $value, $options);
+    }
+
 
     protected function getPayload(): array|false
     {
@@ -74,38 +101,6 @@ class Table extends View
             $this->getOrderBy(),
             $limit_query ? $this->getLimitOffset() : ''
         );
-    }
-
-    private function format(array $data): array
-    {
-        foreach ($data as $i => $row) {
-            foreach ($row as $column => $value) {
-                $module_class = request()->get("module")->class_name;
-                $options = [
-                    "title" => array_search($column, $this->table),
-                ];
-                if (isset($this->format[$column])) {
-                    // A format column is set
-                    $callback = $this->format[$column];
-                    if (is_callable($callback)) {
-                        // The callback method is the value
-                        $data[$i][$column] = $callback($column, $value, $options);
-                    } else if (is_string($callback) && method_exists($module_class, $callback)) {
-                        // The module static callback method is the value
-                        $data[$i][$column] = $module_class::$callback($column, $value, $options);
-                    } else if (
-                        is_string($callback) &&
-                        method_exists(Format::class, $callback)
-                    ) {
-                        // The format class callback is the value
-                        $data[$i][$column] = Format::$callback($column, $value, $options);
-                    }
-                } else {
-                    $data[$i][$column] = Format::span($column, $value, $options);
-                }
-            }
-        }
-        return $data;
     }
 
     private function handleSearch(): void

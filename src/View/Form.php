@@ -24,14 +24,40 @@ class Form extends View
 
     public function getData(): array
     {
+        $data = $this->getPayload();
         return [
             ...parent::getData(),
             "id" => $this->id,
             "form" => $this->form,
-            "data" => $this->control($this->getPayload()),
-            "actions" => [
-            ],
+            "data" => $data,
+            "actions" => [],
         ];
+    }
+
+    public function control(string $column, mixed $value): string
+    {
+        $module_class = request()->get("module")->class_name;
+        $options = [
+            "title" => array_search($column, $this->form),
+        ];
+        if (isset($this->control[$column])) {
+            // A control column is set
+            $callback = $this->control[$column];
+            if (is_callable($callback)) {
+                // The callback method is the value
+                return $callback($column, $value, $options);
+            } else if (is_string($callback) && method_exists($module_class, $callback)) {
+                // The module static callback method is the value
+                return $module_class::$callback($column, $value, $options);
+            } else if (
+                is_string($callback) &&
+                method_exists(Control::class, $callback)
+            ) {
+                // The control class callback is the value
+                return Control::$callback($column, $value, $options);
+            }
+        }
+        return Control::input($column, $value, $options);
     }
 
     private function defaultPayload()
@@ -41,36 +67,6 @@ class Form extends View
             $payload[$column] = null;
         }
         return $payload;
-    }
-
-    private function control(array $data): array
-    {
-        foreach ($data as $column => $value) {
-            $module_class = request()->get("module")->class_name;
-            $options = [
-                "title" => array_search($column, $this->form),
-            ];
-            if (isset($this->control[$column])) {
-                // A control column is set
-                $callback = $this->control[$column];
-                if (is_callable($callback)) {
-                    // The callback method is the value
-                    $data[$column] = $callback($column, $value, $options);
-                } else if (is_string($callback) && method_exists($module_class, $callback)) {
-                    // The module static callback method is the value
-                    $data[$column] = $module_class::$callback($column, $value, $options);
-                } else if (
-                    is_string($callback) &&
-                    method_exists(Control::class, $callback)
-                ) {
-                    // The control class callback is the value
-                    $data[$column] = Control::$callback($column, $value, $options);
-                }
-            } else {
-                $data[$column] = Control::input($column, $value, $options);
-            }
-        }
-        return $data;
     }
 
     protected function getQuery(): string

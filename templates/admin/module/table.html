@@ -53,14 +53,22 @@
 				</a>
 			</th>
 			{% endfor %}
+			<th></th>
 		</tr>
 	</thead>
 	<tbody>
 		{% for row in table.rows %}
 		<tr>
-			{% for col in row %}
-			<td class="p-1" nowrap>{{ col|raw }}</td>
+			{% for column,value in row %}
+			<td class="p-1" nowrap>{{ view.format(column, value)|raw }}</td>
 			{% endfor %}
+			<td class="text-end">
+				{% if permissions.has_edit %}
+				<form hx-get="/admin/{{ module.path }}/{{ row.id }}">
+					<button type="submit" class="btn btn-sm btn-primary">Edit</button>
+				</form>
+				{% endif %}
+			</td>
 		</tr>
 		{% endfor %}
 		{% if table.columns|length > 0 and table.rows|length == 0 %}

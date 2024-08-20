@@ -37,7 +37,10 @@ class ModuleController extends Controller
         $this->module->configure($view);
         $view->processRequest();
         $this->recordSession($this->module);
-        return $this->render($view->getTemplate(), $view->getData());
+        $template = $view->getTemplate();
+        $data = $view->getData();
+        $data['view'] = $view;
+        return $this->render($template, $data);
     }
 
     #[Get("/{module}", "module.index")]
