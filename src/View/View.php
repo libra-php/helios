@@ -37,6 +37,9 @@ class View implements IView
     protected bool $has_edit = true;
     protected bool $has_delete = true;
 
+    /** Validation */
+    protected array $rules = [];
+
     /**
      * @var array Searchable table columns
      */
@@ -48,6 +51,7 @@ class View implements IView
 
 
     /** Form Properties */
+    protected ?int $id = null;
     protected array $form = [];
     protected array $control = [];
 
@@ -85,7 +89,7 @@ class View implements IView
         return [
             "module" => request()->get("module"),
             "links" => $this->buildLinks(),
-            "breadcrumbs" => $this->getBreadcrumbs(isset($this->id) ? $this->id : null),
+            "breadcrumbs" => $this->getBreadcrumbs($this->id),
             "permissions" => [
                 "has_create" => $this->has_create && !empty($this->form),
                 "has_edit" => $this->has_edit && !empty($this->form),
@@ -281,19 +285,21 @@ class View implements IView
     private function getBreadcrumbs(?string $id): array
     {
         $module = request()->get("module");
+        $route = request()->get("route");
         $path = $module->path;
         $breadcrumbs = $this->buildBreadcrumbs($module->id);
-        $route_name = request()->get("route")->getName();
-        if ($route_name === "module.create") {
-            $breadcrumbs[] = (object) [
-                "path" => "$path/create",
-                "title" => "Create",
-            ];
-        } else if (!is_null($id)) {
-            $breadcrumbs[] = (object) [
-                "path" => "$path/$id",
-                "title" => "Edit $id",
-            ];
+        if ($route->getName() !== "module.index") {
+            if ($id) {
+                $breadcrumbs[] = (object) [
+                    "path" => "$path/$id",
+                    "title" => "Edit $id",
+                ];
+            } else {
+                $breadcrumbs[] = (object) [
+                    "path" => "$path/create",
+                    "title" => "Create",
+                ];
+            }
         }
         return $breadcrumbs;
     }

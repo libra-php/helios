@@ -3,7 +3,7 @@
 namespace App\Modules;
 
 use App\Models\Module;
-use Helios\View\{Format, View};
+use Helios\View\View;
 
 class Modules extends Module
 {

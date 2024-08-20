@@ -7,7 +7,9 @@
 <section id="actions" class="d-flex py-2">
 	{% if permissions.has_edit %}
 	<div id="create-new" class="me-1">
-		<a type="submit" href="/admin/{{ module.path }}/create" class="btn btn-sm btn-success link-light">Create New</a>
+		<form hx-get="/admin/{{ module.path }}/create">
+			<button type="submit" class="btn btn-sm btn-success link-light">Create New</button>
+		</form>
 	</div>
 	{% endif %}
 	{% if actions.export_csv %}

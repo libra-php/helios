@@ -8,6 +8,7 @@ use Helios\View\View;
 class Module extends Model
 {
     protected View $view;
+    protected array $rules = [];
 
     public function __construct(?string $key = null)
     {
@@ -23,5 +24,11 @@ class Module extends Model
     {
         return $this->view;
     }
+
+    public function getRules(): array
+    {
+        return $this->rules;
+    }
+
 }
 

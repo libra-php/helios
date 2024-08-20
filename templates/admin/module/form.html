@@ -6,12 +6,20 @@
 {% endblock %}
 
 {% block middle %}
-<form class="view-form">
+<form class="view-form"
+	{% if id %}
+	hx-patch="/admin/{{ module.path}}/{{ id }}"
+	{% else %}
+	hx-post="/admin/{{ module.path }}"
+	{% endif %}>
 	{{ f.csrf()|raw }}
 	{% for title,column in form  %}
-	<div class="d-flex align-items-center">
+	<div class="d-flex align-items-center mb-1">
 		<div class="label truncate"><strong>{{ title }}</strong></div>
-		<div class="flex-grow-1">{{ data[column]|raw }}</div>
+		<div class="flex-grow-1">
+			{{ data[column]|raw }}
+			{% include 'errors/validation.html' with {'validate': column} %}
+		</div>
 	</div>
 	{% endfor %}
 	<div class="m-0 mt-2">

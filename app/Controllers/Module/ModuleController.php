@@ -57,26 +57,34 @@ class ModuleController extends Controller
     #[Get("/{module}/{id}", "module.edit")]
     public function edit(string $module, int $id)
     {
-        header("HX-Push-Url: /admin/$module");
+        header("HX-Push-Url: /admin/$module/$id");
         return $this->renderView(new Form($id));
     }
 
     #[Post("/{module}", "module.store")]
     public function store(string $module)
     {
-        die("wip: store");
+        $valid = $this->validateRequest($this->module->getRules());
+        if ($valid) {
+            $id = 1;
+            return $this->edit($module, $id);
+        }
+        return $this->create($module);
     }
 
     #[Patch("/{module}/{id}", "module.update.patch")]
     #[Put("/{module}/{id}", "module.update.put")]
     public function update(string $module, int $id)
     {
-        die("wip: update");
+        $valid = $this->validateRequest($this->module->getRules());
+        if ($valid) {
+        }
+        return $this->edit($module, $id);
     }
 
     #[Delete("/{module}/{id}", "module.destroy")]
     public function destroy(string $module, int $id)
     {
-        die("wip: destroy");
+        return $this->index($module);
     }
 }

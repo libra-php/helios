@@ -3,10 +3,15 @@
 namespace App\Modules;
 
 use App\Models\Module;
-use Helios\View\{Format, View};
+use Helios\View\View;
 
 class UserTypes extends Module
 {
+    protected array $rules = [
+        "name" => ["required"],
+        "permission_level" => ["required"],
+    ];
+
     public function configure(View $view)
     {
         $view->sqlTable($this->sql_table);

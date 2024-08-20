@@ -12,7 +12,7 @@ class Form extends View
 {
     public string $template = "admin/module/form.html";
 
-    public function __construct(private ?int $id = null)
+    public function __construct(protected ?int $id = null)
     {
         if (!is_null($id)) {
             $pk = $this->primary_key;
@@ -29,7 +29,8 @@ class Form extends View
             "id" => $this->id,
             "form" => $this->form,
             "data" => $this->control($this->getPayload()),
-            "actions" => [],
+            "actions" => [
+            ],
         ];
     }
 
