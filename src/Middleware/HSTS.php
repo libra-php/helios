@@ -16,10 +16,8 @@ class HSTS implements IMiddleware
 
     public function handle(Request $request, Closure $next): Response
     {
-        // Pass the request to the next middleware
         $response = $next($request);
 
-        // Construct the HSTS header value
         $hstsHeader = "max-age={$this->maxAge}";
         if ($this->includeSubDomains) {
             $hstsHeader .= "; includeSubDomains";
@@ -28,7 +26,6 @@ class HSTS implements IMiddleware
             $hstsHeader .= "; preload";
         }
 
-        // Add the HSTS header to the response
         $response->headers->set('Strict-Transport-Security', $hstsHeader);
 
         return $response;

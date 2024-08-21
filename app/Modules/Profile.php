@@ -2,7 +2,7 @@
 
 namespace App\Modules;
 
-use App\Models\Module;
+use App\Modules\Module;
 
 class Profile extends Module
 {

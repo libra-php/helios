@@ -182,7 +182,7 @@ function redirect(string $path, array $options = [
     "swap" => "outerHTML"
 ]): void
 {
-    if (request()->headers->get("hx-request")) {
+    if (request()->headers->has("HX-Request")) {
         $options['path'] = $path;
         $header =  sprintf("HX-Location:%s", json_encode($options));
         header($header);

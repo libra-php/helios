@@ -9,6 +9,7 @@ class Kernel extends Http
     protected array $middleware = [
         // \Helios\Middleware\Whitelist::class,
         \Helios\Middleware\ModuleRequest::class,
+        \Helios\Middleware\HTMX::class,
         \Helios\Middleware\EncryptCookies::class,
         \Helios\Middleware\RouteAuth::class,
         \Helios\Middleware\CSRF::class,

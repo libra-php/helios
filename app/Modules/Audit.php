@@ -2,7 +2,7 @@
 
 namespace App\Modules;
 
-use App\Models\Module;
+use App\Modules\Module;
 
 class Audit extends Module
 {

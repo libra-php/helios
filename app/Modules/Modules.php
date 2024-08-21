@@ -2,14 +2,14 @@
 
 namespace App\Modules;
 
-use App\Models\Module;
+use App\Modules\Module;
 use Helios\View\View;
 
 class Modules extends Module
 {
     public function configure(View $view)
     {
-        $view->sqlTable($this->sql_table);
+        $view->sqlTable('modules');
 
         $view->table("ID", "id")
             ->table("Enabled", "enabled")

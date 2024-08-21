@@ -2,7 +2,7 @@
 
 namespace App\Modules;
 
-use App\Models\Module;
+use App\Modules\Module;
 use Helios\View\View;
 
 class Users extends Module
@@ -12,7 +12,7 @@ class Users extends Module
         $user = user();
 
         /** SQL Table */
-        $view->sqlTable($this->sql_table);
+        $view->sqlTable('users');
 
         /** Table definition (index view) */
         $view->table("ID", "id")

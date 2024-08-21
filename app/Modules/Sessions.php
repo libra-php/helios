@@ -2,7 +2,7 @@
 
 namespace App\Modules;
 
-use App\Models\Module;
+use App\Modules\Module;
 use Helios\View\View;
 
 class Sessions extends Module
@@ -13,7 +13,7 @@ class Sessions extends Module
 
         $view->tableOnly();
 
-        $view->sqlTable($this->sql_table);
+        $view->sqlTable('sessions');
 
         $view->table("ID", "id")
             ->table("URI", "request_uri")

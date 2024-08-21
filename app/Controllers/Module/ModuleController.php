@@ -2,8 +2,7 @@
 
 namespace App\Controllers\Module;
 
-use App\Models\Module;
-use App\Models\Session;
+use App\Models\{Module, Session, UserType};
 use Helios\View\{Table, Form, IView};
 use Helios\Web\Controller;
 use StellarRouter\{Get, Post, Put, Patch, Delete, Group};
@@ -11,7 +10,7 @@ use StellarRouter\{Get, Post, Put, Patch, Delete, Group};
 #[Group(prefix: "/admin", middleware: ['auth', 'module'])]
 class ModuleController extends Controller
 {
-    private Module $module;
+    private $module;
 
     public function __construct()
     {
@@ -24,12 +23,12 @@ class ModuleController extends Controller
 
     private function recordSession($module)
     {
-        Session::new([
-            "request_uri" => request()->getUri(),
-            "ip" => ip2long(request()->getClientIp()),
-            "user_id" => user()->id,
-            "module_id" => $module->id,
-        ]);
+        // Session::new([
+        //     "request_uri" => request()->getUri(),
+        //     "ip" => ip2long(request()->getClientIp()),
+        //     "user_id" => user()->id,
+        //     "module_id" => $module->id,
+        // ]);
     }
 
     public function renderView(IView $view)
@@ -46,7 +45,6 @@ class ModuleController extends Controller
     #[Get("/{module}", "module.index")]
     public function index(string $module)
     {
-        header("HX-Push-Url: /admin/$module");
         return $this->renderView(new Table);
     }
 
@@ -69,8 +67,10 @@ class ModuleController extends Controller
     {
         $valid = $this->validateRequest($this->module->getRules());
         if ($valid) {
-            $id = 1;
-            return $this->edit($module, $id);
+            dd($this->module);
+            if (!is_null($id)) {
+                return $this->edit($module, $id);
+            }
         }
         return $this->create($module);
     }
@@ -82,7 +82,7 @@ class ModuleController extends Controller
         $valid = $this->validateRequest($this->module->getRules());
         if ($valid) {
         }
-        return $this->edit($module, $id);
+        return $this->eit($module, $id);
     }
 
     #[Delete("/{module}/{id}", "module.destroy")]

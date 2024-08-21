@@ -2,7 +2,7 @@
 
 namespace App\Modules;
 
-use App\Models\Module;
+use App\Modules\Module;
 use Helios\View\View;
 
 class UserTypes extends Module
@@ -14,7 +14,7 @@ class UserTypes extends Module
 
     public function configure(View $view)
     {
-        $view->sqlTable($this->sql_table);
+        $view->sqlTable('user_types');
 
         $view->table("ID", "id")
             ->table("Name", "name")

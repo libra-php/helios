@@ -143,11 +143,12 @@ class Model
     }
 
     /**
-     * Create a new model
+     * Create a new model (static)
      */
     public static function new(array $data): Model
     {
         $class = get_called_class();
+        dump($class);
         $model = new $class();
 
         $sql = $model->insertQuery($model->getTableName(), $data);
@@ -157,6 +158,13 @@ class Model
             $id = db()->lastInsertId();
             return new $class($id);
         }
+    }
+
+    public function create(array $data)
+    {
+        $this->parameters = $data;
+        dd($this);
+        $this->save();
     }
 
     /**
