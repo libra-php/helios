@@ -42,6 +42,7 @@
 {% endblock %}
 
 {% block middle %}
+{% if table.columns|length > 0 %}
 <table class="table table-sm view-table caption-top mb-2 {% if table.rows|length > 1 %}table-striped{% endif %}">
 	<thead class="sticky-top bg-dark text-light p-0">
 		<tr>
@@ -78,6 +79,7 @@
 		{% endif %}
 	</tbody>
 </table>
+{% endif %}
 {% endblock %}
 
 {% block bottom %}

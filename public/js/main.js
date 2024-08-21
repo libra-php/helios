@@ -11,4 +11,3 @@ const hideSidebar = () => {
 	sidebar.classList.remove("active");
 	mobile_toggle.classList.remove("hidden");
 }
-

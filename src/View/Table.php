@@ -25,7 +25,7 @@ class Table extends View
 
     public function getData(): array
     {
-        $rows = !empty($this->table) ? $this->getPayload() : [];
+        $rows = $this->getPayload();
         return [
             ...parent::getData(),
             "actions" => [
@@ -78,7 +78,6 @@ class Table extends View
         }
         return Format::span($column, $value, $options);
     }
-
 
     protected function getPayload(): array|false
     {
@@ -240,7 +239,6 @@ class Table extends View
         $this->order_by = $column;
         $this->setSession("order_by", $column);
     }
-
 
     private function setPage(int $page): void
     {
