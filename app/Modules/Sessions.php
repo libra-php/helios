@@ -19,8 +19,8 @@ class Sessions extends Module
             ->addTable("Module", "(SELECT modules.title FROM modules WHERE modules.id = module_id) as module")
             ->addTable("Created", "created_at");
 
-        // Set order
-        $this->orderBy("id")->ascending(false);
+        // Set default order/sort
+        $this->defaultOrder("id")->ascending(false);
 
         // Format columns
         $this->formatTable("created_at", "ago");

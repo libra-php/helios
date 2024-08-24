@@ -54,6 +54,14 @@ class Model implements IModel
     }
 
     /**
+     * Get the model's primary key column
+     */
+    public function getKeyColumn(): string
+    {
+        return $this->key_column;
+    }
+
+    /**
      * Get the model's table name
      */
     public function getTableName(): string
@@ -209,7 +217,7 @@ class Model implements IModel
             'having' => '',
             'group_by' => '',
             'order_by' => '',
-            'sort' => '',
+            'sort' => 'ASC',
             'offset' => 0,
             'limit' => 0,
             'params' => []

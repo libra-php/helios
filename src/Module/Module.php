@@ -64,6 +64,7 @@ class Module
 
     public function processRequest(): void
     {
+        if (!isset($this->model)) return;
         $this->handleSearch();
         $this->handleFilterCount();
         $this->handleFilterLinks();
@@ -198,7 +199,7 @@ class Module
         return $this;
     }
 
-    protected function orderBy(string $order_by): Module
+    protected function defaultOrder(string $order_by): Module
     {
         $this->order_by = $order_by;
         return $this;
@@ -248,7 +249,6 @@ class Module
 
     private function getTotalResults(): int
     {
-        if (!isset($this->model)) return 0;
         return $this->model::get()
             ->select($this->table)
             ->where($this->where)
@@ -322,7 +322,7 @@ class Module
             $term = request()->query->get("search_term");
             $this->setPage(1);
         } else {
-            $term = $this->getSession("search_term") ?? "";
+            $term = $this->getSession("search_term") ?? $this->search_term;
         }
         $this->setSearchTerm($term);
     }
@@ -350,7 +350,7 @@ class Module
             $this->setPage(1);
             $index = request()->query->get("filter_link");
         } else {
-            $index = $this->getSession("filter_link") ?? 0;
+            $index = $this->getSession("filter_link") ?? $this->filter_link;
         }
         $this->setFilterLink($index);
     }
@@ -360,7 +360,7 @@ class Module
         if (request()->query->has("order_by")) {
             $order_by = request()->query->get("order_by");
         } else {
-            $order_by = $this->getSession("order_by") ?? "";
+            $order_by = $this->getSession("order_by") ?? $this->model::get()->getKeyColumn();
         }
         if (request()->query->has("ascending")) {
             $ascending = request()->query->get("ascending") === "ASC";

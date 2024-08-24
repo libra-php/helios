@@ -20,8 +20,7 @@ class Controller
         $twig = container()->get(Environment::class);
         // Request error array
         $data["request_errors"] = $this->request_errors;
-        $nonce = session()->get("nonce");
-        $data["nonce"] = $nonce;
+        $data["nonce"] = session()->get("nonce");
         // Template functions
         $data["f"] = new class {
             public function dump(...$args): void

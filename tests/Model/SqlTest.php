@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 
-use App\Models\UserType;
+use App\Models\{User, UserType};
 
 final class SqlTest extends TestCase
 {
@@ -16,6 +16,13 @@ final class SqlTest extends TestCase
 
         $this->assertSame("SELECT id, name FROM `user_types` WHERE id > ?", $sql->getQuery());
         $this->assertSame([1], $sql->getQueryParams());
+
+        $sql = User::get()
+            ->select(["id", "name", "email"])
+            ->where(["name LIKE ?"], "Alex%");
+
+        $this->assertSame("SELECT id, name, email FROM `users` WHERE name LIKE ?", $sql->getQuery());
+        $this->assertSame(["Alex%"], $sql->getQueryParams());
     }
 
     public function testInsertQuery(): void
