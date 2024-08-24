@@ -31,9 +31,9 @@
 		</form>
 	</div>
 	{% endif %}
-	{% if filters.links|length > 0 %}
+	{% if filters.filter_links|length > 0 %}
 	<div id="filter-links" class="py-1">
-		{% for i,link in filters.links %}
+		{% for i,link in filters.filter_links %}
 		<span class="badge p-0"><a class="filter-link link-dark p-1 px-2 rounded {% if filters.filter_link == i %}active{% endif %}" href="?filter_link={{ i }}">{{ link }} [<span hx-swap="textContent" hx-trigger="load" hx-get="?filter_count={{ i }}" hx-target="this">...</span>]</a></span>
 		{% endfor %}
 	</div>
@@ -42,11 +42,11 @@
 {% endblock %}
 
 {% block middle %}
-{% if table.columns|length > 0 %}
-<table class="table table-sm view-table caption-top mb-2 {% if table.rows|length > 1 %}table-striped{% endif %}">
+{% if table|length > 0 %}
+<table class="table table-sm view-table caption-top mb-2 {% if data|length > 1 %}table-striped{% endif %}">
 	<thead class="sticky-top bg-dark text-light p-0">
 		<tr>
-			{% for title,column in table.columns %}
+			{% for title,column in table %}
 			<th class="p-1" nowrap>
 				<a class="link-light" href="?order_by={{ column }}&ascending={% if filters.order_by == column and filters.ascending %}DESC{% elseif filters.order_by == column and not filters.ascending %}ASC{% else %}ASC{% endif %}">
 					{{ title }}
@@ -58,7 +58,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		{% for row in table.rows %}
+		{% for row in data %}
 		<tr>
 			{% for column,value in row %}
 			<td class="p-1" nowrap>{{ view.format(column, value)|raw }}</td>
@@ -72,9 +72,9 @@
 			</td>
 		</tr>
 		{% endfor %}
-		{% if table.columns|length > 0 and table.rows|length == 0 %}
+		{% if table|length > 0 and data|length == 0 %}
 		<tr>
-			<td class="text-center" colspan="{{ table.columns|length }}"><em>No results found</em></td>
+			<td class="text-center" colspan="{{ table|length }}"><em>No results found</em></td>
 		</tr>
 		{% endif %}
 	</tbody>

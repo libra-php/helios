@@ -1,0 +1,422 @@
+<?php
+
+namespace Helios\Module;
+
+use App\Models\Session;
+use Helios\View\{Form, IView, Table};
+use PDO;
+
+class Module
+{
+    protected bool $export_csv = true;
+    protected string $model;
+    protected array $rules = [];
+
+    private array $table = [];
+    private array $format = [];
+    private array $where = [];
+    private array $group_by = [];
+    private array $having = [];
+    private string $order_by = "";
+    private bool $ascending = true;
+    private array $params = [];
+    private array $filter_links = [];
+    private array $searchable = [];
+    private string $search_term = "";
+    private int $filter_link = 0;
+    private int $page = 1;
+    private int $per_page = 10;
+    private int $total_pages = 1;
+    private array $page_options = [5, 10, 25, 50, 100, 200, 500];
+    private int $total_results = 0;
+    private array $form = [];
+
+    public function view(IView $view, ?int $id = null): string
+    {
+        // Process incoming request
+        $this->processRequest();
+
+        // Set view data
+        if ($view instanceof Table) {
+            $view->setData($this->getTableData());
+        } else if ($view instanceof Form) {
+            if (!is_null($id)) {
+                $view->setData($this->getFormData($id));
+            } else {
+                $view->setData($this->getFormData());
+            }
+        }
+
+        // Module pass thru
+        $view->setModule($this);
+
+        // Record session
+        Session::new([
+            "request_uri" => request()->getUri(),
+            "ip" => ip2long(request()->getClientIp()),
+            "user_id" => user()->id,
+            "module_id" => request()->get("module")->id
+        ]);
+
+        // Render view
+        return template($view->getTemplate(), $view->getTemplateData());
+    }
+
+    public function processRequest(): void
+    {
+        $this->handleSearch();
+        $this->handleFilterCount();
+        $this->handleFilterLinks();
+        $this->handlePage();
+        $this->handlePerPage();
+        $this->handleExportCsv();
+        $this->handleSort();
+    }
+
+    public function getRules(): array
+    {
+        return $this->rules;
+    }
+
+    public function getTable(): array
+    {
+        return $this->stripAliases($this->table);
+    }
+
+    public function getForm(): array
+    {
+        return $this->form;
+    }
+
+    public function getFormat(): array
+    {
+        return $this->format;
+    }
+
+    public function create() {}
+
+    public function save() {}
+
+    public function delete() {}
+
+    public function getPagination(): array
+    {
+        if (!isset($this->model)) return [];
+        $this->total_results = $this->getTotalResults();
+        $this->total_pages = ceil($this->total_results / $this->per_page);
+
+        return [
+            "total_results" => $this->total_results,
+            "total_pages" => $this->total_pages,
+            "page" => $this->page,
+            "per_page" => $this->per_page,
+            "page_options" => $this->page_options,
+        ];
+    }
+
+    public function getFilters(): array
+    {
+        return [
+            "filter_links" => array_keys($this->filter_links),
+            "filter_link" => $this->filter_link,
+            "searchable" => $this->searchable,
+            "search_term" => $this->search_term,
+            "order_by" => $this->order_by,
+            "ascending" => $this->ascending,
+        ];
+    }
+
+    public function getActions(): array
+    {
+        return [
+            "export_csv" => $this->table ? $this->export_csv : false,
+        ];
+    }
+
+    protected function setSession(string $name, mixed $value): void
+    {
+        $module = request()->get("module");
+        $module_session = session()->get($module->path) ?? [];
+        $module_session[$name] = $value;
+        session()->set($module->path, $module_session);
+    }
+
+    protected function hasSession(string $name): bool
+    {
+        $module = request()->get("module");
+        $module_session = session()->get($module->path) ?? [];
+        return key_exists($name, $module_session);
+    }
+
+
+    protected function getSession(string $name): mixed
+    {
+        $module = request()->get("module");
+        $module_session = session()->get($module->path) ?? [];
+        return key_exists($name, $module_session) ? $module_session[$name] : null;
+    }
+
+    protected function addTable(string $header, string $attribute): Module
+    {
+        $this->table[$header] = $attribute;
+        return $this;
+    }
+
+    protected function filterLink(string $title, string $condition): Module
+    {
+        $this->filter_links[$title] = $condition;
+        return $this;
+    }
+
+    protected function addSearch(string $column): Module
+    {
+        $this->searchable[] = $column;
+        return $this;
+    }
+
+    protected function where(string $where, ...$replacements): Module
+    {
+        $this->where[] = "($where)";
+        foreach ($replacements as $replacement) {
+            $this->params[] = $replacement;
+        }
+        return $this;
+    }
+
+    protected function groupBy(string $group_by): Module
+    {
+        $this->group_by[] = $group_by;
+        return $this;
+    }
+
+    protected function having(string $having, ...$replacements): Module
+    {
+        $this->having[] = "($having)";
+        foreach ($replacements as $replacement) {
+            $this->params[] = $replacement;
+        }
+        return $this;
+    }
+
+    protected function orderBy(string $order_by): Module
+    {
+        $this->order_by = $order_by;
+        return $this;
+    }
+
+    protected function ascending(bool $state): Module
+    {
+        $this->ascending = $state;
+        return $this;
+    }
+
+    protected function formatTable(string $column, mixed $callback)
+    {
+        $this->format[$column] = $callback;
+        return $this;
+    }
+
+    private function getTableData(): array
+    {
+        if (!isset($this->model)) return [];
+
+        $page = max(($this->page - 1) * $this->per_page, 0);
+
+        $results = $this->model::get()
+            ->select($this->table)
+            ->where($this->where)
+            ->groupBy($this->group_by)
+            ->having($this->having)
+            ->orderBy($this->order_by)
+            ->sort($this->ascending)
+            ->offset($page)
+            ->limit($this->per_page)
+            ->params($this->params)
+            ->execute()->fetchAll(PDO::FETCH_ASSOC);
+
+        return $results;
+    }
+
+    private function getFormData(?int $id = null): array
+    {
+        if (!isset($this->model)) return [];
+
+        $form = $this->getForm();
+
+        dd($form);
+    }
+
+    private function getTotalResults(): int
+    {
+        if (!isset($this->model)) return 0;
+        return $this->model::get()
+            ->select($this->table)
+            ->where($this->where)
+            ->groupBy($this->group_by)
+            ->having($this->having)
+            ->params($this->params)
+            ->execute()
+            ->rowCount();
+    }
+
+    private function stripAliases(array $data): array
+    {
+        $out = [];
+        foreach ($data as $title => $column) {
+            $arr = explode(" as ", $column);
+            $out[$title] = end($arr);
+        }
+        return $out;
+    }
+
+    private function handlePage(): void
+    {
+        if (request()->query->has("page")) {
+            $page = request()->query->get("page");
+        } else {
+            $page = $this->getSession("page") ?? $this->page;
+        }
+        $this->setPage($page);
+    }
+
+    private function handlePerPage(): void
+    {
+        if (request()->query->has("per_page")) {
+            $per_page = request()->query->get("per_page");
+            $this->setPage(1);
+        } else {
+            $per_page = $this->getSession("per_page") ?? $this->per_page;
+        }
+        $this->setPerPage($per_page);
+    }
+
+    private function handleExportCsv(): void
+    {
+        if (request()->query->has("export_csv")) {
+            $file_name = request()->get("module")->path . "_" . time() . '.csv';
+            header("Content-Type: text/csv");
+            header("Content-Disposition: attachment; filename=$file_name");
+            $fp = fopen("php://output", "wb");
+            $headers = array_keys($this->table);
+            fputcsv($fp, $headers);
+            $this->per_page = 1000;
+            $this->page = 1;
+            $this->total_results = $this->getTotalResults();
+            $this->total_pages = ceil($this->total_results / $this->per_page);
+            while ($this->page <= $this->total_pages) {
+                $results = $this->getTableData();
+                foreach ($results as $item) {
+                    $values = array_values($item);
+                    fputcsv($fp, $values);
+                }
+                $this->page++;
+            }
+            fclose($fp);
+            exit();
+        }
+    }
+
+    private function handleSearch(): void
+    {
+        if (request()->query->has("search_term")) {
+            $term = request()->query->get("search_term");
+            $this->setPage(1);
+        } else {
+            $term = $this->getSession("search_term") ?? "";
+        }
+        $this->setSearchTerm($term);
+    }
+
+    private function handleFilterCount(): void
+    {
+        if (request()->query->has("filter_count")) {
+            $filters = array_values($this->filter_links);
+            $index = request()->query->get("filter_count");
+            if (key_exists($index, $filters)) {
+                $this->per_page = 1000;
+                $this->where($filters[$index]);
+                $count = $this->getTotalResults();
+                echo $count >= 1000 ? '1000+' : $count;
+                exit;
+            }
+            echo 0;
+            exit;
+        }
+    }
+
+    private function handleFilterLinks(): void
+    {
+        if (request()->query->has("filter_link")) {
+            $this->setPage(1);
+            $index = request()->query->get("filter_link");
+        } else {
+            $index = $this->getSession("filter_link") ?? 0;
+        }
+        $this->setFilterLink($index);
+    }
+
+    private function handleSort(): void
+    {
+        if (request()->query->has("order_by")) {
+            $order_by = request()->query->get("order_by");
+        } else {
+            $order_by = $this->getSession("order_by") ?? "";
+        }
+        if (request()->query->has("ascending")) {
+            $ascending = request()->query->get("ascending") === "ASC";
+        } else {
+            $ascending = $this->getSession("ascending") ?? $this->ascending;
+        }
+
+        $this->setOrderBy($order_by);
+        $this->setAscending($ascending);
+    }
+
+    private function setPage(int $page): void
+    {
+        $this->page = $page;
+        $this->setSession("page", $page);
+    }
+
+    private function setPerPage(int $per_page): void
+    {
+        $this->per_page = $per_page;
+        $this->setSession("per_page", $per_page);
+    }
+
+    private function setFilterLink(int $index): void
+    {
+        $filters = array_values($this->filter_links);
+        if (isset($filters[$index])) {
+            $this->filter_link = $index;
+            $this->where($filters[$index]);
+            $this->setSession("filter_link", $index);
+        }
+    }
+
+    private function setOrderBy(string $order_by): void
+    {
+        $this->order_by = $order_by;
+        $this->setSession("order_by", $order_by);
+    }
+
+    private function setAscending(bool $state): void
+    {
+        $this->ascending = $state;
+        $this->setSession("ascending", $state);
+    }
+
+    private function setSearchTerm(string $term): void
+    {
+        if (trim($term)) {
+            $this->search_term = $term;
+            $clause = [];
+            foreach ($this->searchable as $column) {
+                $clause[] = "($column LIKE ?)";
+            }
+            $replacements = array_fill(0, count($clause), "%{$this->search_term}%");
+            $this->where(implode(" OR ", $clause), ...$replacements);
+        }
+        $this->setSession("search_term", $this->search_term);
+    }
+}

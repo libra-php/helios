@@ -2,15 +2,33 @@
 
 namespace Helios\Model;
 
+use Error;
 use Exception;
 use PDO;
+use PDOStatement;
 
-class Model
+class Model implements IModel
 {
     protected array $columns = [];
     protected string $key_column = "id";
 
     private array $parameters = [];
+
+    protected array $query = [
+        'mode' => 'select',
+        'select' => '',
+        'update' => '',
+        'insert' => '',
+        'delete' => '',
+        'where' => '',
+        'having' => '',
+        'group_by' => '',
+        'order_by' => '',
+        'sort' => 'ASC',
+        'offset' => 0,
+        'limit' => 0,
+        'params' => []
+    ];
 
     public function __construct(
         private string $table_name,
@@ -65,12 +83,10 @@ class Model
      */
     public function load(mixed $key): bool
     {
-        $sql = $this->selectQuery(
-            $this->getTableName(),
-            $this->columns,
-            $this->key_column
-        );
-        $result = db()->fetch($sql, $key);
+        $result = $this->select($this->columns)
+            ->where(["$this->key_column = ?"], $key)
+            ->execute()
+            ->fetch();
         if ($result) {
             $this->parameters = (array) $result;
         }
@@ -100,11 +116,9 @@ class Model
     {
         $class = get_called_class();
         $model = new $class();
-        $sql = $model->selectAllQuery(
-            $model->getTableName(),
-            $model->columns,
-        );
-        $results = db()->fetchAll($sql);
+        $results = $model->select($model->columns)
+            ->execute()
+            ->fetchAll();
         $key_column = $model->key_column;
         return array_map(fn($result) => $model->find($result->$key_column), $results);
     }
@@ -124,18 +138,27 @@ class Model
     }
 
     /**
+     * Find a model from the db by primary key or fail
+     * @throws Exception model not found
+     */
+    public static function findOrFail(mixed $key)
+    {
+        $class = get_called_class();
+        $model = new $class($key);
+        return $model;
+    }
+
+    /**
      * Find a model from the db by attribute
      */
     public static function findByAttribute(string $attribute, mixed $key)
     {
         $class = get_called_class();
         $model = new $class();
-        $sql = $model->selectQuery(
-            $model->getTableName(),
-            $model->columns,
-            $attribute
-        );
-        $result = db()->fetch($sql, $key);
+        $result = $model->select($model->columns)
+            ->where(["$attribute = ?"], $key)
+            ->execute()
+            ->fetch();
         if ($result) {
             $key_column = $model->key_column;
             return new $model($result->$key_column);
@@ -148,11 +171,9 @@ class Model
     public static function new(array $data): Model
     {
         $class = get_called_class();
-        dump($class);
         $model = new $class();
 
-        $sql = $model->insertQuery($model->getTableName(), $data);
-        $result = db()->query($sql, ...array_values($data));
+        $result = $model->insert($data)->execute();
 
         if ($result) {
             $id = db()->lastInsertId();
@@ -160,25 +181,12 @@ class Model
         }
     }
 
-    public function create(array $data)
-    {
-        $this->parameters = $data;
-        dd($this);
-        $this->save();
-    }
-
     /**
      * Save model to db
      */
     public function save(): bool
     {
-        $sql = $this->updateQuery(
-            $this->getTableName(),
-            $this->getParameters(),
-            $this->key_column
-        );
-        $data = [...$this->getParameters(), $this->getKey()];
-        $result = db()->query($sql, ...array_values($data));
+        $result = $this->update($this->getParameters());
         if ($result) {
             $this->hydrate();
             return true;
@@ -187,79 +195,284 @@ class Model
     }
 
     /**
-     * Delete model from db
+     * Reset SQL query array
      */
-    public function delete(): bool
+    private function resetQuery(): void
     {
-        $sql = $this->deleteQuery($this->getTableName(), $this->key_column);
-        $result = db()->query($sql, $this->getKey());
-        return $result ? true : false;
+        $this->query = [
+            'mode' => 'select',
+            'select' => '',
+            'update' => '',
+            'insert' => '',
+            'delete' => '',
+            'where' => '',
+            'having' => '',
+            'group_by' => '',
+            'order_by' => '',
+            'sort' => '',
+            'offset' => 0,
+            'limit' => 0,
+            'params' => []
+        ];
     }
 
     /**
-     * Get the select query
+     * Add query params
      */
-    private function selectQuery(
-        string $table_name,
-        array $data,
-        string $key_column
-    ): string {
-        $columns = implode(", ", array_values($data));
-        $sql = sprintf(
-            "SELECT %s FROM `%s` WHERE %s = ?",
-            $columns,
-            $table_name,
-            $key_column
-        );
-        return $sql;
-    }
-
-    /**
-     * Get the update query
-     */
-    private function updateQuery(
-        string $table_name,
-        array $data,
-        string $key_column
-    ): string {
-        $updates = array_map(fn($column) => "$column = ?", array_keys($data));
-        $columns = implode(", ", $updates);
-        $sql = sprintf(
-            "UPDATE `%s` SET %s WHERE %s = ?",
-            $table_name,
-            $columns,
-            $key_column
-        );
-        return $sql;
-    }
-
-    /**
-     * Get the insert query
-     */
-    private function insertQuery(string $table_name, array $data): string
+    private function addQueryParams(array $replacements): void
     {
-        $columns = implode(", ", array_keys($data));
-        $values = implode(", ", array_fill(0, count($data), "?"));
-        $sql = sprintf(
+        foreach ($replacements as $replacement) {
+            $this->query["params"][] = $replacement;
+        }
+    }
+
+    /**
+     * Alias for findOrFail
+     */
+    public static function get(mixed $key = null): self
+    {
+        return self::findOrFail($key);
+    }
+
+    /**
+     * SELECT query
+     */
+    public function select(array $data = []): self
+    {
+        $this->resetQuery();
+        if (empty($data)) $data = $this->columns;
+        $select = implode(", ", array_values($data));
+        $this->query["mode"] = "select";
+        $this->query["select"] = $select;
+        return $this;
+    }
+
+    /**
+     * INSERT query
+     */
+    public function insert(array $data = []): self
+    {
+        $this->resetQuery();
+        $insert = implode(", ", array_keys($data));
+        $replacements = array_values($data);
+        $this->addQueryParams($replacements);
+        $this->query["mode"] = "insert";
+        $this->query["insert"] = $insert;
+        return $this;
+    }
+
+    /**
+     * UPDATE query
+     */
+    public function update(array $data = []): self
+    {
+        $this->resetQuery();
+        $columns = array_keys($data);
+        $update = array_map(fn($column) => "$column = ?", $columns);
+        $replacements = array_values($data);
+        $replacements[] = $this->key;
+        $this->addQueryParams($replacements);
+        $this->query["mode"] = "update";
+        $this->query["update"] = implode(", ", $update);
+        return $this;
+    }
+
+    /**
+     * DELETE query
+     */
+    public function delete(): self
+    {
+        $this->resetQuery();
+        $this->query["mode"] = "delete";
+        $this->addQueryParams([$this->key]);
+        return $this;
+    }
+
+    /**
+     * WHERE clause
+     */
+    public function where(array $data, ...$replacements): self
+    {
+        $where = implode(" AND ", $data);
+        $this->query["where"] = $where;
+        $this->addQueryParams($replacements);
+        return $this;
+    }
+
+    /**
+     * GROUP BY clause
+     */
+    public function groupBy(array $data): self
+    {
+        $where = implode(" AND ", $data);
+        $this->query["group_by"] = $where;
+        return $this;
+    }
+
+    /**
+     * HAVING clause
+     */
+    public function having(array $data, ...$replacements): self
+    {
+        $where = implode(" AND ", $data);
+        $this->query["having"] = $where;
+        $this->addQueryParams($replacements);
+        return $this;
+    }
+
+    /**
+     * ORDER BY clause
+     */
+    public function orderBy(string $column): self
+    {
+        $this->query["order_by"] = $column;
+        return $this;
+    }
+
+    /**
+     * SORT clause
+     */
+    public function sort(bool $asc = true): self
+    {
+        $this->query["sort"] = $asc ? "ASC" : "DESC";
+        return $this;
+    }
+
+    /**
+     * LIMIT clause
+     */
+    public function limit(int $limit): self
+    {
+        $this->query["limit"] = $limit;
+        return $this;
+    }
+
+    /**
+     * OFFSET clause
+     */
+    public function offset(int $offset): self
+    {
+        $this->query["offset"] = $offset;
+        return $this;
+    }
+
+    /**
+     * Explicity set query params
+     */
+    public function params(array $data): self
+    {
+        $this->query["params"] = $data;
+        return $this;
+    }
+
+    /**
+     * Return query
+     * @throws Error unknown query mode
+     */
+    public function getQuery(): string
+    {
+        $sql = match ($this->query["mode"]) {
+            "select" => $this->buildSelect(),
+            "update" => $this->buildUpdate(),
+            "insert" => $this->buildInsert(),
+            "delete" => $this->buildDelete(),
+            default => throw new Error("unknown query mode")
+        };
+        return trim($sql);
+    }
+
+    /**
+     * Get query params (? replacements)
+     */
+    public function getQueryParams(): array
+    {
+        return $this->query["params"];
+    }
+
+    /**
+     * Build SELECT query
+     */
+    private function buildSelect(): string
+    {
+        $select = $this->query["select"];
+        $where = $this->query["where"]
+            ? "WHERE " . $this->query["where"]
+            : '';
+        $group_by = $this->query["group_by"]
+            ? "GROUP BY " . $this->query["group_by"]
+            : '';
+        $having = $this->query["having"]
+            ? "HAVING " . $this->query["having"]
+            : '';
+        $order_by = $this->query["order_by"]
+            ? "ORDER BY " . $this->query["order_by"] . ' ' . $this->query["sort"]
+            : '';
+        $limit = $this->query["limit"]
+            ? "LIMIT " . $this->query["offset"] . ', ' . $this->query["limit"]
+            : '';
+
+        return sprintf(
+            "SELECT %s FROM `%s` %s %s %s %s %s",
+            $select,
+            $this->getTableName(),
+            $where,
+            $group_by,
+            $having,
+            $order_by,
+            $limit
+        );
+    }
+
+    /**
+     * Build INSERT query
+     */
+    private function buildInsert(): string
+    {
+        $insert = $this->query["insert"];
+        $insert_arr = explode(', ', $insert);
+        $placeholders = array_fill(0, count($insert_arr), "?");
+
+        return sprintf(
             "INSERT INTO `%s` (%s) VALUES (%s)",
-            $table_name,
-            $columns,
-            $values
+            $this->getTableName(),
+            $insert,
+            implode(",", $placeholders)
         );
-        return $sql;
     }
 
     /**
-     * Get the delete query
+     * Build UPDATE query
      */
-    private function deleteQuery(string $table_name, string $key_column): string
+    private function buildUpdate(): string
     {
-        $sql = sprintf(
-            "DELETE FROM `%s` WHERE %s = ?",
-            $table_name,
-            $key_column
+        $update = $this->query["update"];
+        return sprintf(
+            "UPDATE `%s` SET %s WHERE %s = ?",
+            $this->getTableName(),
+            $update,
+            $this->key_column,
         );
-        return $sql;
+    }
+
+    /**
+     * Build DELETE query
+     */
+    private function buildDelete(): string
+    {
+        return sprintf(
+            "DELETE FROM `%s` WHERE %s = ?",
+            $this->getTableName(),
+            $this->key_column,
+        );
+    }
+
+    /**
+     * Execute query
+     */
+    public function execute(): bool|PDOStatement
+    {
+        $query = $this->getQuery();
+        return db()->run($query, $this->query["params"]);
     }
 
     public function __isset(mixed $name): bool

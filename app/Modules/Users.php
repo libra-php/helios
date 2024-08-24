@@ -2,41 +2,30 @@
 
 namespace App\Modules;
 
-use App\Modules\Module;
-use Helios\View\View;
+use App\Models\User;
+use Helios\Module\Module;
 
 class Users extends Module
 {
-    public function configure(View $view)
+    protected string $model = User::class;
+
+    public function __construct()
     {
         $user = user();
 
-        /** SQL Table */
-        $view->sqlTable('users');
+        $this->addTable("ID", "id")
+            ->addTable("UUID", "uuid")
+            ->addTable("Name", "name")
+            ->addTable("Email", "email")
+            ->addTable("Created", "created_at");
 
-        /** Table definition (index view) */
-        $view->table("ID", "id")
-            ->table("UUID", "uuid")
-            ->table("Name", "name")
-            ->table("Email", "email")
-            ->table("Created", "created_at");
-
-        /** Filters */
-        $view->filterLink("Me", "id = $user->id")
+        $this->filterLink("Me", "id = $user->id")
             ->filterLink("Others", "id != $user->id")
             ->filterLink("All", "1=1");
 
-        /** Table formatting */
-        $view->tableFormat("created_at", "ago");
+        $this->formatTable("created_at", "ago");
 
-        /** Table searching */
-        $view->addSearch("name")
+        $this->addSearch("name")
             ->addSearch("email");
-
-        /** Form definition (edit & create view) */
-        $view->form("Name", "name")
-            ->form("Email", "email");
-
-        parent::configure($view);
     }
 }

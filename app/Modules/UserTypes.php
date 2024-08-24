@@ -2,30 +2,25 @@
 
 namespace App\Modules;
 
-use App\Modules\Module;
-use Helios\View\View;
+use App\Models\UserType;
+use Helios\Module\Module;
 
 class UserTypes extends Module
 {
+    protected string $model = UserType::class;
+
     protected array $rules = [
         "name" => ["required"],
         "permission_level" => ["required"],
     ];
 
-    public function configure(View $view)
+    public function __construct()
     {
-        $view->sqlTable('user_types');
+        $this->addTable("ID", "id")
+            ->addTable("Name", "name")
+            ->addTable("Permission Level", "permission_level")
+            ->addTable("Created", "created_at");
 
-        $view->table("ID", "id")
-            ->table("Name", "name")
-            ->table("Permission Level", "permission_level")
-            ->table("Created", "created_at");
-
-        $view->tableFormat("created_at", "ago");
-
-        $view->form("Name", "name")
-            ->form("Permission Level", "permission_level");
-
-        parent::configure($view);
+        $this->formatTable("created_at", "ago");
     }
 }

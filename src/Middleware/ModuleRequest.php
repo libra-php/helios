@@ -15,23 +15,15 @@ class ModuleRequest implements IMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $middleware = $request->get("route")?->getMiddleware();
-        $parameters = $request->get("route")?->getParameters();
+        $route = $request->get("route");
+        $middleware = $route?->getMiddleware();
+        $parameters = $route?->getParameters();
 
         if (key_exists("module", $parameters) && in_array("module", $middleware)) {
             // Fetch from db
             $module = Module::findByAttribute("path", $parameters["module"]);
             // The target module class is defined in class_name
-            if ($module && class_exists($module->class_name)) {
-                if (key_exists("id", $parameters)) {
-                    // See if module exists
-                    $exists = db()->fetch("SELECT * FROM {$module->sql_table} WHERE {$module->primary_key} = ?", $parameters['id']);
-                    if (!$exists) {
-                        // This module doesn't exist
-                        redirect(route("error.page-not-found"));
-                    }
-                }
-                // Store the module in the request
+            if ($module && class_exists($module->module_class)) {
                 $request->attributes->add(["module" => $module]);
             } else {
                 // The module doesn't seem to exist
@@ -44,4 +36,3 @@ class ModuleRequest implements IMiddleware
         return $response;
     }
 }
-

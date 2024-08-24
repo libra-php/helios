@@ -2,8 +2,6 @@
 
 namespace App\Modules;
 
-use App\Modules\Module;
+use Helios\Module\Module;
 
-class Audit extends Module
-{
-}
+class Audit extends Module {}
