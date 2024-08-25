@@ -19,10 +19,19 @@ final class SqlTest extends TestCase
 
         $sql = User::get()
             ->select(["id", "name", "email"])
-            ->where(["name LIKE ?"], "Alex%");
+            ->where(["name LIKE ?"], "Alex%")
+            ->orderBy("name")
+            ->ascending(false);
 
-        $this->assertSame("SELECT id, name, email FROM `users` WHERE name LIKE ?", $sql->getQuery());
+        $this->assertSame("SELECT id, name, email FROM `users` WHERE name LIKE ? ORDER BY name DESC", $sql->getQuery());
         $this->assertSame(["Alex%"], $sql->getQueryParams());
+
+        $sql = User::get()
+            ->select()
+            ->where(["permission_level > ?"], 3);
+
+        $this->assertSame("SELECT * FROM `users` WHERE permission_level > ?", $sql->getQuery());
+        $this->assertSame([3], $sql->getQueryParams());
     }
 
     public function testInsertQuery(): void
@@ -38,14 +47,14 @@ final class SqlTest extends TestCase
 
     public function testUpdateQuery(): void
     {
-        $sql = UserType::get(1)->update([
-            "name" => "blue",
-            "permission_level" => 15
+        $sql = User::get(1)->update([
+            "name" => "Claudio Sanchez",
+            "email" => "claudio@live.com"
         ]);
 
         // Note: the key is mixed, so the param for the primary key is a string
-        $this->assertSame("UPDATE `user_types` SET name = ?, permission_level = ? WHERE id = ?", $sql->getQuery());
-        $this->assertSame(["blue", 15, '1'], $sql->getQueryParams());
+        $this->assertSame("UPDATE `users` SET name = ?, email = ? WHERE id = ?", $sql->getQuery());
+        $this->assertSame(["Claudio Sanchez", "claudio@live.com", '1'], $sql->getQueryParams());
     }
 
     public function testDeleteQuery(): void
@@ -54,5 +63,10 @@ final class SqlTest extends TestCase
 
         $this->assertSame("DELETE FROM `user_types` WHERE id = ?", $sql->getQuery());
         $this->assertSame(['2'], $sql->getQueryParams());
+
+        // You must have an ID to delete
+        $sql = UserType::get()->delete();
+
+        $this->assertSame("DELETE FROM `user_types`", $sql->getQuery());
     }
 }

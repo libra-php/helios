@@ -3,6 +3,7 @@
 namespace Helios\Module;
 
 use App\Models\Session;
+use Error;
 use Helios\View\{Form, IView, Table};
 use PDO;
 
@@ -18,7 +19,7 @@ class Module
     private array $group_by = [];
     private array $having = [];
     private string $order_by = "";
-    private bool $ascending = true;
+    private string $sort = "ASC";
     private array $params = [];
     private array $filter_links = [];
     private array $searchable = [];
@@ -71,7 +72,7 @@ class Module
         $this->handlePage();
         $this->handlePerPage();
         $this->handleExportCsv();
-        $this->handleSort();
+        $this->handleOrderBy();
     }
 
     public function getRules(): array
@@ -123,7 +124,7 @@ class Module
             "searchable" => $this->searchable,
             "search_term" => $this->search_term,
             "order_by" => $this->order_by,
-            "ascending" => $this->ascending,
+            "sort" => $this->sort,
         ];
     }
 
@@ -205,9 +206,12 @@ class Module
         return $this;
     }
 
-    protected function ascending(bool $state): Module
+    protected function defaultSort(string $sort): Module
     {
-        $this->ascending = $state;
+        if (!in_array(strtoupper($sort), ["ASC", "DESC"])) {
+            throw new Error("incorrect sort");
+        }
+        $this->sort = $sort;
         return $this;
     }
 
@@ -222,14 +226,22 @@ class Module
         if (!isset($this->model)) return [];
 
         $page = max(($this->page - 1) * $this->per_page, 0);
+        // dump($this->model::search($this->table)
+        //     ->where($this->where)
+        //     ->groupBy($this->group_by)
+        //     ->having($this->having)
+        //     ->orderBy($this->order_by)
+        //     ->offset($page)
+        //     ->limit($this->per_page)
+        //     ->params($this->params)
+        //     ->getQuery());
 
-        $results = $this->model::get()
-            ->select($this->table)
+
+        $results = $this->model::search($this->table)
             ->where($this->where)
             ->groupBy($this->group_by)
             ->having($this->having)
-            ->orderBy($this->order_by)
-            ->sort($this->ascending)
+            ->orderBy([$this->order_by . ' ' . $this->sort])
             ->offset($page)
             ->limit($this->per_page)
             ->params($this->params)
@@ -249,8 +261,7 @@ class Module
 
     private function getTotalResults(): int
     {
-        return $this->model::get()
-            ->select($this->table)
+        return $this->model::search($this->table)
             ->where($this->where)
             ->groupBy($this->group_by)
             ->having($this->having)
@@ -355,21 +366,20 @@ class Module
         $this->setFilterLink($index);
     }
 
-    private function handleSort(): void
+    private function handleOrderBy(): void
     {
         if (request()->query->has("order_by")) {
             $order_by = request()->query->get("order_by");
         } else {
             $order_by = $this->getSession("order_by") ?? $this->model::get()->getKeyColumn();
         }
-        if (request()->query->has("ascending")) {
-            $ascending = request()->query->get("ascending") === "ASC";
+        if (request()->query->has("sort")) {
+            $sort = request()->query->get("sort");
         } else {
-            $ascending = $this->getSession("ascending") ?? $this->ascending;
+            $sort = $this->getSession("sort") ?? $this->sort;
         }
-
         $this->setOrderBy($order_by);
-        $this->setAscending($ascending);
+        $this->setSort($sort);
     }
 
     private function setPage(int $page): void
@@ -400,10 +410,10 @@ class Module
         $this->setSession("order_by", $order_by);
     }
 
-    private function setAscending(bool $state): void
+    private function setSort(string $sort): void
     {
-        $this->ascending = $state;
-        $this->setSession("ascending", $state);
+        $this->sort = $sort;
+        $this->setSession("sort", $sort);
     }
 
     private function setSearchTerm(string $term): void

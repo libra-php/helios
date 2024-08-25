@@ -13,6 +13,6 @@ class User extends Model
 
     public function type(): UserType
     {
-        return UserType::find($this->user_type_id);
+        return UserType::findOrFail($this->user_type_id);
     }
 }

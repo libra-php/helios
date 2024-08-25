@@ -10,5 +10,9 @@ class Audit extends Model
     {
         parent::__construct("audit", $key);
     }
-}
 
+    public function user(): User
+    {
+        return User::findOrFail($this->user_id);
+    }
+}

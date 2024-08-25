@@ -48,9 +48,9 @@
 		<tr>
 			{% for title,column in table %}
 			<th class="p-1" nowrap>
-				<a class="link-light" href="?order_by={{ column }}&ascending={% if filters.order_by == column and filters.ascending %}DESC{% elseif filters.order_by == column and not filters.ascending %}ASC{% else %}ASC{% endif %}">
+				<a class="link-light" href="?order_by={{ column }}&sort={% if filters.order_by == column and filters.sort == "ASC" %}DESC{% elseif filters.order_by == column and filters.sort == "DESC" %}ASC{% else %}ASC{% endif %}">
 					{{ title }}
-					{% if filters.order_by == column and filters.ascending %}▴{% elseif filters.order_by == column and not filters.ascending %}▾{% endif %}
+					{% if filters.order_by == column and filters.sort == "ASC" %}▴{% elseif filters.order_by == column and filters.sort == "DESC" %}▾{% endif %}
 				</a>
 			</th>
 			{% endfor %}

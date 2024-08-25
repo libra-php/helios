@@ -20,7 +20,7 @@ class Sessions extends Module
             ->addTable("Created", "created_at");
 
         // Set default order/sort
-        $this->defaultOrder("id")->ascending(false);
+        $this->defaultOrder("id")->defaultSort("DESC");
 
         // Format columns
         $this->formatTable("created_at", "ago");

@@ -2,7 +2,7 @@
 
 namespace Helios\View;
 
-use App\Models\Module as ModuleModel;
+use Helios\Database\QueryBuilder;
 use Helios\Module\Module;
 
 class View implements IView
@@ -41,7 +41,8 @@ class View implements IView
 
     private function buildBreadcrumbs(string $module_id, array $breadcrumbs = []): array
     {
-        $module = ModuleModel::get()->select()
+        $module = QueryBuilder::select()
+            ->from("modules")
             ->where(["id = ? AND enabled = 1"], $module_id)
             ->execute()
             ->fetch();
@@ -80,17 +81,18 @@ class View implements IView
     private function buildLinks(?int $parent_module_id = null): array
     {
         $user = user();
-        $module =  ModuleModel::get();
         if (is_null($parent_module_id)) {
-            $modules = $module->select()
+            $modules = QueryBuilder::select()
+                ->from("modules")
                 ->where(["parent_module_id IS NULL AND enabled = 1"])
-                ->orderBy("item_order")
+                ->orderBy(["item_order"])
                 ->execute()
                 ->fetchAll();
         } else {
-            $modules = $module->select()
+            $modules = QueryBuilder::select()
+                ->from("modules")
                 ->where(["parent_module_id = ? AND enabled = 1"], $parent_module_id)
-                ->orderBy("item_order")
+                ->orderBy(["item_order"])
                 ->execute()
                 ->fetchAll();
         }
