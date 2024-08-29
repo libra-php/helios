@@ -77,8 +77,8 @@ class Module
         $this->handleFilterLinks();
         $this->handlePage();
         $this->handlePerPage();
-        $this->handleExportCsv();
         $this->handleOrderBy();
+        $this->handleExportCsv();
     }
 
     public function hasEdit(): bool
