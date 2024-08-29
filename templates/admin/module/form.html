@@ -12,7 +12,7 @@
 	{% else %}
 	hx-post="/admin/{{ module.path }}"
 	{% endif %}>
-	{{ f.csrf()|raw }}
+	{{ csrf()|raw }}
 	{% for title,column in form  %}
 	<div class="d-flex align-items-center mb-1">
 		<div class="label truncate"><strong>{{ title }}</strong></div>

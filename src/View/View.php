@@ -7,7 +7,6 @@ use Helios\Module\Module;
 
 class View implements IView
 {
-    protected ?int $id = null;
     protected Module $module;
     private array $data;
     protected string $template = "/admin/module/view.html";
@@ -32,9 +31,9 @@ class View implements IView
         return [
             "view" => $this,
             "data" => $this->data,
-            "module" => request()->get("module"),
+            "module" => module(),
             "links" => $this->buildLinks(),
-            "breadcrumbs" => $this->getBreadcrumbs($this->id),
+            "breadcrumbs" => $this->getBreadcrumbs($this->module->getId()),
             "permissions" => []
         ];
     }
@@ -58,8 +57,8 @@ class View implements IView
 
     private function getBreadcrumbs(?string $id): array
     {
-        $module = request()->get("module");
-        $route = request()->get("route");
+        $module = module();
+        $route = route();
         $path = $module->path;
         $breadcrumbs = $this->buildBreadcrumbs($module->id);
         if ($route->getName() !== "module.index") {

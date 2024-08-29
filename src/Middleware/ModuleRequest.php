@@ -27,7 +27,7 @@ class ModuleRequest implements IMiddleware
                 $request->attributes->add(["module" => $module]);
             } else {
                 // The module doesn't seem to exist
-                redirect(route("error.page-not-found"));
+                redirect(findRoute("error.page-not-found"));
             }
         }
 

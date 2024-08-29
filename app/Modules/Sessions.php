@@ -12,18 +12,18 @@ class Sessions extends Module
     public function __construct()
     {
         // Configure table
-        $this->addTable("ID", "id")
-            ->addTable("URI", "request_uri")
-            ->addTable("IP", "INET_NTOA(ip) as ip")
-            ->addTable("User", "(SELECT users.name FROM users WHERE users.id = user_id) as user")
-            ->addTable("Module", "(SELECT modules.title FROM modules WHERE modules.id = module_id) as module")
-            ->addTable("Created", "created_at");
+        $this->table("ID", "id")
+            ->table("URI", "request_uri")
+            ->table("IP", "INET_NTOA(ip) as ip")
+            ->table("User", "(SELECT users.name FROM users WHERE users.id = user_id) as user")
+            ->table("Module", "(SELECT modules.title FROM modules WHERE modules.id = module_id) as module")
+            ->table("Created", "created_at");
 
         // Set default order/sort
         $this->defaultOrder("id")->defaultSort("DESC");
 
         // Format columns
-        $this->formatTable("created_at", "ago");
+        $this->format("created_at", "ago");
 
         // Filters
         $user = user();

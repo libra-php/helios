@@ -4,13 +4,16 @@
  * Helper functions
  */
 
-use Helios\Application;
-use App\Http\Kernel as HttpKernel;
 use App\Console\Kernel as ConsoleKernel;
+use App\Http\Kernel as HttpKernel;
 use App\Models\User;
+use App\Models\Module;
 use Helios\Admin\Auth;
+use Helios\Application;
+use Helios\Web\Controller;
 use Helios\Session\Session;
 use Lunar\Connection\MySQL;
+use StellarRouter\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
@@ -90,7 +93,7 @@ function env(string $name, $default = "")
 /**
  * Get application configuration settings
  * @param string $name name of the configuration attribute
- * @return mixed configuration settings
+ * @return mixed configuration settinns
  */
 function config(string $name): mixed
 {
@@ -137,6 +140,30 @@ function request(): Request
 }
 
 /**
+ * Return current route
+ */
+function route(): ?Route
+{
+    return request()->get("route");
+}
+
+/**
+ * Return web controller
+ */
+function controller(): ?Controller
+{
+    return request()->get("controller");
+}
+
+/**
+ * Return admin module
+ */
+function module(): ?Module
+{
+    return request()->get("module");
+}
+
+/**
  * Return app session
  */
 function session(): Session
@@ -155,7 +182,7 @@ function user(): ?User
 /**
  * Find a route by name
  */
-function route(string $name, ...$replacements): ?string
+function findRoute(string $name, ...$replacements): ?string
 {
     $router = app()->router();
     $route = $router->findRouteByName($name);

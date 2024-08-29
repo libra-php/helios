@@ -13,19 +13,19 @@ class Users extends Module
     {
         $user = user();
 
-        $this->addTable("ID", "id")
-            ->addTable("UUID", "uuid")
-            ->addTable("Name", "name")
-            ->addTable("Email", "email")
-            ->addTable("Created", "created_at");
+        $this->table("ID", "id")
+            ->table("UUID", "uuid")
+            ->table("Name", "name")
+            ->table("Email", "email")
+            ->table("Created", "created_at");
 
         $this->filterLink("Me", "id = $user->id")
             ->filterLink("Others", "id != $user->id")
             ->filterLink("All", "1=1");
 
-        $this->formatTable("created_at", "ago");
+        $this->format("created_at", "ago");
 
-        $this->addSearch("name")
-            ->addSearch("email");
+        $this->search("name")
+            ->search("email");
     }
 }

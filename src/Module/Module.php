@@ -30,7 +30,9 @@ class Module
     private int $total_pages = 1;
     private array $page_options = [5, 10, 25, 50, 100, 200, 500];
     private int $total_results = 0;
+    private ?int $id = null;
     private array $form = [];
+    private array $control = [];
 
     public function view(IView $view, ?int $id = null): string
     {
@@ -42,6 +44,7 @@ class Module
             $view->setData($this->getTableData());
         } else if ($view instanceof Form) {
             if (!is_null($id)) {
+                $this->id = $id;
                 $view->setData($this->getFormData($id));
             } else {
                 $view->setData($this->getFormData());
@@ -56,11 +59,11 @@ class Module
             "request_uri" => request()->getUri(),
             "ip" => ip2long(request()->getClientIp()),
             "user_id" => user()->id,
-            "module_id" => request()->get("module")->id
+            "module_id" => module()->id
         ]);
 
         // Render view
-        return template($view->getTemplate(), $view->getTemplateData());
+        return controller()?->render($view->getTemplate(), $view->getTemplateData());
     }
 
     public function processRequest(): void
@@ -73,6 +76,11 @@ class Module
         $this->handlePerPage();
         $this->handleExportCsv();
         $this->handleOrderBy();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
     }
 
     public function getRules(): array
@@ -93,6 +101,11 @@ class Module
     public function getFormat(): array
     {
         return $this->format;
+    }
+
+    public function getControl(): array
+    {
+        return $this->control;
     }
 
     public function create() {}
@@ -137,7 +150,7 @@ class Module
 
     protected function setSession(string $name, mixed $value): void
     {
-        $module = request()->get("module");
+        $module = module();
         $module_session = session()->get($module->path) ?? [];
         $module_session[$name] = $value;
         session()->set($module->path, $module_session);
@@ -145,20 +158,24 @@ class Module
 
     protected function hasSession(string $name): bool
     {
-        $module = request()->get("module");
-        $module_session = session()->get($module->path) ?? [];
+        $module_session = session()->get(module()->path) ?? [];
         return key_exists($name, $module_session);
     }
 
 
     protected function getSession(string $name): mixed
     {
-        $module = request()->get("module");
-        $module_session = session()->get($module->path) ?? [];
+        $module_session = session()->get(module()->path) ?? [];
         return key_exists($name, $module_session) ? $module_session[$name] : null;
     }
 
-    protected function addTable(string $header, string $attribute): Module
+    protected function form(string $header, string $attribute): Module
+    {
+        $this->form[$header] = $attribute;
+        return $this;
+    }
+
+    protected function table(string $header, string $attribute): Module
     {
         $this->table[$header] = $attribute;
         return $this;
@@ -170,7 +187,7 @@ class Module
         return $this;
     }
 
-    protected function addSearch(string $column): Module
+    protected function search(string $column): Module
     {
         $this->searchable[] = $column;
         return $this;
@@ -215,9 +232,15 @@ class Module
         return $this;
     }
 
-    protected function formatTable(string $column, mixed $callback)
+    protected function format(string $column, mixed $callback)
     {
         $this->format[$column] = $callback;
+        return $this;
+    }
+
+    protected function control(string $column, mixed $callback)
+    {
+        $this->control[$column] = $callback;
         return $this;
     }
 
@@ -226,16 +249,6 @@ class Module
         if (!isset($this->model)) return [];
 
         $page = max(($this->page - 1) * $this->per_page, 0);
-        // dump($this->model::search($this->table)
-        //     ->where($this->where)
-        //     ->groupBy($this->group_by)
-        //     ->having($this->having)
-        //     ->orderBy($this->order_by)
-        //     ->offset($page)
-        //     ->limit($this->per_page)
-        //     ->params($this->params)
-        //     ->getQuery());
-
 
         $results = $this->model::search($this->table)
             ->where($this->where)
@@ -254,9 +267,17 @@ class Module
     {
         if (!isset($this->model)) return [];
 
-        $form = $this->getForm();
+        if ($id) {
+            $key = $this->model::get()->getKeyColumn();
+            $this->where("$key = ?", $id);
+            return $this->model::search($this->form)
+                ->where($this->where)
+                ->params($this->params)
+                ->execute()->fetch(PDO::FETCH_ASSOC);
+        }
 
-        dd($form);
+        $columns = $this->model::get()->getColumns();
+        return array_fill_keys($columns, null);
     }
 
     private function getTotalResults(): int
@@ -304,7 +325,7 @@ class Module
     private function handleExportCsv(): void
     {
         if (request()->query->has("export_csv")) {
-            $file_name = request()->get("module")->path . "_" . time() . '.csv';
+            $file_name = module()->path . "_" . time() . '.csv';
             header("Content-Type: text/csv");
             header("Content-Disposition: attachment; filename=$file_name");
             $fp = fopen("php://output", "wb");

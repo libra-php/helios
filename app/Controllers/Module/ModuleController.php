@@ -14,8 +14,7 @@ class ModuleController extends Controller
 
     public function __construct()
     {
-        $module = request()->get("module");
-        $module_class = $module->module_class;
+        $module_class = module()->module_class;
         if ($module_class && class_exists($module_class)) {
             $this->module = new $module_class;
         }

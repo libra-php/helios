@@ -16,11 +16,13 @@ class UserTypes extends Module
 
     public function __construct()
     {
-        $this->addTable("ID", "id")
-            ->addTable("Name", "name")
-            ->addTable("Permission Level", "permission_level")
-            ->addTable("Created", "created_at");
+        $this->table("ID", "id")
+            ->table("Name", "name")
+            ->table("Permission Level", "permission_level")
+            ->table("Created", "created_at")
+            ->format("created_at", "ago");
 
-        $this->formatTable("created_at", "ago");
+        $this->form("Name", "name")
+            ->form("Permission Level", "permission_level");
     }
 }

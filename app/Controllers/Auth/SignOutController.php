@@ -11,6 +11,6 @@ class SignOutController
     public function index()
     {
         Auth::signOut();
-        redirect(route("sign-in.index"));
+        redirect(findRoute("sign-in.index"));
     }
 }

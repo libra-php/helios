@@ -53,6 +53,7 @@ class Http implements IKernel
             $routePayload = $this->route->getPayload();
             if ($handlerClass) {
                 $class = new $handlerClass($this->request);
+                request()->attributes->add(["controller" => $class]);
                 $content = $class->$handlerMethod(...$routeParameters);
             } elseif ($routePayload) {
                 $content = $routePayload(...$routeParameters);
@@ -70,7 +71,7 @@ class Http implements IKernel
             return new Response($content, Response::HTTP_OK);
         }
         // Page not found
-        redirect(route("error.page-not-found"));
+        redirect(findRoute("error.page-not-found"));
     }
 
     private function initRouter()

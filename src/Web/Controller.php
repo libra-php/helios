@@ -18,29 +18,8 @@ class Controller
     public function render(string $path, array $data = []): string
     {
         $twig = container()->get(Environment::class);
-        // Request error array
         $data["request_errors"] = $this->request_errors;
         $data["nonce"] = session()->get("nonce");
-        // Template functions
-        $data["f"] = new class {
-            public function dump(...$args): void
-            {
-                dump(...$args);
-            }
-            public function route(string $name, ...$replacements): ?string
-            {
-                return route($name, ...$replacements);
-            }
-            public function csrf(): string
-            {
-                $token = session()->get("csrf_token");
-                return template("components/csrf.html", ["token" => $token]);
-            }
-            public function old(string $name): string
-            {
-                return request()->request->get($name, "");
-            }
-        };
         return $twig->render($path, $data);
     }
 

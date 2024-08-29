@@ -18,7 +18,7 @@ class RouteAuth implements IMiddleware
         $middleware = $request->get("route")?->getMiddleware();
 
         if ($middleware && in_array("auth", $middleware) && !$this->userAuth($request)) {
-            redirect(route("sign-in.index"));
+            redirect(findRoute("sign-in.index"));
         }
 
         $response = $next($request);

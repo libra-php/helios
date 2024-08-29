@@ -2,10 +2,10 @@
 
 {% block content %}
 <section id="sign-in" class="h-100">
-	<form hx-post="{{ f.route('sign-in.index') }}" hx-swap="outerHTML" class="d-flex flex-column align-items-center justify-content-center h-100">
-		{{ f.csrf()|raw }}
+	<form hx-post="{{ route('sign-in.index') }}" hx-swap="outerHTML" class="d-flex flex-column align-items-center justify-content-center h-100">
+		{{ csrf()|raw }}
 		<div class="form-floating mb-3 w-100">
-			<input type="input" class="form-control w-100" name="email" id="email" placeholder="" value="{{ f.old('email') }}">
+			<input type="input" class="form-control w-100" name="email" id="email" placeholder="" value="{{ old('email') }}">
 			<label for="email">Email address</label>
 			{% include 'errors/validation.html' with {'validate': 'email'} %}
 		</div>
