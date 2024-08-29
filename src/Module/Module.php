@@ -9,6 +9,9 @@ use PDO;
 
 class Module
 {
+    protected bool $has_edit = true;
+    protected bool $has_create = true;
+    protected bool $has_delete = true;
     protected bool $export_csv = true;
     protected string $model;
     protected array $rules = [];
@@ -76,6 +79,21 @@ class Module
         $this->handlePerPage();
         $this->handleExportCsv();
         $this->handleOrderBy();
+    }
+
+    public function hasEdit(): bool
+    {
+        return $this->has_edit;
+    }
+
+    public function hasCreate(): bool
+    {
+        return $this->has_create;
+    }
+
+    public function hasDelete(): bool
+    {
+        return $this->has_delete;
     }
 
     public function getId(): ?int
@@ -446,7 +464,7 @@ class Module
                 $clause[] = "($column LIKE ?)";
             }
             $replacements = array_fill(0, count($clause), "%{$this->search_term}%");
-            $this->where(implode(" OR ", $clause), ...$replacements);
+            $this->having(implode(" OR ", $clause), ...$replacements);
         }
         $this->setSession("search_term", $this->search_term);
     }

@@ -11,6 +11,8 @@ class Sessions extends Module
 
     public function __construct()
     {
+        $this->has_create = $this->has_edit = $this->has_delete = false;
+
         // Configure table
         $this->table("ID", "id")
             ->table("URI", "request_uri")
@@ -19,8 +21,12 @@ class Sessions extends Module
             ->table("Module", "(SELECT modules.title FROM modules WHERE modules.id = module_id) as module")
             ->table("Created", "created_at");
 
+        $this->search("user")
+            ->search("module");
+
         // Set default order/sort
-        $this->defaultOrder("id")->defaultSort("DESC");
+        $this->defaultOrder("id")
+            ->defaultSort("DESC");
 
         // Format columns
         $this->format("created_at", "ago");

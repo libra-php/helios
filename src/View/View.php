@@ -34,7 +34,11 @@ class View implements IView
             "module" => module(),
             "links" => $this->buildLinks(),
             "breadcrumbs" => $this->getBreadcrumbs($this->module->getId()),
-            "permissions" => []
+            "permissions" => [
+                "has_edit" => $this->module->hasEdit(),
+                "has_create" => $this->module->hasCreate(),
+                "has_delete" => $this->module->hasDelete(),
+            ]
         ];
     }
 
