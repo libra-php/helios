@@ -37,6 +37,16 @@ class Table extends View
         return Format::span($column, $value, $options);
     }
 
+    public function hasRowEdit(?int $id): bool
+    {
+        return $this->module->hasRowEdit($id);
+    }
+
+    public function hasRowDelete(?int $id): bool
+    {
+        return $this->module->hasRowDelete($id);
+    }
+
     public function getTemplateData(): array
     {
         return [

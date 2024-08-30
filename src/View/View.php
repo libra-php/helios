@@ -29,6 +29,8 @@ class View implements IView
     public function getTemplateData(): array
     {
         return [
+            "id" => $this->module->getId(),
+            "key_column" => $this->module->getKeyColumn(),
             "view" => $this,
             "data" => $this->data,
             "module" => module(),

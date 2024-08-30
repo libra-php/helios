@@ -64,9 +64,14 @@
 			<td class="p-1" nowrap>{{ view.format(column, value)|raw }}</td>
 			{% endfor %}
 			<td class="text-end">
-				{% if permissions.has_edit %}
-				<form hx-get="/admin/{{ module.path }}/{{ row.id }}">
+				{% if view.has_row_edit(row[key_column]) %}
+				<form hx-get="/admin/{{ module.path }}/{{ row[key_column] }}">
 					<button type="submit" class="btn btn-sm btn-primary">Edit</button>
+				</form>
+				{% endif %}
+				{% if view.has_row_delete(row[key_column]) %}
+				<form hx-delete="/admin/{{ module.path }}/{{ row[key_column] }}">
+					<button type="submit" class="btn btn-sm btn-danger">Delete</button>
 				</form>
 				{% endif %}
 			</td>

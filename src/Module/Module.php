@@ -86,6 +86,11 @@ class Module
         return $this->has_edit;
     }
 
+    public function hasRowEdit(?int $id): bool
+    {
+        return $this->hasEdit();
+    }
+
     public function hasCreate(): bool
     {
         return $this->has_create;
@@ -96,9 +101,19 @@ class Module
         return $this->has_delete;
     }
 
+    public function hasRowDelete(?int $id): bool
+    {
+        return $this->hasDelete();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getKeyColumn(): string
+    {
+        return $this->model::get()->getKeyColumn();
     }
 
     public function getRules(): array
