@@ -83,7 +83,7 @@ class Module
 
     public function hasEdit(): bool
     {
-        return $this->has_edit;
+        return !empty($this->form) && $this->has_edit;
     }
 
     public function hasRowEdit(?int $id): bool
@@ -93,12 +93,12 @@ class Module
 
     public function hasCreate(): bool
     {
-        return $this->has_create;
+        return !empty($this->form) && $this->has_create;
     }
 
     public function hasDelete(): bool
     {
-        return $this->has_delete;
+        return !empty($this->table) && $this->has_delete;
     }
 
     public function hasRowDelete(?int $id): bool
@@ -113,6 +113,7 @@ class Module
 
     public function getKeyColumn(): string
     {
+        if (!isset($this->model)) return '';
         return $this->model::get()->getKeyColumn();
     }
 

@@ -63,15 +63,15 @@
 			{% for column,value in row %}
 			<td class="p-1" nowrap>{{ view.format(column, value)|raw }}</td>
 			{% endfor %}
-			<td class="text-end">
-				{% if view.has_row_edit(row[key_column]) %}
+			<td class="text-end d-flex justify-content-end pe-1" nowrap>
+				{% if view.hasRowEdit(row[key_column]) %}
 				<form hx-get="/admin/{{ module.path }}/{{ row[key_column] }}">
 					<button type="submit" class="btn btn-sm btn-primary">Edit</button>
 				</form>
 				{% endif %}
-				{% if view.has_row_delete(row[key_column]) %}
+				{% if view.hasRowDelete(row[key_column]) %}
 				<form hx-delete="/admin/{{ module.path }}/{{ row[key_column] }}">
-					<button type="submit" class="btn btn-sm btn-danger">Delete</button>
+					<button type="submit" class="btn btn-sm btn-danger ms-1">Delete</button>
 				</form>
 				{% endif %}
 			</td>

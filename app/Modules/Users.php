@@ -28,4 +28,11 @@ class Users extends Module
         $this->search("name")
             ->search("email");
     }
+
+    public function hasRowDelete(?int $id): bool
+    {
+        // You may not delete your own user from here
+        // Delete from profile
+        return $id != user()->id;
+    }
 }
