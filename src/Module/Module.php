@@ -4,6 +4,7 @@ namespace Helios\Module;
 
 use App\Models\Session;
 use Error;
+use Helios\Model\Model;
 use Helios\View\{Form, IView, Table};
 use PDO;
 
@@ -142,11 +143,28 @@ class Module
         return $this->control;
     }
 
-    public function create() {}
+    public function create(array $data): ?Model
+    {
+        return $this->model::new($data);
+    }
 
-    public function save() {}
+    public function save(int $id, array $data): bool
+    {
+        $model = $this->model::find($id);
+        if ($model) {
+            return $model->save($data);
+        }
+        return false;
+    }
 
-    public function delete() {}
+    public function delete(int $id): bool
+    {
+        $model = $this->model::find($id);
+        if ($model) {
+            return $model->destroy();
+        }
+        return false;
+    }
 
     public function getPagination(): array
     {

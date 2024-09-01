@@ -70,7 +70,8 @@
 				</form>
 				{% endif %}
 				{% if view.hasRowDelete(row[key_column]) %}
-				<form hx-delete="/admin/{{ module.path }}/{{ row[key_column] }}">
+				<form hx-delete="/admin/{{ module.path }}/{{ row[key_column] }}" hx-confirm="Are you sure you want to delete this record?">
+                    {{ csrf()|raw }}
 					<button type="submit" class="btn btn-sm btn-danger ms-1">Delete</button>
 				</form>
 				{% endif %}

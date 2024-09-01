@@ -213,9 +213,27 @@ class Model implements IModel
     public function save(array $attributes): bool
     {
         $payload = !empty($attributes) ? $attributes : $this->getParameters();
+        $params = [...$attributes, $this->key_column => $this->key];
         $result = QueryBuilder::update($payload)
             ->table($this->table_name)
-            ->params(array_values($this->attributes))
+            ->where(["$this->key_column = ?"], $this->key)
+            ->params(array_values($params))
+            ->execute();
+        if ($result) {
+            $this->hydrate();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Delete model from db
+     */
+    public function destroy(): bool
+    {
+        $result = QueryBuilder::delete()
+            ->from($this->table_name)
+            ->where(["$this->key_column = ?"], $this->key)
             ->execute();
         if ($result) {
             $this->hydrate();

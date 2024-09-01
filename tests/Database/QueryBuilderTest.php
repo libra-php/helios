@@ -75,7 +75,7 @@ final class QueryBuilderTest extends TestCase
 
     public function testDeleteQuery()
     {
-        $qb = QueryBuilder::delete(["enabled" => 1])->from("users")->where(["id = ?"], 99);
+        $qb = QueryBuilder::delete()->from("users")->where(["id = ?"], 99);
         $this->assertSame("delete", $qb->getMode());
 
         $this->assertSame("DELETE FROM `users` WHERE id = ?", $qb->getQuery());

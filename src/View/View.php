@@ -67,7 +67,10 @@ class View implements IView
         $route = route();
         $path = $module->path;
         $breadcrumbs = $this->buildBreadcrumbs($module->id);
-        if ($route->getName() !== "module.index") {
+        if (
+            $route->getName() !== "module.index" &&
+            $route->getName() !== "module.destroy"
+        ) {
             if ($id) {
                 $breadcrumbs[] = (object) [
                     "path" => "$path/$id",

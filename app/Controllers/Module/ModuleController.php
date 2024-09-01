@@ -45,7 +45,12 @@ class ModuleController extends Controller
     {
         $valid = $this->validateRequest($this->module->getRules());
         if ($valid) {
-            dd('wip');
+            $result = $this->module->create((array)$valid);
+            if ($result) {
+                return $this->edit($module, $result->getKey());
+            } else {
+                // TODO: set alert
+            }
         }
         return $this->create($module);
     }
@@ -56,7 +61,12 @@ class ModuleController extends Controller
     {
         $valid = $this->validateRequest($this->module->getRules());
         if ($valid) {
-            dd('wip');
+            $result = $this->module->save($id, (array)$valid);
+            if ($result) {
+                // TODO: set alert
+            } else {
+                // TODO: set alert
+            }
         }
         return $this->edit($module, $id);
     }
@@ -64,6 +74,12 @@ class ModuleController extends Controller
     #[Delete("/{module}/{id}", "module.destroy")]
     public function destroy(string $module, int $id)
     {
+        $result = $this->module->delete($id);
+        if ($result) {
+            // TODO: set alert
+        } else {
+            // TODO: set alert
+        }
         return $this->index($module);
     }
 }
