@@ -23,4 +23,9 @@ class Modules extends Module
 
         $this->format("created_at", "ago");
     }
+
+    public function hasDeletePermission(?int $id): bool
+    {
+        return $id > 8;
+    }
 }

@@ -3,6 +3,9 @@
 {% block top  %}
 {% include 'components/breadcrumbs.html' %}
 <h2 id="title" class="fw-bold mb-2">{{ module.title }}</h2>
+{% if flash|length > 0 %}
+{% include "components/flash.html" %}
+{% endif %}
 {% endblock %}
 
 {% block middle %}

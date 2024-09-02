@@ -39,12 +39,12 @@ class Table extends View
 
     public function hasRowEdit(?int $id): bool
     {
-        return $this->module->hasRowEdit($id);
+        return $this->module->hasEditPermission($id);
     }
 
     public function hasRowDelete(?int $id): bool
     {
-        return $this->module->hasRowDelete($id);
+        return $this->module->hasDeletePermission($id);
     }
 
     public function getTemplateData(): array

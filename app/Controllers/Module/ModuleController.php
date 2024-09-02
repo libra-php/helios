@@ -2,10 +2,12 @@
 
 namespace App\Controllers\Module;
 
+use Exception;
 use Helios\Module\Module;
-use Helios\View\{Table, Form};
+use Helios\View\{Flash, Table, Form};
 use Helios\Web\Controller;
 use StellarRouter\{Get, Post, Put, Patch, Delete, Group};
+use Symfony\Component\HttpFoundation\Response;
 
 #[Group(prefix: "/admin", middleware: ['auth', 'module'])]
 class ModuleController extends Controller
@@ -29,6 +31,10 @@ class ModuleController extends Controller
     #[Get("/{module}/create", "module.create")]
     public function create(string $module)
     {
+        if (!$this->module->hasCreate()) {
+            http_response_code(403);
+            exit();
+        }
         header("HX-Push-Url: /admin/$module/create");
         return $this->module->view(new Form);
     }
@@ -36,6 +42,10 @@ class ModuleController extends Controller
     #[Get("/{module}/{id}", "module.edit")]
     public function edit(string $module, int $id)
     {
+        if (!($this->module->hasEdit() && $this->module->hasEditPermission($id))) {
+            http_response_code(403);
+            exit();
+        }
         header("HX-Push-Url: /admin/$module/$id");
         return $this->module->view(new Form, $id);
     }
@@ -43,14 +53,24 @@ class ModuleController extends Controller
     #[Post("/{module}", "module.store")]
     public function store(string $module)
     {
-        $valid = $this->validateRequest($this->module->getRules());
-        if ($valid) {
-            $result = $this->module->create((array)$valid);
-            if ($result) {
-                return $this->edit($module, $result->getKey());
-            } else {
-                // TODO: set alert
+        if (!$this->module->hasCreate()) {
+            http_response_code(403);
+            exit();
+        }
+        try {
+            $valid = $this->validateRequest($this->module->getRules());
+            if ($valid) {
+                $result = $this->module->create((array)$valid);
+                if ($result && $result->getKey()) {
+                    Flash::add("success", "Successfully created new record");
+                    return $this->edit($module, $result->getKey());
+                } else {
+                    Flash::add("warning", "Failed to create new record");
+                }
             }
+        } catch (Exception $ex) {
+            Flash::add("danger", "Fatal error");
+            error_log("fatal error: module.store => " . $ex->getMessage());
         }
         return $this->create($module);
     }
@@ -59,14 +79,23 @@ class ModuleController extends Controller
     #[Put("/{module}/{id}", "module.update.put")]
     public function update(string $module, int $id)
     {
-        $valid = $this->validateRequest($this->module->getRules());
-        if ($valid) {
-            $result = $this->module->save($id, (array)$valid);
-            if ($result) {
-                // TODO: set alert
-            } else {
-                // TODO: set alert
+        if (!($this->module->hasEdit() && $this->module->hasEditPermission($id))) {
+            http_response_code(403);
+            exit();
+        }
+        try {
+            $valid = $this->validateRequest($this->module->getRules());
+            if ($valid) {
+                $result = $this->module->save($id, (array)$valid);
+                if ($result) {
+                    Flash::add("success", "Successfully updated record");
+                } else {
+                    Flash::add("warning", "Failed to update record");
+                }
             }
+        } catch (Exception $ex) {
+            Flash::add("danger", "Fatal error");
+            error_log("fatal error: module.update => " . $ex->getMessage());
         }
         return $this->edit($module, $id);
     }
@@ -74,11 +103,20 @@ class ModuleController extends Controller
     #[Delete("/{module}/{id}", "module.destroy")]
     public function destroy(string $module, int $id)
     {
-        $result = $this->module->delete($id);
-        if ($result) {
-            // TODO: set alert
-        } else {
-            // TODO: set alert
+        if (!($this->module->hasDelete() && $this->module->hasDeletePermission($id))) {
+            http_response_code(403);
+            exit();
+        }
+        try {
+            $result = $this->module->delete($id);
+            if ($result) {
+                Flash::add("success", "Successfully deleted record");
+            } else {
+                Flash::add("warning", "Failed to delete record");
+            }
+        } catch (Exception $ex) {
+            Flash::add("danger", "Fatal error");
+            error_log("fatal error: module.destroy => " . $ex->getMessage());
         }
         return $this->index($module);
     }

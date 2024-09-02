@@ -2,6 +2,7 @@
 
 namespace Helios\Web;
 
+use Helios\View\Flash;
 use Twig\Environment;
 
 class Controller
@@ -10,6 +11,8 @@ class Controller
     protected array $error_messages = [
         "required" => "Required field",
         "email" => "Must be a valid email address",
+        "min" => "Value is less than minimum",
+        "max" => "Value is greater than maximum",
     ];
 
     /**
@@ -19,6 +22,10 @@ class Controller
     {
         $twig = container()->get(Environment::class);
         $data["request_errors"] = $this->request_errors;
+        if (count($this->request_errors) > 0) {
+            Flash::add("warning", "Validation error");
+        }
+        $data["flash"] = Flash::get();
         $data["nonce"] = session()->get("nonce");
         return $twig->render($path, $data);
     }
@@ -46,10 +53,15 @@ class Controller
             }
 
             foreach ($ruleset as $rule) {
+                $_rule = explode('|', $rule);
+                $rule = $_rule[0];
+                $rule_arg = $_rule[1] ?? null;
                 // Is request value valid?
                 $result = match (strtolower($rule)) {
                     'required' => trim($value) != '',
                     'email' =>  filter_var($value, FILTER_VALIDATE_EMAIL),
+                    'min' => $value > $rule_arg,
+                    'max' => $value < $rule_arg,
                 };
 
                 if ($result) {

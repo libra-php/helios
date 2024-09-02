@@ -29,7 +29,7 @@ class Users extends Module
             ->search("email");
     }
 
-    public function hasRowDelete(?int $id): bool
+    public function hasDeletePermission(?int $id): bool
     {
         // You may not delete your own user from here
         // Delete from profile

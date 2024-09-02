@@ -4,6 +4,9 @@
 <img src="/images/menu.png" id="mobile-toggle" onClick="showSidebar()" class="d-block d-sm-none" />
 {% include 'components/breadcrumbs.html' %}
 <h2 id="title" class="fw-bold mb-2">{{ module.title }}</h2>
+{% if flash|length > 0 %}
+{% include "components/flash.html" %}
+{% endif %}
 <section id="actions" class="d-flex py-2">
 	{% if permissions.has_edit %}
 	<div id="create-new" class="me-1">
@@ -59,11 +62,12 @@
 	</thead>
 	<tbody>
 		{% for row in data %}
-		<tr>
+		<tr valign="middle">
 			{% for column,value in row %}
 			<td class="p-1" nowrap>{{ view.format(column, value)|raw }}</td>
 			{% endfor %}
-			<td class="text-end d-flex justify-content-end pe-1" nowrap>
+			<td class="p-1" nowrap>
+                <div class="w-100 d-flex align-items-center justify-content-end">
 				{% if view.hasRowEdit(row[key_column]) %}
 				<form hx-get="/admin/{{ module.path }}/{{ row[key_column] }}">
 					<button type="submit" class="btn btn-sm btn-primary">Edit</button>
@@ -75,6 +79,7 @@
 					<button type="submit" class="btn btn-sm btn-danger ms-1">Delete</button>
 				</form>
 				{% endif %}
+                </div>
 			</td>
 		</tr>
 		{% endfor %}

@@ -11,7 +11,7 @@ class UserTypes extends Module
 
     protected array $rules = [
         "name" => ["required"],
-        "permission_level" => ["required"],
+        "permission_level" => ["required", "min|0", "max|10"],
     ];
 
     public function __construct()
