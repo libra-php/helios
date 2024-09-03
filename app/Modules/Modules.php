@@ -22,6 +22,19 @@ class Modules extends Module
             ->filterLink("All", "1=1");
 
         $this->format("created_at", "ago");
+
+        $this->form("Enabled", "enabled")
+            ->form("Title", "title")
+            ->form("Module Class", "module_class")
+            ->form("Item Order", "item_order")
+            ->form("Max Permission Level", "max_permission_level")
+            ->form("Parent Module", "parent_module_id");
+
+        $this->control("enabled", "check")
+            ->control("module_class", "select")
+            ->control("item_order", "number")
+            ->control("max_permission_level", "select")
+            ->control("parent_module_id", "select");
     }
 
     public function hasDeletePermission(?int $id): bool

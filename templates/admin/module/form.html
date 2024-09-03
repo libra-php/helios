@@ -19,7 +19,7 @@
 	{{ csrf()|raw }}
 	{% for title,column in form  %}
 	<div class="d-flex align-items-center mb-1">
-		<div class="label truncate"><strong>{{ title }}</strong></div>
+        <div class="label fw-bold truncate" title="{{ title }}">{{ title }}</div>
 		<div class="flex-grow-1">
 			{{ view.control(column, data[column])|raw }}
 			{% include 'errors/validation.html' with {'validate': column} %}
