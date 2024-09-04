@@ -13,6 +13,7 @@ class Controller
         "email" => "Must be a valid email address",
         "min" => "Value is less than minimum",
         "max" => "Value is greater than maximum",
+        "unique" => "Value must be unique",
     ];
 
     /**
@@ -58,10 +59,15 @@ class Controller
                 $rule_arg = $_rule[1] ?? null;
                 // Is request value valid?
                 $result = match (strtolower($rule)) {
-                    'required' => trim($value) != '',
+                    'required' => !is_null($value) && trim($value) != '',
                     'email' =>  filter_var($value, FILTER_VALIDATE_EMAIL),
-                    'min' => $value > $rule_arg,
-                    'max' => $value < $rule_arg,
+                    'url' => filter_var($value, FILTER_VALIDATE_URL),
+                    'ip' => filter_var($value, FILTER_VALIDATE_IP),
+                    'int' => filter_var($value, FILTER_VALIDATE_INT),
+                    'float' => filter_var($value, FILTER_VALIDATE_FLOAT),
+                    'min' => $value >= $rule_arg,
+                    'max' => $value <= $rule_arg,
+                    'unique' => !db()->fetch("SELECT 1 FROM $rule_arg WHERE $key = ?", $value),
                 };
 
                 if ($result) {

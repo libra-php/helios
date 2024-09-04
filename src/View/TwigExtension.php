@@ -33,8 +33,8 @@ class TwigExtension extends AbstractExtension
         $token = session()->get("csrf_token");
         return template("components/csrf.html", ["token" => $token]);
     }
-    public function old(string $name): string
+    public function old(string $name, mixed $default = ''): string
     {
-        return request()->request->get($name, "");
+        return request()->request->get($name, $default);
     }
 }

@@ -41,11 +41,11 @@ class Module
 
     public function view(IView $view, ?int $id = null): string
     {
-        // Process incoming request
-        $this->processRequest();
 
         // Set view data
         if ($view instanceof Table) {
+            // Process incoming request
+            $this->processRequest();
             $view->setData($this->getTableData());
         } else if ($view instanceof Form) {
             if (!is_null($id)) {
@@ -74,6 +74,7 @@ class Module
     public function processRequest(): void
     {
         if (!isset($this->model)) return;
+        // Table view only
         $this->handleSearch();
         $this->handleFilterCount();
         $this->handleFilterLinks();
@@ -326,24 +327,33 @@ class Module
         return $results;
     }
 
-    private function getFormData(?int $id = null): array
+    private function getFormData(?int $id = null): bool|array
     {
         if (!isset($this->model)) return [];
 
         if ($id) {
+            // Edit
             $key = $this->model::get()->getKeyColumn();
             $this->where("$key = ?", $id);
-            return $this->model::search($this->form)
+            $data = $this->model::search($this->form)
                 ->where($this->where)
                 ->params($this->params)
                 ->execute()->fetch(PDO::FETCH_ASSOC);
+        } else {
+            // Create
+            $columns = $this->model::get()->getColumns();
+            $data = array_fill_keys($columns, null);
+            foreach ($data as $column => $value) {
+                if (isset($this->defaults[$column])) {
+                    $data[$column] = $this->defaults[$column];
+                }
+            }
         }
-
-        $columns = $this->model::get()->getColumns();
-        $data = array_fill_keys($columns, null);
+        // If the value is present in the request, use it
         foreach ($data as $column => $value) {
-            if (isset($this->defaults[$column])) {
-                $data[$column] = $this->defaults[$column];
+            $old = request()->request->get($column);
+            if ($old) {
+                $data[$column] = $old;
             }
         }
         return $data;
