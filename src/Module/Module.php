@@ -37,6 +37,7 @@ class Module
     private ?int $id = null;
     private array $form = [];
     private array $control = [];
+    private array $defaults = [];
 
     public function view(IView $view, ?int $id = null): string
     {
@@ -145,6 +146,11 @@ class Module
 
     public function create(array $data): ?Model
     {
+        foreach ($data as $column => $value) {
+            if ($value === '') {
+                $data[$column] = null;
+            }
+        }
         return $this->model::new($data);
     }
 
@@ -296,6 +302,11 @@ class Module
         return $this;
     }
 
+    protected function default(string $column, mixed $value)
+    {
+        $this->defaults[$column] = $value;
+    }
+
     private function getTableData(): array
     {
         if (!isset($this->model)) return [];
@@ -329,7 +340,13 @@ class Module
         }
 
         $columns = $this->model::get()->getColumns();
-        return array_fill_keys($columns, null);
+        $data = array_fill_keys($columns, null);
+        foreach ($data as $column => $value) {
+            if (isset($this->defaults[$column])) {
+                $data[$column] = $this->defaults[$column];
+            }
+        }
+        return $data;
     }
 
     private function getTotalResults(): int

@@ -70,7 +70,7 @@ class ModuleController extends Controller
             }
         } catch (Exception $ex) {
             Flash::add("danger", "Fatal error");
-            error_log("fatal error: module.store => " . $ex->getMessage());
+            error_log("fatal error: module.store => " . print_r($ex, true));
         }
         return $this->create($module);
     }
@@ -95,7 +95,7 @@ class ModuleController extends Controller
             }
         } catch (Exception $ex) {
             Flash::add("danger", "Fatal error");
-            error_log("fatal error: module.update => " . $ex->getMessage());
+            error_log("fatal error: module.update => " . print_r($ex, true));
         }
         return $this->edit($module, $id);
     }
@@ -116,7 +116,7 @@ class ModuleController extends Controller
             }
         } catch (Exception $ex) {
             Flash::add("danger", "Fatal error");
-            error_log("fatal error: module.destroy => " . $ex->getMessage());
+            error_log("fatal error: module.destroy => " . print_r($ex, true));
         }
         return $this->index($module);
     }

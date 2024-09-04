@@ -11,3 +11,8 @@ const hideSidebar = () => {
 	sidebar.classList.remove("active");
 	mobile_toggle.classList.remove("hidden");
 }
+
+const toggleCheckbox = (e) => {
+    const hidden = e.currentTarget.previousElementSibling;
+    hidden.value = e.currentTarget.checked ? 1 : 0;
+}

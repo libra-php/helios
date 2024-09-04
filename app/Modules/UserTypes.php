@@ -19,10 +19,21 @@ class UserTypes extends Module
         $this->table("ID", "id")
             ->table("Name", "name")
             ->table("Permission Level", "permission_level")
-            ->table("Created", "created_at")
-            ->format("created_at", "ago");
+            ->table("Created", "created_at");
+
+        $this->format("created_at", "ago");
 
         $this->form("Name", "name")
             ->form("Permission Level", "permission_level");
+    }
+
+    public function hasEditPermission(?int $id): bool
+    {
+        return $id > 3;
+    }
+
+    public function hasDeletePermission(?int $id): bool
+    {
+        return $id > 3;
     }
 }
