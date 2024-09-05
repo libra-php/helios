@@ -219,6 +219,7 @@ class Module
                     "tag" => "DELETE",
                 ]);
             }
+            return $result;
         }
         return false;
     }
