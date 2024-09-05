@@ -197,6 +197,7 @@ class Module
                     }
                 }
             }
+            return $result;
         }
         return false;
     }
