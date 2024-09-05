@@ -2,6 +2,7 @@
 
 namespace Helios\Module;
 
+use App\Models\Audit;
 use App\Models\Session;
 use Error;
 use Helios\Model\Model;
@@ -152,14 +153,50 @@ class Module
                 $data[$column] = null;
             }
         }
-        return $this->model::new($data);
+        $result =  $this->model::new($data);
+        if ($result) {
+            foreach ($result->getAttributes() as $column => $value) {
+                // Audit the new record
+                Audit::new([
+                    "user_id" => user()->id,
+                    "table_name" => $this->model::get()->getTableName(),
+                    "table_id" => $result->id,
+                    "field" => $column,
+                    "old_value" => null,
+                    "new_value" => $value,
+                    "tag" => "CREATE",
+                ]);
+            }
+        }
+        return $result;
     }
 
     public function save(int $id, array $data): bool
     {
-        $model = $this->model::find($id);
-        if ($model) {
-            return $model->save($data);
+        foreach ($data as $column => $value) {
+            if ($value === '') {
+                $data[$column] = null;
+            }
+        }
+        $old = $this->model::find($id);
+        if ($old) {
+            $result = $this->model::find($id)->save($data);
+            if ($result) {
+                foreach ($data as $column => $value) {
+                    if ($old->$column != $value) {
+                        // Audit the update
+                        Audit::new([
+                            "user_id" => user()->id,
+                            "table_name" => $old->getTableName(),
+                            "table_id" => $id,
+                            "field" => $column,
+                            "old_value" => $old->$column,
+                            "new_value" => $value,
+                            "tag" => "UPDATE",
+                        ]);
+                    }
+                }
+            }
         }
         return false;
     }
@@ -168,7 +205,19 @@ class Module
     {
         $model = $this->model::find($id);
         if ($model) {
-            return $model->destroy();
+            $result = $model->destroy();
+            if ($result) {
+                // Audit the delete
+                Audit::new([
+                    "user_id" => user()->id,
+                    "table_name" => $this->model::get()->getTableName(),
+                    "table_id" => $id,
+                    "field" => $this->model::get()->getKeyColumn(),
+                    "old_value" => $id,
+                    "new_value" => null,
+                    "tag" => "DELETE",
+                ]);
+            }
         }
         return false;
     }

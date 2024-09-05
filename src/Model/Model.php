@@ -55,7 +55,7 @@ class Model implements IModel
     /**
      * Get the model's parameters
      */
-    public function getParameters(): array
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -212,7 +212,7 @@ class Model implements IModel
      */
     public function save(array $attributes): bool
     {
-        $payload = !empty($attributes) ? $attributes : $this->getParameters();
+        $payload = !empty($attributes) ? $attributes : $this->getAttributes();
         $params = [...$attributes, $this->key_column => $this->key];
         $result = QueryBuilder::update($payload)
             ->table($this->table_name)
