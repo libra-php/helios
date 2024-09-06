@@ -7,6 +7,7 @@ $src = $root . "src/";
 $migrations = $root . "migrations/";
 $templates = $root . "templates/";
 $storage = $root . "storage/";
+$jobs = $root . "jobs/";
 
 return [
     "root" => $root,
@@ -15,6 +16,7 @@ return [
     "models" => $app . "Models/",
     "modules" => $app . "Modules/",
     "storage" => $storage,
+    "jobs" => $jobs,
     "logs" => $storage . "logs/",
     "templates" => $templates,
     "template-cache" => $storage . "templates/.cache/",
