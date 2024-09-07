@@ -1,6 +1,6 @@
 <?php
 /**
-* Will automatically remove logs older than 7 days
+* Automatically remove old logs
 */
 
 require_once __DIR__ . "/../vendor/autoload.php";

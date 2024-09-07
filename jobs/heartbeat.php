@@ -1,7 +1,6 @@
 <?php
 /**
 * Application heartbeat
-* Runs every minute
 * Output logged to storage/logs
 */
 
