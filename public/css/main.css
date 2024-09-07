@@ -191,6 +191,19 @@ a:active {
 	width: 150px;
 }
 
+/**
+ * Audit
+ */
+.diff-add {
+    background: #d7fcd9
+}
+.diff-remove {
+    background: #fcdcd7
+}
+
+/**
+ * Flash
+ */
 .flash.alert {
 	margin-bottom: 5px;
 }
@@ -220,6 +233,9 @@ a:active {
 	fill: #4772ff;
 }
 
+/**
+ * Utils
+ */
 .truncate {
     text-overflow: ellipsis;
 	white-space: nowrap;
