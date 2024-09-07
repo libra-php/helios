@@ -13,15 +13,6 @@ Helios is a lightweight, flexible PHP framework tailored for building modern web
 
 Helios is a **hobby project** developed for learning and experimentation purposes. While it provides a robust foundation for web application development, it is not designed or tested for **production environments** or **mission-critical** use cases. For production-grade applications, consider using established frameworks with proven security and performance track records.
 
-## Getting Started
-
-To get started with Helios, clone the repository and follow the setup instructions provided in the [Docker Environment](./docs/DOCKER.md) guide.
-
-```bash
-git clone https://github.com/libra-php/helios.git
-cd helios
-```
-
 ## Documentation
 
 - [Docker Environment](./docs/DOCKER.md)
