@@ -27,12 +27,12 @@ class UserTypes extends Module
             ->form("Permission Level", "permission_level");
     }
 
-    public function hasEditPermission(?int $id): bool
+    public function hasEditPermission(int $id): bool
     {
         return $id > 3;
     }
 
-    public function hasDeletePermission(?int $id): bool
+    public function hasDeletePermission(int $id): bool
     {
         return $id > 3;
     }

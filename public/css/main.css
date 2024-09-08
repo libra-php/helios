@@ -45,11 +45,6 @@ a:active {
 	border: 3px solid #ffffff;
 }
 
-.form-control:focus {
-	box-shadow: none;
-	background-color: #deffd6;
-}
-
 #sign-in {
 	max-width: 364px;
 	margin: auto;

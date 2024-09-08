@@ -18,12 +18,16 @@
 	{% endif %}>
 	{{ csrf()|raw }}
 	{% for title,column in form  %}
-	<div class="d-flex align-items-center mb-1">
-        <div class="label fw-bold truncate" title="{{ title }}">{{ title }}</div>
-		<div class="flex-grow-1">
-			{{ view.control(column, data[column])|raw }}
-			{% include 'errors/validation.html' with {'validate': column} %}
-		</div>
+	<div class="row m-0">
+        <div class="col-sm-2 form-left truncate">
+            <span class="label fw-bold truncate" title="{{ title }}">{{ title }}</span>
+        </div>
+        <div class="col-sm-10 form-right">
+            <div class="control-wrapper mb-2">
+                {{ view.control(column, data[column])|raw }}
+                {% include 'errors/validation.html' with {'validate': column} %}
+            </div>
+        </div>
 	</div>
 	{% endfor %}
 	<div class="m-0 mt-2 d-flex">

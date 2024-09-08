@@ -32,6 +32,10 @@ class Form extends View
             ) {
                 // The control callback is the value
                 return Control::$callback($column, $value, $options);
+            } else if (is_array($callback)) {
+                // If the callback is an array, then we assume it is a select control
+                $options['options'] = $callback;
+                return Control::select($column, $value, $options);
             }
         }
         return Control::input($column, $value, $options);

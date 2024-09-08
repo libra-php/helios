@@ -90,7 +90,7 @@ class Module
         return !empty($this->form) && $this->has_edit;
     }
 
-    public function hasEditPermission(?int $id): bool
+    public function hasEditPermission(int $id): bool
     {
         return $this->hasEdit();
     }
@@ -105,7 +105,7 @@ class Module
         return !empty($this->table) && $this->has_delete;
     }
 
-    public function hasDeletePermission(?int $id): bool
+    public function hasDeletePermission(int $id): bool
     {
         return $this->hasDelete();
     }

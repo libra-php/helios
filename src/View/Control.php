@@ -28,4 +28,14 @@ class Control
         ]);
         return $hidden . $checkbox;
     }
+
+    public static function select(string $column, mixed $value, array $options)
+    {
+        return template("components/control/select.html", [
+            "class" => "form-select control",
+            "column" => $column,
+            "value" => $value,
+            ...$options
+        ]);
+    }
 }
