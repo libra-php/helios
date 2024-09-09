@@ -11,17 +11,20 @@ class Modules extends Module
 {
     protected string $model = ModuleModel::class;
 
-    protected array $rules = [
-        "enabled" => [],
-        "title" => ["required"],
-        "module_class" => [],
-        "item_order" => [],
-        "max_permission_level" => [],
-        "parent_module_id" => [],
-    ];
-
     public function __construct()
     {
+        // Custom error message
+        controller()->addErrorMessage("module_class", "Module class must exist");
+
+        $this->rules = [
+            "enabled" => [],
+            "title" => ["required"],
+            "module_class" => [fn($value) => class_exists($value)],
+            "item_order" => [],
+            "max_permission_level" => [],
+            "parent_module_id" => [],
+        ];
+
         $this->table("ID", "id")
             ->table("Enabled", "enabled")
             ->table("Title", "title")

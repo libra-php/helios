@@ -53,7 +53,6 @@ class Http implements IKernel
             $routePayload = $this->route->getPayload();
             if ($handlerClass) {
                 $class = new $handlerClass($this->request);
-                request()->attributes->add(["controller" => $class]);
                 $content = $class->$handlerMethod(...$routeParameters);
             } elseif ($routePayload) {
                 $content = $routePayload(...$routeParameters);
