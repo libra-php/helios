@@ -90,7 +90,8 @@ class Controller
             }
 
             // Empty rulesets are valid
-            if (empty($ruleset)) {
+            $is_required = in_array("required", $ruleset);
+            if (empty($ruleset) || (!$is_required && !$value)) {
                 $validated[$key] = $value;
                 continue;
             }
@@ -101,50 +102,9 @@ class Controller
                     $rule = $_rule[0];
                     $rule_arg = $_rule[1] ?? null;
                     // Is request value valid?
-                    $result = match (strtolower($rule)) {
-                        'required' => !is_null($value) && trim($value) !== '',
-                        'email' => filter_var($value, FILTER_VALIDATE_EMAIL),
-                        'url' => filter_var($value, FILTER_VALIDATE_URL),
-                        'ip' => filter_var($value, FILTER_VALIDATE_IP),
-                        'int' => filter_var($value, FILTER_VALIDATE_INT),
-                        'float' => filter_var($value, FILTER_VALIDATE_FLOAT),
-                        'mac_address' => filter_var($value, FILTER_VALIDATE_MAC),
-                        'min' => is_numeric($value) && $value >= $rule_arg,
-                        'max' => is_numeric($value) && $value <= $rule_arg,
-                        'min_length' => is_string($value) && strlen($value) >= $rule_arg,
-                        'max_length' => is_string($value) && strlen($value) <= $rule_arg,
-                        'unique' => !db()->fetch("SELECT 1 FROM $rule_arg WHERE $key = ?", [$value]),
-                        'regex' => preg_match($rule_arg, $value),
-                        'in' => in_array($value, (array)$rule_arg),
-                        'not_in' => !in_array($value, (array)$rule_arg),
-                        'alpha_num' => ctype_alnum($value), // alpha numeric
-                        'alpha' => ctype_alpha($value), // alpha only
-                        'date' => strtotime($value) !== false,
-                        'json' => is_string($value) && is_array(json_decode($value, true)) && (json_last_error() == JSON_ERROR_NONE),
-                        'boolean' => is_bool($value) || in_array(strtolower($value), ['true', 'false', '1', '0', 1, 0], true),
-                        'numeric' => is_numeric($value),
-                        'phone' => preg_match('/^[\+0-9\s\-\(\)]+$/', $value), // basic phone number
-                        'even' => is_numeric($value) && $value % 2 === 0,
-                        'odd' => is_numeric($value) && $value % 2 !== 0,
-                        'starts_with' => str_starts_with($value, $rule_arg),
-                        'ends_with' => str_ends_with($value, $rule_arg),
-                        'credit_card' => preg_match('/^[0-9]{13,19}$/', $value),
-                        'digits' => ctype_digit($value), // only digits
-                        'uuid' => preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $value),
-                        'postal_code' => preg_match('/^[A-Z0-9]{3,10}$/i', $value), // canada
-                        'palindrome' => strrev($value) === $value,
-                        'uppercase' => ctype_upper($value),
-                        'lowercase' => ctype_lower($value),
-                        'hex_color' => preg_match('/^#?([a-f0-9]{6}|[a-f0-9]{3})$/i', $value),
-                        'divisible_by' => is_numeric($value) && $value % $rule_arg === 0,
-                        'greater_than' => is_numeric($value) && $value > $rule_arg,
-                        'less_than' => is_numeric($value) && $value < $rule_arg,
-                        'date_format' => date_create_from_format($rule_arg, $value) !== false,
-                        'timezone' => in_array($value, timezone_identifiers_list()),
-                        'multiple_of' => is_numeric($value) && fmod($value, $rule_arg) == 0,
-                        default => throw new InvalidArgumentException("Validation rule '$rule' is not supported."),
-                    };
+                    $result = $this->validate($key, $rule, $value, $rule_arg);
                 } elseif (is_callable($rule)) {
+                    // The callback determines the result
                     $result = $rule($value);
                 }
 
@@ -164,6 +124,53 @@ class Controller
         }
 
         return $valid ? (object)$validated : false;
+    }
+
+    public function validate(string $key, string $rule, ?string $value = null, ?string $rule_arg = null): bool
+    {
+        return match (strtolower($rule)) {
+            'required' => !is_null($value) && trim($value) !== '',
+            'email' => filter_var($value, FILTER_VALIDATE_EMAIL),
+            'url' => filter_var($value, FILTER_VALIDATE_URL),
+            'ip' => filter_var($value, FILTER_VALIDATE_IP),
+            'int' => filter_var($value, FILTER_VALIDATE_INT),
+            'float' => filter_var($value, FILTER_VALIDATE_FLOAT),
+            'mac_address' => filter_var($value, FILTER_VALIDATE_MAC),
+            'min' => is_numeric($value) && $value >= $rule_arg,
+            'max' => is_numeric($value) && $value <= $rule_arg,
+            'min_length' => is_string($value) && strlen($value) >= $rule_arg,
+            'max_length' => is_string($value) && strlen($value) <= $rule_arg,
+            'unique' => !db()->fetch("SELECT 1 FROM $rule_arg WHERE $key = ?", $value),
+            'regex' => preg_match($rule_arg, $value),
+            'in' => in_array($value, (array)$rule_arg),
+            'not_in' => !in_array($value, (array)$rule_arg),
+            'alpha_num' => ctype_alnum($value), // alpha numeric
+            'alpha' => ctype_alpha($value), // alpha only
+            'date' => strtotime($value) !== false,
+            'json' => is_string($value) && is_array(json_decode($value, true)) && (json_last_error() == JSON_ERROR_NONE),
+            'boolean' => is_bool($value) || in_array(strtolower($value), ['true', 'false', '1', '0', 1, 0], true),
+            'numeric' => is_numeric($value),
+            'phone' => preg_match('/^[\+0-9\s\-\(\)]+$/', $value), // basic phone number
+            'even' => is_numeric($value) && $value % 2 === 0,
+            'odd' => is_numeric($value) && $value % 2 !== 0,
+            'starts_with' => str_starts_with($value, $rule_arg),
+            'ends_with' => str_ends_with($value, $rule_arg),
+            'credit_card' => preg_match('/^[0-9]{13,19}$/', $value),
+            'digits' => ctype_digit($value), // only digits
+            'uuid' => preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $value),
+            'postal_code' => preg_match('/^[A-Z0-9]{3,10}$/i', $value), // canada
+            'palindrome' => strrev($value) === $value,
+            'uppercase' => ctype_upper($value),
+            'lowercase' => ctype_lower($value),
+            'hex_color' => preg_match('/^#?([a-f0-9]{6}|[a-f0-9]{3})$/i', $value),
+            'divisible_by' => is_numeric($value) && $value % $rule_arg === 0,
+            'greater_than' => is_numeric($value) && $value > $rule_arg,
+            'less_than' => is_numeric($value) && $value < $rule_arg,
+            'date_format' => date_create_from_format($rule_arg, $value) !== false,
+            'timezone' => in_array($value, timezone_identifiers_list()),
+            'multiple_of' => is_numeric($value) && fmod($value, $rule_arg) == 0,
+            default => throw new InvalidArgumentException("Validation rule '$rule' is not supported."),
+        };
     }
 
     public function addRequestError(string $field, string $message)
