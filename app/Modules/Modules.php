@@ -6,7 +6,6 @@ use App\Models\Module as ModuleModel;
 use Composer\ClassMapGenerator\ClassMapGenerator;
 use Helios\Module\Module;
 use Helios\View\Control;
-use PDO;
 
 class Modules extends Module
 {
