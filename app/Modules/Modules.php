@@ -25,7 +25,9 @@ class Modules extends Module
         $this->table("ID", "id")
             ->table("Enabled", "enabled")
             ->table("Title", "title")
-            ->table("Access Level", "(SELECT name FROM user_types WHERE permission_level = max_permission_level) as max_permission")
+            ->table("Access Level", "(SELECT name 
+                FROM user_types 
+                WHERE permission_level = max_permission_level) as max_permission")
             ->table("Created", "created_at");
 
         $this->filterLink("Root", "parent_module_id IS NULL")

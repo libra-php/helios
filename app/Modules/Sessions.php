@@ -17,8 +17,12 @@ class Sessions extends Module
         $this->table("ID", "id")
             ->table("URI", "request_uri")
             ->table("IP", "INET_NTOA(ip) as ip")
-            ->table("User", "(SELECT users.name FROM users WHERE users.id = user_id) as user")
-            ->table("Module", "(SELECT modules.title FROM modules WHERE modules.id = module_id) as module")
+            ->table("User", "(SELECT users.name 
+                FROM users 
+                WHERE users.id = user_id) as user")
+            ->table("Module", "(SELECT modules.title 
+                FROM modules 
+                WHERE modules.id = module_id) as module")
             ->table("Created", "created_at");
 
         $this->search("user")

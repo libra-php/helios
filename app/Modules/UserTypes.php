@@ -28,7 +28,8 @@ class UserTypes extends Module
 
         $this->control("permission_level", "number");
 
-        $max_permission = db()->var("SELECT max(permission_level)+1 FROM user_types");
+        $max_permission = db()->var("SELECT max(permission_level)+1 
+            FROM user_types");
         $this->default("permission_level", $max_permission);
     }
 

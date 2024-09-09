@@ -14,7 +14,9 @@ class Audit extends Module
         $this->has_create = $this->has_edit = $this->has_delete = false;
 
         $this->table("ID", "id")
-            ->table("User", "(SELECT name FROM users WHERE id = user_id) as user")
+            ->table("User", "(SELECT name 
+                FROM users 
+                WHERE id = user_id) as user")
             ->table("Table", "table_name")
             ->table("Table ID", "table_id")
             ->table("Field", "field")
