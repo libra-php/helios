@@ -18,13 +18,18 @@ class UserTypes extends Module
     {
         $this->table("ID", "id")
             ->table("Name", "name")
-            ->table("Permission Level", "permission_level")
+            ->table("Access Level", "permission_level")
             ->table("Created", "created_at");
 
         $this->format("created_at", "ago");
 
         $this->form("Name", "name")
-            ->form("Permission Level", "permission_level");
+            ->form("Access Level", "permission_level");
+
+        $this->control("permission_level", "number");
+
+        $max_permission = db()->var("SELECT max(permission_level)+1 FROM user_types");
+        $this->default("permission_level", $max_permission);
     }
 
     public function hasEditPermission(int $id): bool

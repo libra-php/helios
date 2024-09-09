@@ -42,7 +42,8 @@ class Modules extends Module
             ->form("Access Level", "max_permission_level")
             ->form("Parent Module", "parent_module_id");
 
-        $this->control("enabled", "checkbox")
+        $this->control("enabled", "switch")
+            ->control("item_order", "number")
             ->control("module_class", function ($column, $value, $options) {
                 $modules_path = config("paths.modules");
                 $map = ClassMapGenerator::createMap($modules_path);
@@ -62,6 +63,7 @@ class Modules extends Module
                 FROM user_types 
                 ORDER BY name"));
 
+        $this->default("enabled", 1);
         $this->default("item_order", 0);
     }
 

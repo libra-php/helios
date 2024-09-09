@@ -1,5 +1,11 @@
-<select id="{{ id }}" class="{{ class }}" title="{{ title }}" value="{{ value }}" name="{{ column }}"
-    onchange="{{ onchange }}" {{ attrs }}>
+<select 
+    id="{{ id }}" 
+    class="{{ class }}" 
+    title="{{ title }}" 
+    value="{{ value }}" 
+    name="{{ column }}"
+    {% if onchange %}onchange="{{ onchange }}"{% endif %}
+    {{ attrs }}>
     <option>Please select an option</option>
     {% for option in options %}
     {% set option_value = option.value ?? option[value] %}

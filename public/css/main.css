@@ -113,8 +113,14 @@ a:active {
 
 #app #module-content #top #mobile-toggle {
 	position: absolute;
-	top: 12px;
-	right: 10px;
+	top: 14px;
+	right: 14px;
+    opacity: 0.6;
+    height: 20px;
+}
+
+#app #module-content #top #mobile-toggle:hover {
+    opacity: 1;
 }
 
 #app #module-content #top #title {

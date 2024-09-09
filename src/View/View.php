@@ -79,7 +79,7 @@ class View implements IView
             } else {
                 $breadcrumbs[] = (object) [
                     "path" => "$path/create",
-                    "title" => "Create",
+                    "title" => "Create New",
                 ];
             }
         }
