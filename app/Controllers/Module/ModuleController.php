@@ -7,7 +7,6 @@ use Helios\Module\Module;
 use Helios\View\{Flash, Table, Form};
 use Helios\Web\Controller;
 use StellarRouter\{Get, Post, Put, Patch, Delete, Group};
-use Symfony\Component\HttpFoundation\Response;
 
 #[Group(prefix: "/admin", middleware: ['auth', 'module'])]
 class ModuleController extends Controller

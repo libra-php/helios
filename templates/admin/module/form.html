@@ -6,7 +6,9 @@
 {% if flash|length > 0 %}
 {% include "components/flash.html" %}
 {% endif %}
+{% endblock %}
 
+{% block middle %}
 <form class="view-form"
     method="POST"
 	{% if id %}
@@ -15,29 +17,25 @@
 	hx-post="/admin/{{ module.path }}"
 	{% endif %}>
 	{{ csrf()|raw }}
-{% endblock %}
-
-{% block middle %}
-{% for title,column in form  %}
-<div class="row m-0">
-    <div class="col-sm-2 form-left truncate">
-        <span class="label fw-bold truncate" title="{{ title }}">{{ title }}</span>
-    </div>
-    <div class="col-sm-10 form-right">
-        <div class="control-wrapper mb-2">
-            {{ view.control(column, data[column])|raw }}
-            {% include 'errors/validation.html' with {'validate': column} %}
+	{% for title,column in form  %}
+	<div class="row m-0">
+        <div class="col-sm-2 form-left truncate">
+            <span class="label fw-bold truncate" title="{{ title }}">{{ title }}</span>
         </div>
-    </div>
-</div>
-{% endfor %}
-{% endblock %}
-
-{% block bottom  %}
+        <div class="col-sm-10 form-right">
+            <div class="control-wrapper mb-2">
+                {{ view.control(column, data[column])|raw }}
+                {% include 'errors/validation.html' with {'validate': column} %}
+            </div>
+        </div>
+	</div>
+	{% endfor %}
 	<div class="m-0 mt-2 d-flex">
 		<button class="btn btn-success" type="submit">{% if id %}Save{% else %}Create{% endif %}</button>
         <a class="btn btn-warning ms-2 text-dark text-decoration-none" href="/admin/{{ module.path }}">Cancel</a>
 	</div>
 </form>
+{% endblock %}
 
+{% block bottom  %}
 {% endblock %}
