@@ -9,13 +9,13 @@ class UserTypes extends Module
 {
     protected string $model = UserType::class;
 
-    protected array $rules = [
-        "name" => ["required"],
-        "permission_level" => ["required", "min|0", "max|10", "unique|user_types"],
-    ];
-
     public function __construct()
     {
+        $this->rules = [
+            "name" => ["required"],
+            "permission_level" => ["required", "min|0", "max|10", "unique|user_types"],
+        ];
+
         $this->table("ID", "id")
             ->table("Name", "name")
             ->table("Access Level", "permission_level")
