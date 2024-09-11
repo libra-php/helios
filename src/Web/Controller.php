@@ -8,7 +8,14 @@ use Twig\Environment;
 
 class Controller
 {
+    /**
+     * Request errors from failed validation
+     */
     protected array $request_errors = [];
+
+    /**
+     * Validation error messages
+     */
     protected array $error_messages = [
         'required' => 'Required field',
         'email' => 'Must be a valid email address',
@@ -62,6 +69,8 @@ class Controller
 
     /**
      * Render a twig template
+     * @param string $path of template
+     * @param array $data for template
      */
     public function render(string $path, array $data = []): string
     {
@@ -85,6 +94,8 @@ class Controller
 
     /**
      * Validate the request
+     * @param array $rules for validating request
+     * @param ?int $id edit
      */
     public function validateRequest(array $rules, ?int $id = null): object|false
     {
@@ -99,17 +110,20 @@ class Controller
                 $ruleset = explode("|", $ruleset);
             }
 
-            // Empty rulesets are valid
             $is_required = in_array("required", $ruleset);
-            if (empty($ruleset) || (!$is_required && !$value)) {
+            // Empty rulesets are valid OR 
+            // It is not required in the request and value is null
+            if (empty($ruleset) || (!$is_required && (!$value || $value === 'NULL'))) {
                 $validated[$key] = $value;
                 continue;
             }
 
+            // Check each rule
             foreach ($ruleset as $rule) {
                 if (is_string($rule) && $rule) {
                     $_rule = explode('|', $rule);
                     $rule = $_rule[0];
+                    // The rule might have an argument
                     $rule_arg = $_rule[1] ?? null;
                     // Is request value valid?
                     $result = $this->validate($key, $rule, $value, $rule_arg);
@@ -138,6 +152,13 @@ class Controller
         return $valid ? (object)$validated : false;
     }
 
+    /**
+     * Test a request key with a validation rule
+     * @param string $key in request
+     * @param string $rule validation
+     * @param ?string $value from request
+     * @param ?string $rule_arg optional argument
+     */
     public function validate(string $key, string $rule, ?string $value = null, ?string $rule_arg = null): bool
     {
         return match (strtolower($rule)) {
@@ -187,13 +208,23 @@ class Controller
         };
     }
 
-    public function addRequestError(string $field, string $message)
+    /**
+     * Add request validation error
+     * @param string $key in request
+     * @param string $message explains validation failure
+     */
+    public function addRequestError(string $key, string $message)
     {
-        if (trim($message) != '') $this->request_errors[$field][] = $message;
+        if (trim($message) != '') $this->request_errors[$key][] = $message;
     }
 
-    public function addErrorMessage(string $field, string $message)
+    /**
+     * Add validation error message
+     * @param string $key in request
+     * @param string $message explains validation failure
+     */
+    public function addErrorMessage(string $key, string $message)
     {
-        if (trim($message) != '') $this->error_messages[$field] = $message;
+        if (trim($message) != '') $this->error_messages[$key] = $message;
     }
 }

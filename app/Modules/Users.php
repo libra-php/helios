@@ -13,7 +13,7 @@ class Users extends Module
 
     public function __construct()
     {
-        controller()->addErrorMessage("regex", "Password must contain: 1 uppercase, 1 number, and special symbol character");
+        controller()->addErrorMessage("regex", "Must contain: 1 uppercase, 1 number, and 1 symbol");
         $this->rules = [
             "name" => ["required"],
             "email" => ["required", function($value) {
@@ -49,12 +49,14 @@ class Users extends Module
         $this->form("Name", "name")
             ->form("Email", "email")
             ->form("User Type", "user_type_id")
-            ->form("Password", "password")
+            ->form("Password", "'' as password")
             ->form("Password (again)", "'' as password_match");
 
         $this->control("user_type_id", db()->fetchAll("SELECT id as value, name as label FROM user_types ORDER BY name"))
             ->control("password", "password")
             ->control("password_match", "password");
+
+        $this->default("user_type_id", db()->var("SELECT id FROM user_types WHERE name = 'Standard'"));
     }
 
     public function create(array $data): ?Model

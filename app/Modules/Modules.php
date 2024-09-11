@@ -16,7 +16,7 @@ class Modules extends Module
         $this->rules = [
             "enabled" => [],
             "title" => ["required"],
-            "module_class" => ["required", "class_exists"],
+            "module_class" => ["class_exists"],
             "item_order" => [],
             "max_permission_level" => [],
             "parent_module_id" => [],

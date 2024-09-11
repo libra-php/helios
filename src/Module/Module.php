@@ -149,7 +149,7 @@ class Module
     public function create(array $data): ?Model
     {
         foreach ($data as $column => $value) {
-            if ($value === '') {
+            if ($value === '' || $value === 'NULL') {
                 $data[$column] = null;
             }
         }
@@ -174,7 +174,7 @@ class Module
     public function save(int $id, array $data): bool
     {
         foreach ($data as $column => $value) {
-            if ($value === '') {
+            if ($value === '' || $value === 'NULL') {
                 $data[$column] = null;
             }
         }
