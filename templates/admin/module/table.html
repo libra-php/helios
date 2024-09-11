@@ -8,87 +8,87 @@
 {% include "components/flash.html" %}
 {% endif %}
 <section id="actions" class="d-flex py-2">
-	{% if permissions.has_edit %}
-	<div id="create-new" class="me-1">
-		<form hx-get="/admin/{{ module.path }}/create">
-			<button type="submit" class="btn btn-sm btn-success link-light">Create New</button>
-		</form>
-	</div>
-	{% endif %}
-	{% if actions.export_csv %}
-	<div id="export-csv" class="me-1">
-		<form hx-disable="true">
-			<button type="submit" name="export_csv" class="btn btn-sm btn-dark link-light">Export CSV</button>
-		</form>
-	</div>
-	{% endif %}
+    {% if permissions.has_edit %}
+    <div id="create-new" class="me-1">
+        <form hx-get="/admin/{{ module.path }}/create">
+            <button type="submit" class="btn btn-sm btn-success link-light">Create New</button>
+        </form>
+    </div>
+    {% endif %}
+    {% if actions.export_csv %}
+    <div id="export-csv" class="me-1">
+        <form hx-disable="true">
+            <button type="submit" name="export_csv" class="btn btn-sm btn-dark link-light">Export CSV</button>
+        </form>
+    </div>
+    {% endif %}
 </section>
 <section id="filters" class="py-2">
-	{% if filters.searchable|length > 0 %}
-	<div id="search" class="py-1">
-		<form>
-			<div class="input-group input-group-sm">
-				<input type="search" class="form-control" name="search_term" placeholder="..." value="{{ filters.search_term }}" />
-				<button type="submit" class="btn btn-dark">Search</button>
-			</div>
-		</form>
-	</div>
-	{% endif %}
-	{% if filters.filter_links|length > 0 %}
-	<div id="filter-links" class="py-1">
-		{% for i,link in filters.filter_links %}
-		<span class="badge p-0"><a class="filter-link link-dark p-1 px-2 rounded {% if filters.filter_link == i %}active{% endif %}" href="?filter_link={{ i }}">{{ link }} [<span hx-swap="textContent" hx-trigger="load" hx-get="?filter_count={{ i }}" hx-target="this">...</span>]</a></span>
-		{% endfor %}
-	</div>
-	{% endif %}
+    {% if filters.searchable|length > 0 %}
+    <div id="search" class="py-1">
+        <form>
+            <div class="input-group input-group-sm">
+                <input type="search" class="form-control" name="search_term" placeholder="..." value="{{ filters.search_term }}" />
+                <button type="submit" class="btn btn-dark">Search</button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+    {% if filters.filter_links|length > 0 %}
+    <div id="filter-links" class="py-1">
+        {% for i,link in filters.filter_links %}
+        <span class="badge p-0"><a class="filter-link link-dark p-1 px-2 rounded {% if filters.filter_link == i %}active{% endif %}" href="?filter_link={{ i }}">{{ link }} [<span hx-swap="textContent" hx-trigger="load" hx-get="?filter_count={{ i }}" hx-target="this">...</span>]</a></span>
+        {% endfor %}
+    </div>
+    {% endif %}
 </section>
 {% endblock %}
 
 {% block middle %}
 {% if table|length > 0 %}
 <table class="table table-sm view-table caption-top mb-2 {% if data|length > 1 %}table-striped{% endif %}">
-	<thead class="sticky-top bg-dark text-light p-0">
-		<tr>
-			{% for title,column in table %}
-			<th class="p-1" nowrap>
-				<a class="link-light" href="?order_by={{ column }}&sort={% if filters.order_by == column and filters.sort == "ASC" %}DESC{% elseif filters.order_by == column and filters.sort == "DESC" %}ASC{% else %}ASC{% endif %}">
-					{{ title }}
-					{% if filters.order_by == column and filters.sort == "ASC" %}▴{% elseif filters.order_by == column and filters.sort == "DESC" %}▾{% endif %}
-				</a>
-			</th>
-			{% endfor %}
-			<th></th>
-		</tr>
-	</thead>
-	<tbody>
-		{% for row in data %}
-		<tr valign="middle">
-			{% for column,value in row %}
-			<td class="p-1" nowrap>{{ view.format(column, value)|raw }}</td>
-			{% endfor %}
-			<td class="p-1" nowrap>
+    <thead class="sticky-top bg-dark text-light p-0">
+        <tr>
+            {% for title,column in table %}
+            <th class="p-1" nowrap>
+                <a class="link-light" href="?order_by={{ column }}&sort={% if filters.order_by == column and filters.sort == "ASC" %}DESC{% elseif filters.order_by == column and filters.sort == "DESC" %}ASC{% else %}ASC{% endif %}">
+                    {{ title }}
+                    {% if filters.order_by == column and filters.sort == "ASC" %}▴{% elseif filters.order_by == column and filters.sort == "DESC" %}▾{% endif %}
+                </a>
+            </th>
+            {% endfor %}
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in data %}
+        <tr valign="middle">
+            {% for column,value in row %}
+            <td class="p-1" nowrap>{{ view.format(column, value)|raw }}</td>
+            {% endfor %}
+            <td class="p-1" nowrap>
                 <div class="w-100 d-flex align-items-center justify-content-end">
-				{% if view.hasRowEdit(row[key_column]) %}
-				<form hx-get="/admin/{{ module.path }}/{{ row[key_column] }}">
-					<button type="submit" class="btn btn-sm btn-primary">Edit</button>
-				</form>
-				{% endif %}
-				{% if view.hasRowDelete(row[key_column]) %}
-				<form method="POST" hx-delete="/admin/{{ module.path }}/{{ row[key_column] }}" hx-confirm="Are you sure you want to delete this record?">
-                    {{ csrf()|raw }}
-					<button type="submit" class="btn btn-sm btn-danger ms-1">Delete</button>
-				</form>
-				{% endif %}
+                    {% if view.hasRowEdit(row[key_column]) %}
+                    <form hx-get="/admin/{{ module.path }}/{{ row[key_column] }}">
+                        <button type="submit" class="btn btn-sm btn-primary">Edit</button>
+                    </form>
+                    {% endif %}
+                    {% if view.hasRowDelete(row[key_column]) %}
+                    <form method="POST" hx-delete="/admin/{{ module.path }}/{{ row[key_column] }}" hx-confirm="Are you sure you want to delete this record?">
+                        {{ csrf()|raw }}
+                        <button type="submit" class="btn btn-sm btn-danger ms-1">Delete</button>
+                    </form>
+                    {% endif %}
                 </div>
-			</td>
-		</tr>
-		{% endfor %}
-		{% if table|length > 0 and data|length == 0 %}
-		<tr>
-			<td class="text-center" colspan="{{ table|length }}"><em>No results found</em></td>
-		</tr>
-		{% endif %}
-	</tbody>
+            </td>
+        </tr>
+        {% endfor %}
+        {% if table|length > 0 and data|length == 0 %}
+        <tr>
+            <td class="text-center" colspan="{{ table|length }}"><em>No results found</em></td>
+        </tr>
+        {% endif %}
+    </tbody>
 </table>
 {% endif %}
 {% endblock %}
@@ -96,27 +96,27 @@
 {% block bottom %}
 {% if pagination.total_pages >= 1 %}
 <div id="pagination" class="d-flex align-items-center mt-2">
-	<nav class="flex-grow-1" aria-label="page navigation">
-		<ul class="pagination pagination-sm mb-0">
-			<li class="page-item {% if pagination.page < 2 %}disabled{% endif %}"><a class="page-link link-dark" href="?page={{ pagination.page - 1 }}">Previous</a></li>
-			{% if pagination.page > 1 %}
-			<li class="page-item"><a class="page-link link-dark" href="?page=1">1</a></li>
-			<li class="page-item disabled"><span class="page-link link-dark">...</span></li>
-			{% endif %}
-			<li class="page-item active"><a class="page-link link-dark" href="?page={{ pagination.page }}">{{ pagination.page }}</a></li>
-			{% if pagination.page < pagination.total_pages %}
-			<li class="page-item disabled"><span class="page-link link-dark">...</span></li>
-			<li class="page-item"><a class="page-link link-dark" href="?page={{ pagination.total_pages }}">{{ pagination.total_pages }}</a></li>
-			{% endif %}
-			<li class="page-item {% if pagination.page >= pagination.total_pages %}disabled{% endif %}"><a class="page-link link-dark" href="?page={{ pagination.page + 1 }}">Next</a></li>
-		</ul>
-	</nav>
-	<select hx-get="" hx-trigger="change" class="form-select form-select-sm" name="per_page" id="per-page">
-		<option disabled>Results per page</option>
-		{% for i in pagination.page_options %}
-		<option value="{{ i }}" {% if i == pagination.per_page %}selected{% endif %}>{{ i }}</option>
-		{% endfor %}
-	</select>
+    <nav class="flex-grow-1" aria-label="page navigation">
+        <ul class="pagination pagination-sm mb-0">
+            <li class="page-item {% if pagination.page < 2 %}disabled{% endif %}"><a class="page-link link-dark" href="?page={{ pagination.page - 1 }}">Previous</a></li>
+            {% if pagination.page > 1 %}
+            <li class="page-item"><a class="page-link link-dark" href="?page=1">1</a></li>
+            <li class="page-item disabled"><span class="page-link link-dark">...</span></li>
+            {% endif %}
+            <li class="page-item active"><a class="page-link link-dark" href="?page={{ pagination.page }}">{{ pagination.page }}</a></li>
+            {% if pagination.page < pagination.total_pages %}
+            <li class="page-item disabled"><span class="page-link link-dark">...</span></li>
+            <li class="page-item"><a class="page-link link-dark" href="?page={{ pagination.total_pages }}">{{ pagination.total_pages }}</a></li>
+            {% endif %}
+            <li class="page-item {% if pagination.page >= pagination.total_pages %}disabled{% endif %}"><a class="page-link link-dark" href="?page={{ pagination.page + 1 }}">Next</a></li>
+        </ul>
+    </nav>
+    <select hx-get="" hx-trigger="change" class="form-select form-select-sm" name="per_page" id="per-page">
+        <option disabled>Results per page</option>
+        {% for i in pagination.page_options %}
+        <option value="{{ i }}" {% if i == pagination.per_page %}selected{% endif %}>{{ i }}</option>
+        {% endfor %}
+    </select>
 </div>
 {% endif %}
 {% endblock %}

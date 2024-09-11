@@ -41,7 +41,7 @@ return new class implements IMigration
             [
                 1,
                 "Administrator",
-                "administrator@localhost",
+                "administrator",
                 Auth::hashPassword("admin2024!"),
                 Auth::google2FASecret(),
                 0,

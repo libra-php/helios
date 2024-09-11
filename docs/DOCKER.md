@@ -63,7 +63,7 @@ Run the database migration command from the PHP container
 
 ### Step 8: Admin Sign-In
 To access the admin backend, visit https://0.0.0.0:8080/sign-in. Use the default credentials:
-- **Email:** administrator@localhost
+- **Email:** administrator
 - **Password:** admin2024!
 
 **Important:** Change the default password immediately after logging in.

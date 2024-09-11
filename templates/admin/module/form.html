@@ -10,15 +10,15 @@
 
 {% block middle %}
 <form class="view-form"
-    method="POST"
-	{% if id %}
-	hx-patch="/admin/{{ module.path}}/{{ id }}"
-	{% else %}
-	hx-post="/admin/{{ module.path }}"
-	{% endif %}>
-	{{ csrf()|raw }}
-	{% for title,column in form  %}
-	<div class="row m-0">
+      method="POST"
+      {% if id %}
+      hx-patch="/admin/{{ module.path}}/{{ id }}"
+      {% else %}
+      hx-post="/admin/{{ module.path }}"
+      {% endif %}>
+    {{ csrf()|raw }}
+    {% for title,column in form  %}
+    <div class="row m-0">
         <div class="col-sm-2 form-left truncate">
             <span class="label fw-bold truncate" title="{{ title }}">{{ title }}</span>
         </div>
@@ -28,12 +28,12 @@
                 {% include 'errors/validation.html' with {'validate': column} %}
             </div>
         </div>
-	</div>
-	{% endfor %}
-	<div class="m-0 mt-2 d-flex">
-		<button class="btn btn-success" type="submit">{% if id %}Save{% else %}Create{% endif %}</button>
+    </div>
+    {% endfor %}
+    <div class="m-0 mt-2 d-flex">
+        <button class="btn btn-success" type="submit">{% if id %}Save{% else %}Create{% endif %}</button>
         <a class="btn btn-warning ms-2 text-dark text-decoration-none" href="/admin/{{ module.path }}">Cancel</a>
-	</div>
+    </div>
 </form>
 {% endblock %}
 

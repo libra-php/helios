@@ -16,7 +16,12 @@ class Users extends Module
         controller()->addErrorMessage("regex", "Password must contain: 1 uppercase, 1 number, and special symbol character");
         $this->rules = [
             "name" => ["required"],
-            "email" => ["required", "email"],
+            "email" => ["required", function($value) {
+                if ($value !== 'administrator') {
+                    return filter_var($value, FILTER_VALIDATE_EMAIL);
+                }
+                return true;
+            }],
             "user_type_id" => ["required"],
             "password" => ["required", "min_length|8", "regex|^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"],
             "password_match" => ["required", function ($value) {
@@ -47,8 +52,7 @@ class Users extends Module
             ->form("Password", "password")
             ->form("Password (again)", "'' as password_match");
 
-        $this->control("email", "email")
-            ->control("user_type_id", db()->fetchAll("SELECT id as value, name as label FROM user_types ORDER BY name"))
+        $this->control("user_type_id", db()->fetchAll("SELECT id as value, name as label FROM user_types ORDER BY name"))
             ->control("password", "password")
             ->control("password_match", "password");
     }
