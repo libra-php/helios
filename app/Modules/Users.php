@@ -3,6 +3,8 @@
 namespace App\Modules;
 
 use App\Models\User;
+use Helios\Admin\Auth;
+use Helios\Model\Model;
 use Helios\Module\Module;
 
 class Users extends Module
@@ -11,11 +13,13 @@ class Users extends Module
 
     public function __construct()
     {
+        controller()->addErrorMessage("regex", "Password must contain: 1 uppercase, 1 number, and special symbol character");
         $this->rules = [
             "name" => ["required"],
             "email" => ["required", "email"],
-            "password" => ["required", "min_length|8", "alpha_num"],
-            "password_match" => ["required", function($value) {
+            "user_type_id" => ["required"],
+            "password" => ["required", "min_length|8", "regex|^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"],
+            "password_match" => ["required", function ($value) {
                 controller()->addErrorMessage("password_match", "Passwords must match");
                 return request()->get("password") === $value;
             }],
@@ -38,21 +42,37 @@ class Users extends Module
             ->search("email");
 
         $this->form("Name", "name")
-             ->form("Email", "email")
-             ->form("Password", "password")
-             ->form("Password (again)", "password_match");
+            ->form("Email", "email")
+            ->form("User Type", "user_type_id")
+            ->form("Password", "password")
+            ->form("Password (again)", "'' as password_match");
 
         $this->control("email", "email")
-             ->control("password", "password")
-             ->control("password_match", "password");
+            ->control("user_type_id", db()->fetchAll("SELECT id as value, name as label FROM user_types ORDER BY name"))
+            ->control("password", "password")
+            ->control("password_match", "password");
+    }
+
+    public function create(array $data): ?Model
+    {
+        unset($data["password_match"]);
+        $data["password"] = Auth::hashPassword($data["password"]);
+        return parent::create($data);
+    }
+
+    public function save(int $id, array $data): bool
+    {
+        unset($data["password_match"]);
+        $data["password"] = Auth::hashPassword($data["password"]);
+        return parent::save($id, $data);
     }
 
     public function hasEditPermission(int $id): bool
     {
         $user = user();
-        if ($id === $user->id) return true;
+        if ($id == $user->id) return true;
 
-        if ($user->type()->permission_level < 2) {
+        if ($user->type()->permission_level < 1) {
             return true;
         }
 
@@ -62,9 +82,9 @@ class Users extends Module
     public function hasDeletePermission(?int $id): bool
     {
         $user = user();
-        if ($id === $user->id) return true;
+        if ($id == $user->id) return true;
 
-        if ($user->type()->permission_level < 2) {
+        if ($user->type()->permission_level < 1) {
             return true;
         }
 

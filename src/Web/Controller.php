@@ -153,7 +153,7 @@ class Controller
             'min_length' => is_string($value) && strlen($value) >= $rule_arg,
             'max_length' => is_string($value) && strlen($value) <= $rule_arg,
             'unique' => !db()->fetch("SELECT 1 FROM $rule_arg WHERE $key = ?", $value),
-            'regex' => preg_match($rule_arg, $value),
+            'regex' => preg_match("/$rule_arg/", $value),
             'in' => in_array($value, (array)$rule_arg),
             'not_in' => !in_array($value, (array)$rule_arg),
             'alpha_num' => ctype_alnum($value), // alpha numeric

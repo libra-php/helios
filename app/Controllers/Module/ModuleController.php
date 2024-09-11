@@ -69,7 +69,12 @@ class ModuleController extends Controller
                 }
             }
         } catch (Exception $ex) {
-            Flash::add("danger", "Fatal error");
+            $message = "Fatal error ";
+            $debug_mode = config("app.debug");
+            if ($debug_mode) {
+                $message .= $ex->getMessage();
+            }
+            Flash::add("danger", $message);
             error_log("fatal error: module.store => " . print_r($ex, true));
         }
         return $this->create($module);
@@ -94,7 +99,12 @@ class ModuleController extends Controller
                 }
             }
         } catch (Exception $ex) {
-            Flash::add("danger", "Fatal error");
+            $message = "Fatal error ";
+            $debug_mode = config("app.debug");
+            if ($debug_mode) {
+                $message .= $ex->getMessage();
+            }
+            Flash::add("danger", $message);
             error_log("fatal error: module.update => " . print_r($ex, true));
         }
         return $this->edit($module, $id);
@@ -115,7 +125,12 @@ class ModuleController extends Controller
                 Flash::add("warning", "Failed to delete record");
             }
         } catch (Exception $ex) {
-            Flash::add("danger", "Fatal error");
+            $message = "Fatal error ";
+            $debug_mode = config("app.debug");
+            if ($debug_mode) {
+                $message .= $ex->getMessage();
+            }
+            Flash::add("danger", $message);
             error_log("fatal error: module.destroy => " . print_r($ex, true));
         }
         return $this->index($module);

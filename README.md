@@ -19,9 +19,7 @@ Helios is a **hobby project** developed for learning and experimentation purpose
 ## Documentation
 
 - [Docker Environment](./docs/DOCKER.md)
-- [Routing](./docs/ROUTING.md)
-- [Controllers](./docs/CONTROLLERS.md)
-- [Administration](./docs/ADMIN.md)
+- *Additional documentation coming soon*
 
 ## License
 

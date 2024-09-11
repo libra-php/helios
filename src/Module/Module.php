@@ -133,7 +133,7 @@ class Module
 
     public function getForm(): array
     {
-        return $this->form;
+        return $this->stripAliases($this->form);
     }
 
     public function getFormat(): array
