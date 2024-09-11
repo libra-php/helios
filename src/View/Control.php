@@ -7,10 +7,10 @@ class Control
     public static function input(string $column,  mixed $value, array $options)
     {
         return template("components/control/input.html", [
-            "class" => "form-control control",
+            ...$options,
+            "class" => $options["class"] . " form-control",
             "column" => $column,
             "value" => $value,
-            ...$options
         ]);
     }
 
@@ -20,7 +20,7 @@ class Control
         $checkbox = self::input("", $value, [
             ...$options,
             "type" => "checkbox",
-            "class" => "form-check-input",
+            "class" => $options["class"] . " form-check-input",
             "onchange" => "toggleCheckbox(event)",
             "checked" => $value ? "checked" : '',
         ]);
@@ -30,17 +30,17 @@ class Control
     public static function textarea(string $column, mixed $value, array $options)
     {
         return template("components/control/textarea.html", [
-            "class" => "form-control control",
+            ...$options,
+            "class" => $options["class"] . " form-control",
             "column" => $column,
             "value" => $value,
-            ...$options
         ]);
     }
 
     public static function switch(string $column, mixed $value, array $options)
     {
         return template("components/control/switch.html", [
-            "input" => self::checkbox($column, $value, [...$options, "class" => "form-check-input"])
+            "input" => self::checkbox($column, $value, [...$options, "class" => $options["class"] . " form-check-input"])
         ]);
     }
 
@@ -199,10 +199,10 @@ class Control
     public static function select(string $column, mixed $value, array $options)
     {
         return template("components/control/select.html", [
-            "class" => "form-select control",
+            ...$options,
+            "class" => $options["class"] . " form-select",
             "column" => $column,
             "value" => $value,
-            ...$options
         ]);
     }
 }

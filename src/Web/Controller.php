@@ -76,6 +76,14 @@ class Controller
     }
 
     /**
+     * Is a request error present?
+     */
+    public function hasError(string $column): bool
+    {
+        return request()->request->has($column) && isset($this->request_errors[$column]);
+    }
+
+    /**
      * Validate the request
      */
     public function validateRequest(array $rules, ?int $id = null): object|false
@@ -120,6 +128,8 @@ class Controller
                     } else if (isset($this->error_messages[$key])) {
                         // Look for other error_message entry by key
                         $this->addRequestError($key, sprintf($this->error_messages[$key], $rule_arg));
+                    } else {
+                        $this->addRequestError('_', "A validation error has occurred");
                     }
                 }
             }

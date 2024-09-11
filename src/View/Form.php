@@ -16,7 +16,13 @@ class Form extends View
         $control = $this->module->getControl();
         $options = [
             "title" => array_search($column, $form),
+            "class" => "control"
         ];
+        // Check if there is a validation error
+        if (controller()->hasError($column)) {
+            $options["class"] .= " is-invalid";
+        }
+        // Render control
         if (isset($control[$column])) {
             // A control column is set
             $callback = $control[$column];
