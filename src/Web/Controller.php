@@ -50,6 +50,8 @@ class Controller
         'date_format' => 'Value must match the date format: %s',
         'timezone' => 'Value must be a valid timezone',
         'multiple_of' => 'Value must be a multiple of %s',
+        'file_exists' => 'Value must be a file path that exists',
+        'class_exists' => 'Value must be a class that exists',
     ];
 
 
@@ -76,7 +78,7 @@ class Controller
     /**
      * Validate the request
      */
-    public function validateRequest(array $rules): object|false
+    public function validateRequest(array $rules, ?int $id = null): object|false
     {
         $valid = true;
         $request = request()->request;
@@ -105,7 +107,7 @@ class Controller
                     $result = $this->validate($key, $rule, $value, $rule_arg);
                 } elseif (is_callable($rule)) {
                     // The callback determines the result
-                    $result = $rule($value);
+                    $result = $rule($value, $id);
                 }
 
                 if ($result) {
@@ -169,6 +171,8 @@ class Controller
             'date_format' => date_create_from_format($rule_arg, $value) !== false,
             'timezone' => in_array($value, timezone_identifiers_list()),
             'multiple_of' => is_numeric($value) && fmod($value, $rule_arg) == 0,
+            'file_exists' => file_exists($value),
+            'class_exists' => class_exists($value),
             default => throw new InvalidArgumentException("Validation rule '$rule' is not supported."),
         };
     }

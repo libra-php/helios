@@ -13,7 +13,12 @@ class UserTypes extends Module
     {
         $this->rules = [
             "name" => ["required"],
-            "permission_level" => ["required", "min|0", "max|10", "unique|user_types"],
+            "permission_level" => ["required", "min|0", "max|10", function($value, $id) {
+                controller()->addErrorMessage("permission_level", "Permission level must be unique");
+                return !db()->fetch("SELECT 1 
+                    FROM user_types 
+                    WHERE permission_level = ? AND id != ?", $value, $id);
+            }],
         ];
 
         $this->table("ID", "id")

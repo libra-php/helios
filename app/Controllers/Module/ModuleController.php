@@ -84,7 +84,7 @@ class ModuleController extends Controller
             exit();
         }
         try {
-            $valid = $this->validateRequest($this->module->getRules());
+            $valid = $this->validateRequest($this->module->getRules(), $id);
             if ($valid) {
                 $result = $this->module->save($id, (array)$valid);
                 if ($result) {

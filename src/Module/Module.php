@@ -31,7 +31,7 @@ class Module
     private string $search_term = "";
     private int $filter_link = 0;
     private int $page = 1;
-    private int $per_page = 10;
+    private int $per_page = 25;
     private int $total_pages = 1;
     private array $page_options = [5, 10, 25, 50, 100, 200, 500];
     private int $total_results = 0;

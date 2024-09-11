@@ -23,7 +23,7 @@ class Audit extends Module
             ->table("Diff", "id as diff")
             ->table("Tag", "tag");
 
-        $this->format("diff", function(string $column, string $value) {
+        $this->format("diff", function (string $column, string $value) {
             $record = AuditModel::find($value);
             return $this->htmlDiff($record->old_value ?? '', $record->new_value ?? '');
         });
@@ -33,9 +33,9 @@ class Audit extends Module
         $this->defaultOrder("id")
             ->defaultSort("DESC");
 
-        $user = user();
-        $this->filterLink("Me", "user_id = $user->id")
-            ->filterLink("Others", "user_id != $user->id")
+        $this->filterLink("Create", "tag = 'CREATE'")
+            ->filterLink("Update", "tag = 'UPDATE'")
+            ->filterLink("Delete", "tag = 'DELETE'")
             ->filterLink("All", "1=1");
     }
 

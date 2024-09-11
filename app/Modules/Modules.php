@@ -13,13 +13,10 @@ class Modules extends Module
 
     public function __construct()
     {
-        // Custom error message
-        controller()->addErrorMessage("module_class", "Module class must exist");
-
         $this->rules = [
             "enabled" => [],
             "title" => ["required"],
-            "module_class" => [fn($value) => class_exists($value)],
+            "module_class" => ["required", "class_exists"],
             "item_order" => [],
             "max_permission_level" => [],
             "parent_module_id" => [],
