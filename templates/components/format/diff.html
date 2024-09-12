@@ -2,13 +2,15 @@
     {% for k in diff %}
     {% if k is iterable %}
         {% if k.d %}
-            <span title="Removed" class="diff-remove">{{ k.d|join(' ')}}</span>
+            <span title="Removed" class="diff diff-remove">{{ k.d|join(' ')}}</span>
         {% endif %}
         {% if k.i %}
-            <span title="Added" class="diff-add">{{ k.i|join(' ')}}</span>
+            <span title="Added" class="diff diff-add">{{ k.i|join(' ')}}</span>
         {% endif %}
     {% else %}
-        {{ k }}
+        {% if k == 'null' or k == null %}
+            null
+        {% endif %}
     {% endif %}
     {% endfor %}
 </div>

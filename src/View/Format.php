@@ -10,6 +10,7 @@ class Format
     public static function ago(string $column, mixed $value, array $options)
     {
         $ago = Carbon::parse($value)->diffForHumans();
+        $options['title'] = $options['title'] . ': ' .$value;
         return self::span($column, $ago, $options);
     }
 
@@ -29,8 +30,9 @@ class Format
         foreach ($old as $oindex => $ovalue) {
             $nkeys = array_keys($new, $ovalue);
             foreach ($nkeys as $nindex) {
-                $matrix[$oindex][$nindex] = isset($matrix[$oindex - 1][$nindex - 1]) ?
-                    $matrix[$oindex - 1][$nindex - 1] + 1 : 1;
+                $matrix[$oindex][$nindex] = isset($matrix[$oindex - 1][$nindex - 1]) 
+                    ? $matrix[$oindex - 1][$nindex - 1] + 1 
+                    : 1;
                 if ($matrix[$oindex][$nindex] > $maxlen) {
                     $maxlen = $matrix[$oindex][$nindex];
                     $omax = $oindex + 1 - $maxlen;
@@ -50,7 +52,13 @@ class Format
     {
         // The value is an audit id
         $record = Audit::find($value);
-        $diff = self::diff(preg_split("/[\s]+/", $record->old_value ?? ''), preg_split("/[\s]+/", $record->new_value ?? ''));
+        if (is_null($record->old_value)) {
+            $record->old_value = 'null';
+        }
+        if (is_null($record->new_value)) {
+            $record->new_value = 'null';
+        }
+        $diff = self::diff(preg_split("/[\s]+/", $record->old_value), preg_split("/[\s]+/", $record->new_value));
         return template("components/format/diff.html", ["diff" => $diff]);
     }
 }

@@ -21,9 +21,11 @@ class Audit extends Module
             ->table("Table ID", "table_id")
             ->table("Field", "field")
             ->table("Diff", "id as audit_diff")
-            ->table("Tag", "tag");
+            ->table("Tag", "tag")
+            ->table("Created", "created_at");
 
-        $this->format("audit_diff", "auditDiff");
+        $this->format("audit_diff", "auditDiff")
+             ->format("created_at", "ago");
 
         $this->search("user");
 

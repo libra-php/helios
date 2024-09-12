@@ -148,12 +148,17 @@ class Module
 
     public function create(array $data): ?Model
     {
+        $model = $this->model::get();
         foreach ($data as $column => $value) {
             if ($value === '' || $value === 'NULL') {
                 $data[$column] = null;
             }
         }
-        $result =  $this->model::new($data);
+        // Created at should be set
+        if (isset($model->created_at)) {
+            $data['created_at'] = date("Y-m-d H:i:s");
+        }
+        $result = $model::new($data);
         if ($result) {
             foreach ($result->getAttributes() as $column => $value) {
                 // Audit the new record
@@ -179,6 +184,10 @@ class Module
             }
         }
         $old = $this->model::find($id);
+        // Updated at should be set
+        if (isset($old->updated_at)) {
+            $data['updated_at'] = date("Y-m-d H:i:s");
+        }
         if ($old) {
             $result = $this->model::find($id)->save($data);
             if ($result) {
