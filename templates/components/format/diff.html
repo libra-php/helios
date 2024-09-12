@@ -1,0 +1,14 @@
+<div class="table-diff">
+    {% for k in diff %}
+    {% if k is iterable %}
+        {% if k.d %}
+            <span title="Removed" class="diff-remove">{{ k.d|join(' ')}}</span>
+        {% endif %}
+        {% if k.i %}
+            <span title="Added" class="diff-add">{{ k.i|join(' ')}}</span>
+        {% endif %}
+    {% else %}
+        {{ k }}
+    {% endif %}
+    {% endfor %}
+</div>
