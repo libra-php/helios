@@ -1,6 +1,7 @@
 <?php
 
 return [
+    "default_admin_pass" => "Admin2024!",
     "whitelist" => [
     ],
     "blacklist" => [

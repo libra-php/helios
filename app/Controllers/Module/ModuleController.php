@@ -20,16 +20,21 @@ class ModuleController extends Controller
         if ($module_class && class_exists($module_class)) {
             $this->module = new $module_class;
         }
+        // Check password (warn if default admin password)
+        $user = user();
+        if (password_verify(config("security.default_admin_pass"), $user->password)) {
+            Flash::add("warning", "You're using an insecure password<br>Please <a href='/admin/users/{$user->id}'>change your password</a> immediately to secure your account");
+        }
     }
 
     #[Get("/{module}", "module.index")]
-    public function index(string $module)
+    public function index(string $module): string
     {
         return $this->module->view(new Table);
     }
 
     #[Get("/{module}/create", "module.create")]
-    public function create(string $module)
+    public function create(string $module): string
     {
         if (!$this->module->hasCreate()) {
             http_response_code(403);
@@ -40,7 +45,7 @@ class ModuleController extends Controller
     }
 
     #[Get("/{module}/{id}", "module.edit")]
-    public function edit(string $module, int $id)
+    public function edit(string $module, int $id): string
     {
         if (!($this->module->hasEdit() && $this->module->hasEditPermission($id))) {
             http_response_code(403);
@@ -51,7 +56,7 @@ class ModuleController extends Controller
     }
 
     #[Post("/{module}", "module.store")]
-    public function store(string $module)
+    public function store(string $module): string
     {
         if (!$this->module->hasCreate()) {
             http_response_code(403);
@@ -82,7 +87,7 @@ class ModuleController extends Controller
 
     #[Patch("/{module}/{id}", "module.update.patch")]
     #[Put("/{module}/{id}", "module.update.put")]
-    public function update(string $module, int $id)
+    public function update(string $module, int $id):  string
     {
         if (!($this->module->hasEdit() && $this->module->hasEditPermission($id))) {
             http_response_code(403);

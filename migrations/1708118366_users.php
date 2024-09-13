@@ -42,7 +42,7 @@ return new class implements IMigration
                 1,
                 "Administrator",
                 "administrator",
-                Auth::hashPassword("admin2024!"),
+                Auth::hashPassword(config("security.default_admin_pass")),
                 Auth::google2FASecret(),
                 0,
             ]
