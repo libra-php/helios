@@ -1,7 +1,6 @@
 # Helios
-<img src="https://github.com/user-attachments/assets/c1f8a7ab-1a7f-49c6-882c-ba0821f409a9" alt="helios" />
 
-
+![helios_banner](https://github.com/user-attachments/assets/c100e14b-0cd2-4cf3-8285-3cada55beaf2)
 
 Helios is a lightweight, flexible PHP framework tailored for building modern web applications. Designed with simplicity and scalability in mind, Helios integrates seamlessly with **htmx** to deliver dynamic, interactive user interfaces. Whether you're exploring new development approaches or working on a personal project, Helios provides the tools to make web development more intuitive and efficient.
 
