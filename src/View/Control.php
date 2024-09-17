@@ -34,6 +34,7 @@ class Control
             "class" => $options["class"] . " form-control",
             "column" => $column,
             "value" => $value,
+            "rows" => $options["rows"] ?? 8
         ]);
     }
 

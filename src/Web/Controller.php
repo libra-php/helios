@@ -162,7 +162,7 @@ class Controller
     public function validate(string $key, string $rule, ?string $value = null, ?string $rule_arg = null): bool
     {
         return match (strtolower($rule)) {
-            'required' => !is_null($value) && trim($value) !== '',
+            'required' => !is_null($value) && trim($value) !== '' && $value !== "NULL",
             'email' => filter_var($value, FILTER_VALIDATE_EMAIL),
             'url' => filter_var($value, FILTER_VALIDATE_URL),
             'ip' => filter_var($value, FILTER_VALIDATE_IP),

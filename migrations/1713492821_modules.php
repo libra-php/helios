@@ -43,6 +43,7 @@ return new class implements IMigration
             ["Sessions", "sessions", "App\\\Modules\\\Sessions", 2, 1, 1],
             ["Audit", "audit", "App\\\Modules\\\Audit", 3, 0, 1],
             ["Profile", "profile", "App\\\Modules\\\Profile", 0, 2, 2],
+            ["Tests", "tests", "App\\\Modules\\\Tests", 1, 0, 1],
         );
     }
 

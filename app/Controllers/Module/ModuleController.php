@@ -5,6 +5,7 @@ namespace App\Controllers\Module;
 use Exception;
 use Helios\Module\Module;
 use Helios\View\{Flash, Table, Form};
+use Helios\View\View;
 use Helios\Web\Controller;
 use StellarRouter\{Get, Post, Put, Patch, Delete, Group};
 
@@ -30,7 +31,12 @@ class ModuleController extends Controller
     #[Get("/{module}", "module.index")]
     public function index(string $module): string
     {
-        return $this->module->view(new Table);
+        try {
+            return $this->module->view(new Table);
+        } catch (Exception $ex) {
+            error_log("fatal error: module.index => " . print_r($ex, true));
+        }
+        return "Fatal error (check logs)";
     }
 
     #[Get("/{module}/create", "module.create")]
@@ -41,7 +47,12 @@ class ModuleController extends Controller
             exit();
         }
         header("HX-Push-Url: /admin/$module/create");
-        return $this->module->view(new Form);
+        try {
+            return $this->module->view(new Form);
+        } catch (Exception $ex) {
+            error_log("fatal error: module.create => " . print_r($ex, true));
+        }
+        return "Fatal error (check logs)";
     }
 
     #[Get("/{module}/{id}", "module.edit")]
@@ -52,7 +63,12 @@ class ModuleController extends Controller
             exit();
         }
         header("HX-Push-Url: /admin/$module/$id");
-        return $this->module->view(new Form, $id);
+        try {
+            return $this->module->view(new Form, $id);
+        } catch (Exception $ex) {
+            error_log("fatal error: module.edit => " . print_r($ex, true));
+        }
+        return "Fatal error (check logs)";
     }
 
     #[Post("/{module}", "module.store")]

@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block middle %}
-<form class="view-form"
+<form class="view-form my-2"
       method="POST"
       {% if id %}
       hx-patch="/admin/{{ module.path}}/{{ id }}"
