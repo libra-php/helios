@@ -265,7 +265,35 @@ a:active {
 .htmx-request.htmx-indicator{
     opacity: 1 !important;
 }
+
 #request-spinner {
-    height: 10px;
-    width: 10px;
+    height: 14px;
+    width: 14px;
+}
+.spinner-3 {
+  width: 50px;
+  aspect-ratio: 1;
+  display: grid;
+  border-radius: 50%;
+  background:
+    linear-gradient(0deg ,rgb(0 0 0/50%) 30%,#0000 0 70%,rgb(0 0 0/100%) 0) 50%/8% 100%,
+    linear-gradient(90deg,rgb(0 0 0/25%) 30%,#0000 0 70%,rgb(0 0 0/75% ) 0) 50%/100% 8%;
+  background-repeat: no-repeat;
+  animation: s3 1s infinite steps(12);
+}
+.spinner-3::before,
+.spinner-3::after {
+   content: "";
+   grid-area: 1/1;
+   border-radius: 50%;
+   background: inherit;
+   opacity: 0.915;
+   transform: rotate(30deg);
+}
+.spinner-3::after {
+   opacity: 0.83;
+   transform: rotate(60deg);
+}
+@keyframes s3 {
+  100% {transform: rotate(1turn)}
 }
