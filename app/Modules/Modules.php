@@ -27,14 +27,16 @@ class Modules extends Module
             ->table("Title", "title")
             ->table("Access Level", "(SELECT name 
                 FROM user_types 
-                WHERE permission_level = max_permission_level) as max_permission")
+                WHERE permission_level = max_permission_level) as max_permission_level")
             ->table("Created", "created_at");
 
         $this->filterLink("Root", "parent_module_id IS NULL")
             ->filterLink("Children", "parent_module_id IS NOT NULL")
             ->filterLink("All", "1=1");
 
-        $this->format("created_at", "ago");
+        $this->format("created_at", "ago")
+             ->format("enabled", "check")
+             ->format("max_permission_level", fn($column, $value) => !$value ? 'n/a' : $value);
 
         $this->form("Enabled", "enabled")
             ->form("Title", "title")

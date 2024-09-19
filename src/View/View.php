@@ -52,7 +52,7 @@ class View implements IView
             ->execute()
             ->fetch();
         $breadcrumbs[] = $module;
-        if (intval($module->parent_module_id) > 0) {
+        if ($module && intval($module->parent_module_id) > 0) {
             return $this->buildBreadcrumbs(
                 $module->parent_module_id,
                 $breadcrumbs

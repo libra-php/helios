@@ -5,7 +5,6 @@ namespace App\Controllers\Module;
 use Exception;
 use Helios\Module\Module;
 use Helios\View\{Flash, Table, Form};
-use Helios\View\View;
 use Helios\Web\Controller;
 use StellarRouter\{Get, Post, Put, Patch, Delete, Group};
 
@@ -24,7 +23,7 @@ class ModuleController extends Controller
         // Check password (warn if default admin password)
         $user = user();
         if (password_verify(config("security.default_admin_pass"), $user->password)) {
-            Flash::add("warning", "You're using an insecure password<br>Please <a href='/admin/users/{$user->id}'>change your password</a> immediately to secure your account");
+            Flash::add("warning", "You're using an insecure password<br>Please <a href='/admin/users/{$user->id}'><u>change your password</u></a> immediately to secure your account");
         }
     }
 

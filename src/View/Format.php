@@ -14,6 +14,15 @@ class Format
         return self::span($column, $ago, $options);
     }
 
+    public static function check(string $column,  mixed $value, array $options)
+    {
+        return template("components/format/check.html", [
+            ...$options,
+            "column" => $column,
+            "value" => $value,
+        ]);
+    }
+
     public static function span(string $column,  mixed $value, array $options)
     {
         return template("components/format/span.html", [
