@@ -128,7 +128,8 @@ class Module
 
     public function getTable(): array
     {
-        return $this->stripAliases($this->table);
+        $table = array_filter($this->table, fn($key) => substr($key, 0, 5) !== 'data_', ARRAY_FILTER_USE_KEY);
+        return $this->stripAliases($table);
     }
 
     public function getForm(): array
@@ -294,8 +295,11 @@ class Module
         return $this;
     }
 
-    protected function table(string $header, string $attribute): Module
+    protected function table(?string $header, string $attribute): Module
     {
+        if (is_null($header)) {
+            $header = 'data_' . count($this->table);
+        }
         $this->table[$header] = $attribute;
         return $this;
     }
@@ -464,11 +468,12 @@ class Module
     private function handleExportCsv(): void
     {
         if (request()->query->has("export_csv")) {
+            $table = $this->getTable();
             $file_name = module()->path . "_" . time() . '.csv';
             header("Content-Type: text/csv");
             header("Content-Disposition: attachment; filename=$file_name");
             $fp = fopen("php://output", "wb");
-            $headers = array_keys($this->table);
+            $headers = array_keys($table);
             fputcsv($fp, $headers);
             $this->per_page = 1000;
             $this->page = 1;
@@ -477,7 +482,13 @@ class Module
             while ($this->page <= $this->total_pages) {
                 $results = $this->getTableData();
                 foreach ($results as $item) {
-                    $values = array_values($item);
+                    $row = []; 
+                    foreach ($item as $column => $value) {
+                        if (in_array($column, $table)) {
+                            $row[$column] = $value;
+                        }
+                    }
+                    $values = array_values($row);
                     fputcsv($fp, $values);
                 }
                 $this->page++;

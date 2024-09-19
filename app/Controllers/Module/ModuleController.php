@@ -23,7 +23,8 @@ class ModuleController extends Controller
         // Check password (warn if default admin password)
         $user = user();
         if (password_verify(config("security.default_admin_pass"), $user->password)) {
-            Flash::add("warning", "You're using an insecure password<br>Please <a href='/admin/users/{$user->id}'><u>change your password</u></a> immediately to secure your account");
+            Flash::add("warning", "You're using an insecure password");
+            Flash::add("warning", "Please <a href='/admin/users/{$user->id}'><u>change your password</u></a> immediately to secure your account");
         }
     }
 
@@ -35,7 +36,7 @@ class ModuleController extends Controller
         } catch (Exception $ex) {
             error_log("fatal error: module.index => " . print_r($ex, true));
         }
-        return "Fatal error (check logs)";
+        return "💣";
     }
 
     #[Get("/{module}/create", "module.create")]
@@ -51,7 +52,7 @@ class ModuleController extends Controller
         } catch (Exception $ex) {
             error_log("fatal error: module.create => " . print_r($ex, true));
         }
-        return "Fatal error (check logs)";
+        return "💣";
     }
 
     #[Get("/{module}/{id}", "module.edit")]
@@ -67,7 +68,7 @@ class ModuleController extends Controller
         } catch (Exception $ex) {
             error_log("fatal error: module.edit => " . print_r($ex, true));
         }
-        return "Fatal error (check logs)";
+        return "💣";
     }
 
     #[Post("/{module}", "module.store")]

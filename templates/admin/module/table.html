@@ -63,7 +63,9 @@
         {% for row in data %}
         <tr valign="middle">
             {% for column,value in row %}
-            <td class="p-1" nowrap>{{ view.format(column, value)|raw }}</td>
+            {% if column in table %}
+                <td class="p-1" nowrap>{{ view.format(column, value)|raw }}</td>
+            {% endif %}
             {% endfor %}
             <td class="p-1" nowrap>
                 <div class="w-100 d-flex align-items-center justify-content-end">

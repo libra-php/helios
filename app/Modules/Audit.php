@@ -22,12 +22,14 @@ class Audit extends Module
             ->table("Field", "field")
             ->table("Diff", "id as audit_diff")
             ->table("Tag", "tag")
-            ->table("Created", "created_at");
+            ->table("Created", "created_at")
+            ->table(null, "old_value")
+            ->table(null, "new_value");
 
         $this->format("audit_diff", "auditDiff")
              ->format("created_at", "ago");
 
-        $this->search("user");
+        $this->search("user")->search("new_value")->search("old_value");
 
         $this->defaultOrder("id")
             ->defaultSort("DESC");
