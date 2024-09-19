@@ -14,8 +14,12 @@ return new class implements IMigration
             $table->unsignedBigInteger("control_select")->nullable();
             $table->tinyInteger("control_switch")->nullable();
             $table->text("control_textarea")->nullable();
+            $table->unsignedBigInteger("control_image")->nullable();
+            $table->unsignedBigInteger("control_file")->nullable();
             $table->timestamps();
             $table->primaryKey("id");
+            $table->foreignKey("control_image")->references("files", "id")->onDelete("SET NULL");
+            $table->foreignKey("control_file")->references("files", "id")->onDelete("SET NULL");
         });
     }
 

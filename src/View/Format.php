@@ -7,14 +7,14 @@ use Carbon\Carbon;
 
 class Format
 {
-    public static function ago(string $column, mixed $value, array $options)
+    public static function _ago(string $column, mixed $value, array $options)
     {
         $ago = Carbon::parse($value)->diffForHumans();
         $options['title'] = $options['title'] . ': ' .$value;
-        return self::span($column, $ago, $options);
+        return self::_span($column, $ago, $options);
     }
 
-    public static function check(string $column,  mixed $value, array $options)
+    public static function _check(string $column,  mixed $value, array $options)
     {
         return template("components/format/check.html", [
             ...$options,
@@ -23,7 +23,7 @@ class Format
         ]);
     }
 
-    public static function span(string $column,  mixed $value, array $options)
+    public static function _span(string $column,  mixed $value, array $options)
     {
         return template("components/format/span.html", [
             ...$options,
@@ -32,7 +32,7 @@ class Format
         ]);
     }
 
-    private static function diff(mixed $old, mixed $new): array
+    private static function _diff(mixed $old, mixed $new): array
     {
         $matrix = array();
         $maxlen = 0;
@@ -51,9 +51,9 @@ class Format
         }
         if ($maxlen == 0) return array(array('d' => $old, 'i' => $new));
         return array_merge(
-            self::diff(array_slice($old, 0, $omax), array_slice($new, 0, $nmax)),
+            self::_diff(array_slice($old, 0, $omax), array_slice($new, 0, $nmax)),
             array_slice($new, $nmax, $maxlen),
-            self::diff(array_slice($old, $omax + $maxlen), array_slice($new, $nmax + $maxlen))
+            self::_diff(array_slice($old, $omax + $maxlen), array_slice($new, $nmax + $maxlen))
         );
     }
 
@@ -67,7 +67,7 @@ class Format
         if (is_null($record->new_value)) {
             $record->new_value = 'null';
         }
-        $diff = self::diff(preg_split("/[\s]+/", $record->old_value), preg_split("/[\s]+/", $record->new_value));
+        $diff = self::_diff(preg_split("/[\s]+/", $record->old_value), preg_split("/[\s]+/", $record->new_value));
         return template("components/format/diff.html", ["diff" => $diff]);
     }
 }

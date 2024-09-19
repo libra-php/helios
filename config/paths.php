@@ -18,6 +18,7 @@ return [
     "storage" => $storage,
     "jobs" => $jobs,
     "logs" => $storage . "logs/",
+    "uploads" => $storage . "uploads/",
     "templates" => $templates,
     "template-cache" => $storage . "templates/.cache/",
     "migrations" => $migrations,

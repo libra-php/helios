@@ -90,7 +90,7 @@ class ModuleController extends Controller
                 }
             }
         } catch (Exception $ex) {
-            $message = "Fatal error ";
+            $message = "Fatal error. ";
             $debug_mode = config("app.debug");
             if ($debug_mode) {
                 $message .= $ex->getMessage();
@@ -120,7 +120,7 @@ class ModuleController extends Controller
                 }
             }
         } catch (Exception $ex) {
-            $message = "Fatal error ";
+            $message = "Fatal error. ";
             $debug_mode = config("app.debug");
             if ($debug_mode) {
                 $message .= $ex->getMessage();
@@ -146,7 +146,7 @@ class ModuleController extends Controller
                 Flash::add("warning", "Failed to delete record");
             }
         } catch (Exception $ex) {
-            $message = "Fatal error ";
+            $message = "Fatal error. ";
             $debug_mode = config("app.debug");
             if ($debug_mode) {
                 $message .= $ex->getMessage();

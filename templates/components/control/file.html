@@ -1,0 +1,13 @@
+{% if file %}
+    <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center file-desc">
+            <span>{{ file.original_name }}</span>
+            <button class="ms-2 btn btn-sm btn-warning" onClick="fileUpload(event)">Change</button>
+        </div>
+        <div class="hidden file-upload w-100">
+            {{ input|raw }}
+        </div>
+    </div>
+{% else %}
+    {{ input|raw }}
+{% endif %}

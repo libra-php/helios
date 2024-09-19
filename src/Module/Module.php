@@ -3,11 +3,14 @@
 namespace Helios\Module;
 
 use App\Models\Audit;
+use App\Models\File;
 use App\Models\Session;
 use Error;
+use Exception;
 use Helios\Model\Model;
-use Helios\View\{Form, IView, Table};
+use Helios\View\{Flash, Form, IView, Table};
 use PDO;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class Module
 {
@@ -153,6 +156,15 @@ class Module
         foreach ($data as $column => $value) {
             if ($value === '' || $value === 'NULL') {
                 $data[$column] = null;
+            }
+            if (isset($this->control[$column]) && $this->control[$column] === "file") {
+                $file_id = $this->handleFileUpload($column);
+                if ($file_id !== false) {
+                    $data[$column] = $file_id;
+                    Flash::add("success", "File successfully uploaded");
+                } else {
+                    Flash::add("warning", "File upload failed");
+                }
             }
         }
         // Created at should be set
@@ -372,6 +384,50 @@ class Module
         $this->defaults[$column] = $value;
     }
 
+    private function handleFileUpload(string $key): string|bool
+    {
+        // Get the uploaded file
+        $file = request()->files->get($key);
+
+        // Check if a file was uploaded
+        if ($file instanceof UploadedFile && $file->isValid()) {
+            // Check if temp file exists
+            $tmp_file = $file->getPathname();
+            if (!file_exists($tmp_file)) {
+                throw new \Exception("Temporary file does not exist: " . $tmp_file);
+            }
+
+            // Generate a unique name for the file
+            $file_name = md5(uniqid()) . '.' . $file->getClientOriginalExtension();
+
+            // Check if the uploads directory exists and is writable
+            $uploads_directory = config("paths.uploads");
+            if (!is_dir($uploads_directory) || !is_writable($uploads_directory)) {
+                throw new \Exception("Uploads directory does not exist or is not writable: " . $uploads_directory);
+            }
+
+            // File metadata
+            $original_name = $file->getClientOriginalName();
+            $mime_type = $file->getMimeType();
+            $size = $file->getSize();
+
+            // Move the file to uploads
+            $file->move($uploads_directory, $file_name);
+
+            // Save file metadata to database
+            $file = File::new([
+                "filename" => $file_name,
+                "original_name" => $original_name,
+                "mime_type" => $mime_type,
+                "size" => $size,
+            ]);
+
+            return $file ? $file->id : false;
+        }
+        return false;
+    }
+
+
     private function getTableData(): array
     {
         if (!isset($this->model)) return [];
@@ -414,11 +470,15 @@ class Module
             }
         }
         // If the value is present in the request, use it
-        foreach ($data as $column => $value) {
-            $old = request()->request->get($column);
-            if ($old) {
-                $data[$column] = $old;
+        if (is_array($data)) {
+            foreach ($data as $column => $value) {
+                $old = request()->request->get($column);
+                if ($old) {
+                    $data[$column] = $old;
+                }
             }
+        } else {
+            $data = [];
         }
         return $data;
     }

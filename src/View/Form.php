@@ -26,25 +26,26 @@ class Form extends View
         if (isset($control[$column])) {
             // A control column is set
             $callback = $control[$column];
-            if (is_callable($callback)) {
-                // The callback method is the value
-                return $callback($column, $value, $options);
-            } else if (is_string($callback) && method_exists($this->module::class, $callback)) {
+            if (is_string($callback) && method_exists($this->module::class, $callback)) {
                 // The module callback method is the value
                 return $this->module->$callback($column, $value, $options);
             } else if (
                 is_string($callback) &&
-                method_exists(Control::class, $callback)
+                method_exists(Control::class, '_'.$callback)
             ) {
-                // The control callback is the value
-                return Control::$callback($column, $value, $options);
+                // Control static method (prefixed with _)
+                $method = '_'.$callback;
+                return Control::$method($column, $value, $options);
             } else if (is_array($callback)) {
                 // If the callback is an array, then we assume it is a select control
                 $options['options'] = $callback;
-                return Control::select($column, $value, $options);
+                return Control::_select($column, $value, $options);
+            } else if (is_callable($callback)) {
+                // The callback method is the value
+                return $callback($column, $value, $options);
             }
         }
-        return Control::input($column, $value, $options);
+        return Control::_input($column, $value, $options);
     }
 
     public function getTemplateData(): array

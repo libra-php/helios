@@ -15,7 +15,8 @@
       hx-patch="/admin/{{ module.path}}/{{ id }}"
       {% else %}
       hx-post="/admin/{{ module.path }}"
-      {% endif %}>
+      {% endif %}
+      enctype="multipart/form-data">
     {{ csrf()|raw }}
     {% for title,column in form  %}
     <div class="row m-0">

@@ -86,7 +86,7 @@
         {% endfor %}
         {% if table|length > 0 and data|length == 0 %}
         <tr>
-            <td class="text-center" colspan="{{ table|length }}"><em>No results found</em></td>
+            <td class="text-center" colspan="{{ table|length + 1 }}"><em>No results found</em></td>
         </tr>
         {% endif %}
     </tbody>

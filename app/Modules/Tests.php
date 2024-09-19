@@ -3,6 +3,7 @@
 namespace App\Modules;
 
 use App\Models\Test;
+use Helios\Model\Model;
 use Helios\Module\Module;
 
 class Tests extends Module
@@ -13,9 +14,11 @@ class Tests extends Module
     {
         $this->rules = [
             "control_input" => ["required"],
-            "control_select" => ["required"],
+            "control_select" => [""],
             "control_switch" => [""],
-            "control_textarea" => ["required"],
+            "control_textarea" => [""],
+            "control_image" => [""],
+            "control_file" => ["required"],
         ];
 
         $this->table("ID", "id")
@@ -24,12 +27,16 @@ class Tests extends Module
         $this->form("Input", "control_input")
              ->form("Select", "control_select")
              ->form("Switch", "control_switch")
-             ->form("Text Area", "control_textarea");
+             ->form("Text Area", "control_textarea")
+             ->form("Image", "control_image")
+             ->form("File", "control_file");
 
         $this->control("control_select", db()->fetchAll("SELECT id as value, name as label 
             FROM user_types 
             ORDER BY name")) 
              ->control("control_switch", "switch")
-             ->control("control_textarea", "textarea");
+             ->control("control_textarea", "textarea")
+             ->control("control_image", "image")
+             ->control("control_file", "file");
     }
 }

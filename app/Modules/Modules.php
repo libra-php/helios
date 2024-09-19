@@ -56,7 +56,7 @@ class Modules extends Module
                         "value" => $class,
                     ];
                 }
-                return Control::select($column, $value, $options);
+                return Control::_select($column, $value, $options);
             })
             ->control("item_order", "number")
             ->control("parent_module_id", db()->fetchAll("SELECT id as value, title as label 
