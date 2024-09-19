@@ -1,15 +1,24 @@
 const showSidebar = () => {
-  const sidebar = document.getElementById("sidebar");
-	const mobile_toggle = document.getElementById("mobile-toggle");
-	sidebar.classList.add("active");
-	mobile_toggle.classList.add("hidden");
+    const sidebar = document.getElementById("sidebar");
+    const module_content = document.getElementById("module-content");
+    sidebar.classList.add("active");
+    module_content.classList.add("hidden");
 }
 
 const hideSidebar = () => {
-  const sidebar = document.getElementById("sidebar");
-	const mobile_toggle = document.getElementById("mobile-toggle");
-	sidebar.classList.remove("active");
-	mobile_toggle.classList.remove("hidden");
+    const sidebar = document.getElementById("sidebar");
+    const module_content = document.getElementById("module-content");
+    sidebar.classList.remove("active");
+    module_content.classList.remove("hidden");
+}
+
+const toggleSidebar = () => {
+    const sidebar = document.getElementById("sidebar");
+    if (sidebar.classList.contains("active")) {
+        hideSidebar();
+    } else {
+        showSidebar();
+    }
 }
 
 const toggleCheckbox = (e) => {
