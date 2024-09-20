@@ -89,7 +89,7 @@ class Controller
      */
     public function hasError(string $column): bool
     {
-        return (request()->request->has($column) || request()->files->has($column)) && isset($this->request_errors[$column]);
+        return isset($this->request_errors[$column]);
     }
 
     /**
@@ -103,7 +103,6 @@ class Controller
         $validated = [];
 
         foreach ($rules as $key => $ruleset) {
-            #FIXME: Only POST and FILES can be validated ??
             $value = request()->request->has($key) ? request()->request->get($key) : request()->files->get($key);
             // Ruleset can be provided as | delimited
             if (is_string($ruleset)) {

@@ -3,7 +3,6 @@
 namespace App\Modules;
 
 use App\Models\Test;
-use Helios\Model\Model;
 use Helios\Module\Module;
 
 class Tests extends Module

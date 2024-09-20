@@ -93,8 +93,13 @@ class Control
             ...$options,
             "type" => "file",
         ]);
+        $hidden = self::_input($column, $value, [
+            ...$options,
+            "type" => "hidden",
+        ]);
         return template("components/control/file.html", [
             "input" => $input,
+            "hidden" => $hidden,
             "file" => $value ? File::find($value) : null,
         ]);
     }

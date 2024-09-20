@@ -12,7 +12,7 @@
 <form class="view-form my-2"
       method="POST"
       {% if id %}
-      hx-patch="/admin/{{ module.path}}/{{ id }}"
+      hx-post="/admin/{{ module.path}}/{{ id }}"
       {% else %}
       hx-post="/admin/{{ module.path }}"
       {% endif %}

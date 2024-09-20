@@ -36,7 +36,7 @@ class ModuleController extends Controller
         } catch (Exception $ex) {
             error_log("fatal error: module.index => " . print_r($ex, true));
         }
-        return "💣";
+        return "Fatal error";
     }
 
     #[Get("/{module}/create", "module.create")]
@@ -52,7 +52,7 @@ class ModuleController extends Controller
         } catch (Exception $ex) {
             error_log("fatal error: module.create => " . print_r($ex, true));
         }
-        return "💣";
+        return "Fatal error";
     }
 
     #[Get("/{module}/{id}", "module.edit")]
@@ -68,7 +68,7 @@ class ModuleController extends Controller
         } catch (Exception $ex) {
             error_log("fatal error: module.edit => " . print_r($ex, true));
         }
-        return "💣";
+        return "Fatal error";
     }
 
     #[Post("/{module}", "module.store")]
@@ -101,6 +101,7 @@ class ModuleController extends Controller
         return $this->create($module);
     }
 
+    #[Post("/{module}/{id}", "module.update.post")]
     #[Patch("/{module}/{id}", "module.update.patch")]
     #[Put("/{module}/{id}", "module.update.put")]
     public function update(string $module, int $id):  string

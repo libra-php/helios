@@ -57,7 +57,7 @@ class Format
         );
     }
 
-    public static function auditDiff(string $column,  mixed $value, array $options)
+    public static function _auditDiff(string $column,  mixed $value, array $options)
     {
         // The value is an audit id
         $record = Audit::find($value);

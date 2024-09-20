@@ -157,7 +157,7 @@ class Module
             if ($value === '' || $value === 'NULL') {
                 $data[$column] = null;
             }
-            if (isset($this->control[$column]) && $this->control[$column] === "file") {
+            if (request()->files->has($column) && isset($this->control[$column]) && $this->control[$column] === "file") {
                 $file_id = $this->handleFileUpload($column);
                 if ($file_id !== false) {
                     $data[$column] = $file_id;
@@ -194,6 +194,15 @@ class Module
         foreach ($data as $column => $value) {
             if ($value === '' || $value === 'NULL') {
                 $data[$column] = null;
+            }
+            if (request()->files->has($column) && isset($this->control[$column]) && $this->control[$column] === "file") {
+                $file_id = $this->handleFileUpload($column);
+                if ($file_id !== false) {
+                    $data[$column] = $file_id;
+                    Flash::add("success", "File successfully uploaded");
+                } else {
+                    Flash::add("warning", "File upload failed");
+                }
             }
         }
         $old = $this->model::find($id);
@@ -384,50 +393,6 @@ class Module
         $this->defaults[$column] = $value;
     }
 
-    private function handleFileUpload(string $key): string|bool
-    {
-        // Get the uploaded file
-        $file = request()->files->get($key);
-
-        // Check if a file was uploaded
-        if ($file instanceof UploadedFile && $file->isValid()) {
-            // Check if temp file exists
-            $tmp_file = $file->getPathname();
-            if (!file_exists($tmp_file)) {
-                throw new \Exception("Temporary file does not exist: " . $tmp_file);
-            }
-
-            // Generate a unique name for the file
-            $file_name = md5(uniqid()) . '.' . $file->getClientOriginalExtension();
-
-            // Check if the uploads directory exists and is writable
-            $uploads_directory = config("paths.uploads");
-            if (!is_dir($uploads_directory) || !is_writable($uploads_directory)) {
-                throw new \Exception("Uploads directory does not exist or is not writable: " . $uploads_directory);
-            }
-
-            // File metadata
-            $original_name = $file->getClientOriginalName();
-            $mime_type = $file->getMimeType();
-            $size = $file->getSize();
-
-            // Move the file to uploads
-            $file->move($uploads_directory, $file_name);
-
-            // Save file metadata to database
-            $file = File::new([
-                "filename" => $file_name,
-                "original_name" => $original_name,
-                "mime_type" => $mime_type,
-                "size" => $size,
-            ]);
-
-            return $file ? $file->id : false;
-        }
-        return false;
-    }
-
-
     private function getTableData(): array
     {
         if (!isset($this->model)) return [];
@@ -504,6 +469,59 @@ class Module
         return $out;
     }
 
+    /**
+     * Handle a file upload request
+     * Stored in uploads directory
+     * @param string $key in request
+     * @return ?int File id
+     */
+    private function handleFileUpload(string $key): string|bool
+    {
+        // Get the uploaded file
+        $file = request()->files->get($key);
+
+        // Check if a file was uploaded
+        if ($file instanceof UploadedFile && $file->isValid()) {
+            // Check if temp file exists
+            $tmp_file = $file->getPathname();
+            if (!file_exists($tmp_file)) {
+                throw new \Exception("Temporary file does not exist: " . $tmp_file);
+            }
+
+            // Generate a unique name for the file
+            $file_name = md5(uniqid()) . '.' . $file->getClientOriginalExtension();
+
+            // Check if the uploads directory exists and is writable
+            $uploads_directory = config("paths.uploads");
+            if (!is_dir($uploads_directory) || !is_writable($uploads_directory)) {
+                throw new \Exception("Uploads directory does not exist or is not writable: " . $uploads_directory);
+            }
+
+            // File metadata
+            $original_name = $file->getClientOriginalName();
+            $mime_type = $file->getMimeType();
+            $size = $file->getSize();
+
+            // Move the file to uploads
+            $file->move($uploads_directory, $file_name);
+
+            // Save file metadata to database
+            $file = File::new([
+                "filename" => $file_name,
+                "original_name" => $original_name,
+                "mime_type" => $mime_type,
+                "size" => $size,
+            ]);
+
+            return $file ? $file->id : false;
+        }
+        return false;
+    }
+
+    /**
+     * Handle page request
+     * Used in table pagination
+     */
     private function handlePage(): void
     {
         if (request()->query->has("page")) {
@@ -514,6 +532,10 @@ class Module
         $this->setPage($page);
     }
 
+    /**
+     * Handle per page request
+     * How many rows shown per page
+     */
     private function handlePerPage(): void
     {
         if (request()->query->has("per_page")) {
@@ -525,6 +547,10 @@ class Module
         $this->setPerPage($per_page);
     }
 
+    /**
+     * Handle export CSV request
+     * Exports table data to CSV format
+     */
     private function handleExportCsv(): void
     {
         if (request()->query->has("export_csv")) {
@@ -558,6 +584,10 @@ class Module
         }
     }
 
+    /**
+     * Handle search request
+     * Filters table columns on search term
+     */
     private function handleSearch(): void
     {
         if (request()->query->has("search_term")) {
@@ -569,6 +599,10 @@ class Module
         $this->setSearchTerm($term);
     }
 
+    /**
+     * Handle fitler count request
+     * The count shown in table link filter
+     */
     private function handleFilterCount(): void
     {
         if (request()->query->has("filter_count")) {
@@ -586,6 +620,10 @@ class Module
         }
     }
 
+    /**
+     * Handle filter link request
+     * Links above the table with counts
+     */
     private function handleFilterLinks(): void
     {
         if (request()->query->has("filter_link")) {
@@ -597,6 +635,10 @@ class Module
         $this->setFilterLink($index);
     }
 
+    /**
+     * Handle order by and sorting requests
+     * Sorts table column ASC/DESC
+     */
     private function handleOrderBy(): void
     {
         if (request()->query->has("order_by")) {
