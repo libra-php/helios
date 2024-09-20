@@ -195,8 +195,12 @@ a:active {
 }
 
 /**
- * Audit
+ * Controls
  */
+.control_image {
+    width: 100%; 
+}
+
 .diff {
     margin: 0;
     padding: 4px;

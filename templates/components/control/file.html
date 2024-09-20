@@ -1,7 +1,7 @@
 {% if file %}
     <div>
         <div class="d-flex flex-column py-1">
-            <span><strong>File Name</strong>: <a href='/uploads/{{file.filename}}'><u>{{ file.filename }}</u></a></span>
+            <span><strong>File Name</strong>: <a hx-boost="false" target="_blank" href='/uploads/{{file.filename}}'><u>{{ file.filename }}</u></a></span>
             <span><strong>Original Name</strong>: {{ file.original_name }}</span>
             <span><strong>Size</strong>: {{ file.size }} bytes</span>
             <span><strong>Type</strong>: {{ file.mime_type }}</span>

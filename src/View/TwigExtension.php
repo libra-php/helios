@@ -20,6 +20,11 @@ class TwigExtension extends AbstractExtension
         ];
     }
 
+    public function hasError(string $column): bool
+    {
+        return controller()->hasError($column);
+    }
+
     public function dump(...$args): void
     {
         dump(...$args);

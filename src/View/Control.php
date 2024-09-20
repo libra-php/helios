@@ -106,7 +106,20 @@ class Control
 
     public static function _image(string $column, mixed $value, array $options)
     {
-        return '';
+        $input = self::_input($column, $value, [
+            ...$options,
+            "type" => "file",
+            "accept" => ".jpg,.jpeg,.png,.gif"
+        ]);
+        $hidden = self::_input($column, $value, [
+            ...$options,
+            "type" => "hidden",
+        ]);
+        return template("components/control/image.html", [
+            "input" => $input,
+            "hidden" => $hidden,
+            "file" => $value ? File::find($value) : null,
+        ]);
     }
 
     public static function _hidden(string $column, mixed $value, array $options)

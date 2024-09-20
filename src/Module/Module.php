@@ -157,7 +157,7 @@ class Module
             if ($value === '' || $value === 'NULL') {
                 $data[$column] = null;
             }
-            if (request()->files->has($column) && isset($this->control[$column]) && $this->control[$column] === "file") {
+            if (request()->files->has($column) && isset($this->control[$column]) && in_array($this->control[$column], ["file", "image"])) {
                 $file_id = $this->handleFileUpload($column);
                 if ($file_id !== false) {
                     $data[$column] = $file_id;
@@ -195,7 +195,7 @@ class Module
             if ($value === '' || $value === 'NULL') {
                 $data[$column] = null;
             }
-            if (request()->files->has($column) && isset($this->control[$column]) && $this->control[$column] === "file") {
+            if (request()->files->has($column) && isset($this->control[$column]) && in_array($this->control[$column], ["file", "image"])) {
                 $file_id = $this->handleFileUpload($column);
                 if ($file_id !== false) {
                     $data[$column] = $file_id;

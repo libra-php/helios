@@ -16,8 +16,8 @@ class Tests extends Module
             "control_select" => [""],
             "control_switch" => [""],
             "control_textarea" => [""],
-            "control_image" => [""],
-            "control_file" => ["required"],
+            "control_image" => ["required"],
+            "control_file" => [""],
         ];
 
         $this->table("ID", "id")

@@ -36,6 +36,4 @@ const toggleFileUpload = (e) => {
         file_upload.classList.add("hidden");
         hidden_input.disabled = false;
     }
-    console.log(file_upload);
-    console.log(hidden_input);
 }
