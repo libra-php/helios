@@ -25,11 +25,3 @@ const toggleCheckbox = (e) => {
     const hidden = e.currentTarget.previousElementSibling;
     hidden.value = e.currentTarget.checked ? 1 : 0;
 }
-
-const fileUpload = (e) => {
-    e.preventDefault();
-    const file_desc = e.currentTarget.closest(".file-desc");
-    const file_upload = e.currentTarget.closest(".file-desc").nextElementSibling;
-    file_desc.classList.add("hidden");
-    file_upload.classList.remove("hidden");
-}
