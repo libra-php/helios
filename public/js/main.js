@@ -26,6 +26,10 @@ const toggleCheckbox = (e) => {
     hidden.value = e.currentTarget.checked ? 1 : 0;
 }
 
+const clearSearch = () => {
+    document.getElementById('filter-search').value = '';
+}
+
 const toggleFileUpload = (e) => {
     const file_upload = e.currentTarget.nextElementSibling;
     const hidden_input = file_upload.nextElementSibling.firstElementChild;

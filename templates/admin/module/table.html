@@ -27,8 +27,11 @@
     <div id="search" class="py-2">
         <form>
             <div class="input-group input-group-sm">
-                <input type="search" class="form-control" name="search_term" placeholder="..." value="{{ filters.search_term }}" />
-                <button type="submit" class="btn btn-dark">Search</button>
+                <input type="search" class="form-control" id="filter-search" name="search_term" placeholder="..." value="{{ filters.search_term }}" />
+                <button type="submit" class="btn btn-primary">Search</button>
+                {% if filters.search_term %}
+                    <button type="submit" onClick="clearSearch()" class="btn btn-dark">Clear</button>
+                {% endif %}
             </div>
         </form>
     </div>
