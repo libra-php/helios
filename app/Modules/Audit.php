@@ -34,9 +34,9 @@ class Audit extends Module
         $this->defaultOrder("id")
             ->defaultSort("DESC");
 
-        $this->filterLink("Create", "tag = 'CREATE'")
-            ->filterLink("Update", "tag = 'UPDATE'")
-            ->filterLink("Delete", "tag = 'DELETE'")
-            ->filterLink("All", "1=1");
+        $this->filterLink("All", "1=1")
+             ->filterLink("Create", "tag = 'CREATE'")
+             ->filterLink("Update", "tag = 'UPDATE'")
+             ->filterLink("Delete", "tag = 'DELETE'");
     }
 }
