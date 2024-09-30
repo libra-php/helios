@@ -40,5 +40,7 @@ class Sessions extends Module
         $this->filterLink("Me", "user_id = $user->id")
             ->filterLink("Others", "user_id != $user->id")
             ->filterLink("All", "1=1");
+
+        $this->dateColumn("created_at");
     }
 }

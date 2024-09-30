@@ -32,6 +32,9 @@ class Module
     private array $filter_links = [];
     private array $searchable = [];
     private string $search_term = "";
+    private string $date_column = "";
+    private string $date_filter_start = "";
+    private ?string $date_filter_end = null;
     private int $filter_link = 0;
     private int $page = 1;
     private int $per_page = 25;
@@ -80,6 +83,7 @@ class Module
         if (!isset($this->model)) return;
         // Table view only
         $this->handleSearch();
+        $this->handleDateFilter();
         $this->handleFilterCount();
         $this->handleFilterLinks();
         $this->handlePage();
@@ -279,6 +283,9 @@ class Module
             "search_term" => $this->search_term,
             "order_by" => $this->order_by,
             "sort" => $this->sort,
+            "date_column" => $this->date_column,
+            "date_filter_start" => $this->date_filter_start,
+            "date_filter_end" => $this->date_filter_end,
         ];
     }
 
@@ -308,6 +315,14 @@ class Module
     {
         $module_session = session()->get(module()->path) ?? [];
         return key_exists($name, $module_session) ? $module_session[$name] : null;
+    }
+
+    protected function removeSession(string $name): void
+    {
+        $module = module();
+        $module_session = session()->get($module->path) ?? [];
+        unset($module_session[$name]);
+        session()->set($module->path, $module_session);
     }
 
     protected function form(string $header, string $attribute): Module
@@ -364,6 +379,12 @@ class Module
     protected function defaultOrder(string $order_by): Module
     {
         $this->order_by = $order_by;
+        return $this;
+    }
+
+    protected function dateColumn(string $column): Module
+    {
+        $this->date_column = $column;
         return $this;
     }
 
@@ -600,6 +621,33 @@ class Module
     }
 
     /**
+     * Handle date filter request
+     */
+    private function handleDateFilter(): void
+    {
+        if (request()->query->has("date_filter_start")) {
+            $start = request()->query->get("date_filter_start");
+            $end = request()->query->get("date_filter_end");
+            $this->setPage(1);
+        } else {
+            $start = $this->getSession("date_filter_start") ?? $this->date_filter_start;
+            $end = $this->getSession("date_filter_end") ?? $this->date_filter_end;
+        }
+        if (request()->query->has("clear_date")) {
+            if (request()->query->get("clear_date") === "start") {
+                $this->removeSession("date_filter_start");
+                $start = null;
+            } else {
+                $this->removeSession("date_filter_end");
+                $end = null;
+            }
+        }
+        if ($start) {
+            $this->setDateFilter($start, $end);
+        }
+    }
+
+    /**
      * Handle fitler count request
      * The count shown in table link filter
      */
@@ -687,6 +735,20 @@ class Module
     {
         $this->sort = $sort;
         $this->setSession("sort", $sort);
+    }
+
+    private function setDateFilter(string $start, ?string $end = null): void
+    {
+        if ($this->date_column && $start) {
+            $this->date_filter_start = $start;
+            $this->date_filter_end = $end;
+            $this->where("{$this->date_column} >= ?", $start);
+            if ($end) {
+                $this->where("{$this->date_column} <= ?", $end);
+            }
+            $this->setSession("date_filter_start", $start);
+            $this->setSession("date_filter_end", $end);
+        }
     }
 
     private function setSearchTerm(string $term): void
