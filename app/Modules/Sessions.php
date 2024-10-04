@@ -26,6 +26,7 @@ class Sessions extends Module
             ->table("Created", "created_at");
 
         $this->search("user")
+            ->search("request_uri")
             ->search("module");
 
         // Set default order/sort
