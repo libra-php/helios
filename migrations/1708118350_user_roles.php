@@ -8,7 +8,7 @@ return new class implements IMigration
 {
     public function up(): string
     {
-        return Schema::create("user_types", function (Blueprint $table) {
+        return Schema::create("user_roles", function (Blueprint $table) {
             $table->bigIncrements("id");
             $table->varchar("name");
             $table->tinyInteger("permission_level")->default(2); // default standard user
@@ -20,7 +20,7 @@ return new class implements IMigration
 
     public function afterUp(): string
     {
-        return Schema::insert("user_types",
+        return Schema::insert("user_roles",
             ["name", "permission_level"],
             ["Super Admin", 0],
             ["Admin", 1],
@@ -30,6 +30,6 @@ return new class implements IMigration
 
     public function down(): string
     {
-        return Schema::drop("user_types");
+        return Schema::drop("user_roles");
     }
 };

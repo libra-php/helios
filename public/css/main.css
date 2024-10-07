@@ -81,6 +81,7 @@ a:active {
 #app #sidebar .sidebar-links {
     list-style-type: none;
     line-height: 2.5rem;
+    padding-left: 22px;
 }
 
 #app #sidebar .btn-toggle {

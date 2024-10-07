@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Helios\Model\Model;
 
-class Test extends Model
+class UserRole extends Model
 {
     public function __construct(?string $key = null)
     {
-        parent::__construct("test", $key);
+        parent::__construct("user_roles", $key);
     }
 }
 

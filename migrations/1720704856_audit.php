@@ -25,6 +25,6 @@ return new class implements IMigration
 
     public function down(): string
     {
-        return Schema::drop("user_types");
+        return Schema::drop("user_roles");
     }
 };

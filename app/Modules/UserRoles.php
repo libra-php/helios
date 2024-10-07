@@ -2,12 +2,12 @@
 
 namespace App\Modules;
 
-use App\Models\UserType;
+use App\Models\UserRole;
 use Helios\Module\Module;
 
-class UserTypes extends Module
+class UserRoles extends Module
 {
-    protected string $model = UserType::class;
+    protected string $model = UserRole::class;
 
     public function __construct()
     {
@@ -17,11 +17,11 @@ class UserTypes extends Module
                 controller()->addErrorMessage("permission_level", "Permission level must be unique");
                 if (!$id) {
                     return !db()->fetch("SELECT 1 
-                        FROM user_types 
+                        FROM user_roles 
                         WHERE permission_level = ?", $value);
                 }
                 return !db()->fetch("SELECT 1 
-                    FROM user_types 
+                    FROM user_roles 
                     WHERE permission_level = ? AND id != ?", $value, $id);
             }],
         ];
@@ -39,7 +39,7 @@ class UserTypes extends Module
         $this->control("permission_level", "number");
 
         $max_permission = db()->var("SELECT max(permission_level)+1 
-            FROM user_types");
+            FROM user_roles");
         $this->default("permission_level", $max_permission);
     }
 

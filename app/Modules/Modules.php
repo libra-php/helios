@@ -26,7 +26,7 @@ class Modules extends Module
             ->table("Enabled", "enabled")
             ->table("Title", "title")
             ->table("Access Level", "(SELECT name 
-                FROM user_types 
+                FROM user_roles 
                 WHERE permission_level = max_permission_level) as max_permission_level")
             ->table("Created", "created_at");
 
@@ -63,7 +63,7 @@ class Modules extends Module
                 FROM modules 
                 ORDER BY title"))
             ->control("max_permission_level", db()->fetchAll("SELECT permission_level as value, name as label 
-                FROM user_types 
+                FROM user_roles 
                 ORDER BY name"));
 
         $this->default("enabled", 1);

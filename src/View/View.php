@@ -109,7 +109,7 @@ class View implements IView
             // Skip the modules that the user doesn't have permission to
             if (
                 !is_null($module->max_permission_level) &&
-                $user->type()->permission_level > $module->max_permission_level
+                $user->role()->permission_level > $module->max_permission_level
             ) {
                 continue;
             }

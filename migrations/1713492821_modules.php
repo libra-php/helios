@@ -38,12 +38,13 @@ return new class implements IMigration
             ["Administration", NULL, NULL, 0, NULL, NULL],
             ["Account", NULL, NULL, 1, NULL, NULL],
             ["Users", "users", "App\\\Modules\\\Users", 0, 1, 1],
-            ["User Types", "user-types", "App\\\Modules\\\UserTypes", 0, 0, 3],
+            ["Roles", "user-roles", "App\\\Modules\\\UserRoles", 0, 0, 3],
             ["Modules", "modules", "App\\\Modules\\\Modules", 1, 0, 1],
             ["Sessions", "sessions", "App\\\Modules\\\Sessions", 2, 1, 1],
             ["Audit", "audit", "App\\\Modules\\\Audit", 3, 0, 1],
+            ["Files", "files", "App\\\Modules\\\Files", 4, 0, 1],
             ["Profile", "profile", "App\\\Modules\\\Profile", 0, 2, 2],
-            ["Tests", "tests", "App\\\Modules\\\Tests", 1, 0, 1],
+            ["Notifications", "notifications", "App\\\Modules\\\Notifications", 1, 2, 2],
         );
     }
 

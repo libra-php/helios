@@ -11,8 +11,8 @@ class User extends Model
         parent::__construct("users", $key);
     }
 
-    public function type(): UserType
+    public function role(): UserRole
     {
-        return UserType::findOrFail($this->user_type_id);
+        return UserRole::findOrFail($this->user_role_id);
     }
 }

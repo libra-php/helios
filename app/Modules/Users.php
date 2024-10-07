@@ -22,7 +22,7 @@ class Users extends Module
                 }
                 return true;
             }],
-            "user_type_id" => ["required"],
+            "user_role_id" => ["required"],
             "password" => ["required", "min_length|8", "regex|^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"],
             "password_match" => ["required", function ($value) {
                 controller()->addErrorMessage("password_match", "Passwords must match");
@@ -48,15 +48,15 @@ class Users extends Module
 
         $this->form("Name", "name")
             ->form("Email", "email")
-            ->form("User Type", "user_type_id")
+            ->form("User Type", "user_role_id")
             ->form("Password", "'' as password")
             ->form("Password (again)", "'' as password_match");
 
-        $this->control("user_type_id", db()->fetchAll("SELECT id as value, name as label FROM user_types ORDER BY name"))
+        $this->control("user_role_id", db()->fetchAll("SELECT id as value, name as label FROM user_types ORDER BY name"))
             ->control("password", "password")
             ->control("password_match", "password");
 
-        $this->default("user_type_id", db()->var("SELECT id FROM user_types WHERE name = 'Standard'"));
+        $this->default("user_role_id", db()->var("SELECT id FROM user_types WHERE name = 'Standard'"));
     }
 
     public function create(array $data): ?Model
@@ -78,7 +78,7 @@ class Users extends Module
         $user = user();
         if ($id == $user->id) return true;
 
-        if ($user->type()->permission_level < 1) {
+        if ($user->role()->permission_level < 1) {
             return true;
         }
 
@@ -90,7 +90,7 @@ class Users extends Module
         $user = user();
         if ($id == $user->id) return true;
 
-        if ($user->type()->permission_level < 1) {
+        if ($user->role()->permission_level < 1) {
             return true;
         }
 
