@@ -23,9 +23,7 @@ class SignInController extends Controller
 
         if ($valid) {
             if (Auth::authenticateUser($valid->email, $valid->password, isset($valid->remember_me))) {
-                //redirect(route("profile.index"));
-                // FIXME: redirect module route
-                redirect("/admin/profile");
+                redirect(config("security.auth_route"));
             }
             $this->addRequestError("password", "Invalid email or password");
         }

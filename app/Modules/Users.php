@@ -52,11 +52,11 @@ class Users extends Module
             ->form("Password", "'' as password")
             ->form("Password (again)", "'' as password_match");
 
-        $this->control("user_role_id", db()->fetchAll("SELECT id as value, name as label FROM user_types ORDER BY name"))
+        $this->control("user_role_id", db()->fetchAll("SELECT id as value, name as label FROM user_roles ORDER BY name"))
             ->control("password", "password")
             ->control("password_match", "password");
 
-        $this->default("user_role_id", db()->var("SELECT id FROM user_types WHERE name = 'Standard'"));
+        $this->default("user_role_id", db()->var("SELECT id FROM user_roles WHERE name = 'Standard'"));
     }
 
     public function create(array $data): ?Model

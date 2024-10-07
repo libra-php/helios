@@ -2,6 +2,7 @@
 
 namespace Helios\View;
 
+use App\Models\Module as ModelsModule;
 use Helios\Database\QueryBuilder;
 use Helios\Module\Module;
 
@@ -122,7 +123,8 @@ class View implements IView
             $sidebar_links[] = $link;
         }
         // Add sign out link
-        if ($parent_module_id == 2) {
+        $account_module = ModelsModule::findByAttribute("title", "Account");
+        if ($parent_module_id == $account_module->id) {
             $link = [
                 "id" => null,
                 "label" => "Sign Out",
