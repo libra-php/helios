@@ -35,18 +35,17 @@ return new class implements IMigration
                 "max_permission_level",
                 "parent_module_id"
             ],
-            ["Administration", NULL, NULL, 1, NULL, NULL],
-            ["Uploads", NULL, NULL, 1, 0, NULL],
+            ["Administration", NULL, NULL, 3, NULL, NULL],
+            ["Uploads", NULL, NULL, 4, 0, NULL],
             ["Account", NULL, NULL, 2, NULL, NULL],
+            ["Home", NULL, NULL, 1, NULL, NULL],
             ["Users", "users", "App\\\Modules\\\Users", 0, 1, 1],
-            ["Roles", "user-roles", "App\\\Modules\\\UserRoles", 0, 0, 4],
+            ["Roles", "user-roles", "App\\\Modules\\\UserRoles", 0, 0, 5],
             ["Modules", "modules", "App\\\Modules\\\Modules", 1, 0, 1],
             ["Sessions", "sessions", "App\\\Modules\\\Sessions", 2, 1, 1],
             ["Audit", "audit", "App\\\Modules\\\Audit", 3, 0, 1],
             ["Files", "files", "App\\\Modules\\\Files", 4, 0, 2],
-            ["Home", "home", "App\\\Modules\\\Home", 0, 2, 3],
-            ["Notifications", "notifications", "App\\\Modules\\\Notifications", 1, 2, 3],
-            ["Profile", "profile", "App\\\Modules\\\Profile", 2, 2, 3],
+            ["Feed", "feed", "App\\\Modules\\\Feed", 0, 2, 4],
         );
     }
 

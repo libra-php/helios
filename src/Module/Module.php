@@ -5,8 +5,7 @@ namespace Helios\Module;
 use App\Models\Audit;
 use App\Models\File;
 use App\Models\Session;
-use Error;
-use Exception;
+use Error, Exception;
 use Helios\Model\Model;
 use Helios\View\{Flash, Form, IView, Table};
 use PDO;
@@ -48,11 +47,11 @@ class Module
 
     public function view(IView $view, ?int $id = null): string
     {
+        // Process incoming request
+        $this->processRequest();
 
         // Set view data
         if ($view instanceof Table) {
-            // Process incoming request
-            $this->processRequest();
             $view->setData($this->getTableData());
         } else if ($view instanceof Form) {
             if (!is_null($id)) {
@@ -294,6 +293,11 @@ class Module
         return [
             "export_csv" => $this->table ? $this->export_csv : false,
         ];
+    }
+
+    public function getCustomData(): array
+    {
+        return [];
     }
 
     protected function setSession(string $name, mixed $value): void

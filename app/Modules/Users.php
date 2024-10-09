@@ -21,7 +21,7 @@ class Users extends Module
                     return filter_var($value, FILTER_VALIDATE_EMAIL);
                 }
                 return true;
-            }],
+            }, "unique|users"],
             "user_role_id" => ["required"],
             "password" => ["required", "min_length|8", "regex|^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"],
             "password_match" => ["required", function ($value) {
@@ -48,7 +48,7 @@ class Users extends Module
 
         $this->form("Name", "name")
             ->form("Email", "email")
-            ->form("User Type", "user_role_id")
+            ->form("Role", "user_role_id")
             ->form("Password", "'' as password")
             ->form("Password (again)", "'' as password_match");
 

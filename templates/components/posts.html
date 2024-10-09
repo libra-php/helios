@@ -1,0 +1,8 @@
+{% for post in posts %}
+{% include "components/post.html" with {'post': post, 'user_avatar': user_avatar } %}
+{% endfor %}
+{% if posts is empty %}
+<div class="d-flex justify-content-center p-2">
+    <p><em>There are currently no posts</em></p>
+</div>
+{% endif %}

@@ -3,22 +3,22 @@
 <html lang="en">
 
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>{% block title %}Helios{% endblock %}</title>
-	<link rel="icon" href="/favicon.ico">
-	<link href="/css/bootstrap.min.css" rel="stylesheet">
-	<script src="/js/htmx.min.js"></script>
-	<link rel="stylesheet" href="/css/main.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Helios{% endblock %}</title>
+    <link rel="icon" href="/favicon.ico">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/js/htmx.min.js"></script>
+    <link rel="stylesheet" href="/css/main.css">
 </head>
 
 <body>
-	<main id="content" class="h-100">
-		{% block content %}{% endblock %}
-	</main>
-	<script src="/js/bootstrap.bundle.min.js"></script>
-	<script src="/js/main.js"></script>
-	<script src="/js/sidebar.js" nonce="{{ nonce }}"></script>
+    <main id="content" class="h-100">
+        {% block content %}{% endblock %}
+    </main>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/sidebar.js" nonce="{{ nonce }}"></script>
 </body>
 
 </html>

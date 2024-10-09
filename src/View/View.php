@@ -9,7 +9,7 @@ use Helios\Module\Module;
 class View implements IView
 {
     protected Module $module;
-    private array $data;
+    private array $data = [];
     protected string $template = "/admin/module/view.html";
 
     public function setModule(Module $module): void

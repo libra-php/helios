@@ -13,6 +13,7 @@ const hideSidebar = () => {
 }
 
 const toggleSidebar = () => {
+    console.log("test");
     const sidebar = document.getElementById("sidebar");
     if (sidebar.classList.contains("active")) {
         hideSidebar();
@@ -28,6 +29,21 @@ const toggleCheckbox = (e) => {
 
 const clearSearch = () => {
     document.getElementById('filter-search').value = '';
+}
+
+const clearPost = () => {
+    setTimeout(() => {document.getElementById('new-post').value = ''});
+}
+
+const bodyChange = (e) => {
+    const value = e.currentTarget.value;
+    const button = e.currentTarget.closest('.d-flex').querySelector('button[type="submit"]');
+    button.disabled = value.length === 0;
+}
+
+const showComment = (e) => {
+    const comment = e.currentTarget.closest('.actions').nextElementSibling;
+    comment.classList.toggle("hidden");
 }
 
 const toggleFileUpload = (e) => {

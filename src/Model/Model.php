@@ -219,8 +219,8 @@ class Model implements IModel
             ->where(["$this->key_column = ?"], $this->key)
             ->params(array_values($params))
             ->execute();
+        $this->hydrate();
         if ($result) {
-            $this->hydrate();
             return true;
         }
         return false;

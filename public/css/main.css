@@ -247,6 +247,36 @@ a:active {
 }
 
 /**
+ * Feed
+ */
+#feed {
+    max-width: 598px;
+}
+#feed #post-control {
+}
+#feed #posts .post {
+    min-height: 80px;
+    border-bottom: 1px solid #ccc;
+    margin: 15px 0;
+}
+#feed #posts .post .title {
+}
+#feed #posts .post .body {
+    font-size: 1.1rem;
+    padding: 12px 0;
+}
+#feed #posts .post .actions {
+    padding: 0 6px 6px 0;
+}
+#feed #posts .post .actions > button {
+    margin-right: 8px;
+    border: 0 !important;
+}
+#feed #posts .post:last-child {
+    border: 0;
+}
+
+/**
  * Utils
  */
 .truncate {
