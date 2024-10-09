@@ -39,6 +39,17 @@ class FeedController extends Controller
         ]);
     }
 
+    #[Get("/post/ago/{id}", "feed.post-ago")]
+    public function postAgo($id)
+    {
+        $post = PostModel::find($id);
+        if ($post) {
+            $ago = Carbon::parse($post->created_at)->diffForHumans();
+            return $ago;
+        }
+        return '';
+    }
+
     #[Get("/comment/count/{id}", "feed.comment-count")]
     public function commentCount($id)
     {
