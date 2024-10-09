@@ -13,6 +13,27 @@ use PDO;
 #[Group(prefix: "/feed/post", middleware: ['auth'])]
 class PostController extends Controller
 {
+    #[Get("/show/{id}", "post.show")]
+    public function show($id)
+    {
+        $post = PostModel::find($id);
+        if ($post) {
+            $user = user();
+            $user->avatar = $user->gravatar(40);
+
+            $post_user = User::find($post->user_id);
+            $post_user->avatar = $post_user->gravatar(40);
+            $post->user = $post_user;
+            return $this->render("/admin/feed/show.html", [
+                "post" => $post,
+                "user" => $user,
+            ]); 
+        }
+        http_response_code(404);
+        header("HTTP/1.0 404 Not Found");
+        die;
+    }
+
     #[Get("/ago/{id}", "feed.post-ago")]
     public function postAgo($id)
     {
@@ -21,45 +42,23 @@ class PostController extends Controller
             $ago = Carbon::parse($post->created_at)->diffForHumans();
             return $ago;
         }
-        return '';
+        http_response_code(404);
+        header("HTTP/1.0 404 Not Found");
+        die;
     }
 
-    #[Get("/comment/count/{id}", "feed.comment-count")]
-    public function commentCount($id)
-    {
-        $count = PostModel::search(["count(*)"])
-            ->where(["parent_id = ?"], $id)
-            ->execute()
-            ->fetch(PDO::FETCH_COLUMN);
-        return $count ?? 0;
-    }
-
-    #[Post("/comment/{id}", "feed.post-comment")]
-    public function comment($id)
-    {
-        $valid = $this->validateRequest([
-            "body" => ["required", "min_length|1"],
-        ]);
-        if ($valid) {
-            if (trim($valid->body)) {
-                PostModel::new([
-                    "user_id" => user()->id,
-                    "parent_id" => $id,
-                    "body" => $valid->body,
-                ]);
-            }
-        }
-        return $this->posts();
-    }
-
-    #[Get("/like/count/{id}", "feed.post-likes")]
-    public function likes($id)
+    #[Get("/like-button/{id}", "feed.like-button")]
+    public function likeButton($id)
     {
         $count = Like::search(["count(*)"])
             ->where(["post_id = ?"], $id)
             ->execute()
             ->fetch(PDO::FETCH_COLUMN);
-        return $count ?? 0;
+        return $this->render("/admin/feed/like-button.html", [
+            "id" => $id,
+            "count" => $count,
+        ]);
+
     }
 
     #[Post("/like/{id}", "feed.post-like")]
@@ -85,7 +84,53 @@ class PostController extends Controller
             ]);
         }
 
-        return $this->posts();
+        return $this->likeButton($id);
+    }
+
+    #[Get("/comment-button/{id}", "feed.comment-button")]
+    public function commentButton($id)
+    {
+        $count = PostModel::search(["count(*)"])
+            ->where(["parent_id = ?"], $id)
+            ->execute()
+            ->fetch(PDO::FETCH_COLUMN);
+        return $this->render("/admin/feed/comment-button.html", [
+            "id" => $id,
+            "count" => $count,
+        ]);
+    }
+
+    #[Post("/comment/{id}", "feed.post-comment")]
+    public function comment($id)
+    {
+        $valid = $this->validateRequest([
+            "body" => ["required", "min_length|1"],
+        ]);
+        if ($valid) {
+            if (trim($valid->body)) {
+                $user = user();
+                $post = PostModel::new([
+                    "user_id" => $user->id,
+                    "parent_id" => $id,
+                    "body" => $valid->body,
+                ]);
+                $post->user = $user;
+                $post->user->avatar = $user->gravatar(40);
+                return $this->render("admin/feed/post.html", [
+                    "post" => $post,
+                    "user" => $user,
+                ]);
+            }
+        }
+        return $this->show($id);
+    }
+
+    #[Get("/comments/{id}", "feed.comments")]
+    public function comments($id): string
+    {
+        return $this->render("admin/feed/posts.html", [
+            "posts" => $this->getComments($id)
+        ]);
     }
 
     #[Get("/posts", "feed.posts")]
@@ -149,5 +194,21 @@ class PostController extends Controller
             $post->user = $user;
         }
         return $posts;
+    }
+
+    private function getComments($id)
+    {
+        $user = user();
+        $comments = PostModel::search(["*"])
+            ->where(["parent_id = ?"], $id)
+            ->orderBy(["created_at DESC"])
+            ->execute()->fetchAll();
+
+        foreach ($comments as $i => &$post) {
+            $user = User::find($post->user_id);
+            $user->avatar = $user->gravatar(40);
+            $post->user = $user;
+        }
+        return $comments;
     }
 }

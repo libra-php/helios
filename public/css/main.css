@@ -275,6 +275,13 @@ a:active {
 #feed #posts .post:last-child {
     border: 0;
 }
+#feed #original {
+    font-size: 1.3rem;
+}
+#feed #original img {
+    width: 65px;
+    height: 65px;
+}
 
 /**
  * Utils

@@ -4,11 +4,8 @@
         <div class="title"><strong>{{ post.user.name }}</strong> <span class="px-2">·</span> <small hx-get="/feed/post/ago/{{ post.id }}" hx-trigger="load, every 1m" hx-target="this" hx-swap="textContent"></small></div>
         <div class="body">{{ post.body|raw }}</div>
         <div class="actions d-flex justify-content-start">
-            <button class="btn btn-sm">💬<span class="msg-count ps-1" hx-trigger="load" hx-get="/feed/post/comment/count/{{ post.id }}" hx-swap="textContent"></span></button>
-            <form hx-post="/feed/post/like/{{ post.id }}" hx-target="#post-{{ post.id }} .like-count" hx-select="#post-{{ post.id }} .like-count" hx-swap="outerHTML">
-                {{ csrf()|raw }}
-                <button class="btn btn-sm" type="submit">❤️<span class="like-count ps-1" hx-trigger="load" hx-target="closest .like-count" hx-get="/feed/post/like/count/{{ post.id }}" hx-swap="textContent"></span></button>
-            </form>
+            <div hx-get="/feed/post/comment-button/{{ post.id }}" hx-trigger="load"></div>
+            <div hx-get="/feed/post/like-button/{{ post.id }}" hx-trigger="load"></div>
         </div>
     </div>
 </div>
