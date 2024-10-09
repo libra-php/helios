@@ -1,9 +1,3 @@
 {% for post in posts %}
 {% include "admin/feed/post.html" with {'post': post } %}
 {% endfor %}
-{% if posts is empty %}
-    <div class="d-flex justify-content-center p-2">
-        <p><em>There are currently no posts</em></p>
-    </div>
-{% endif %}
-

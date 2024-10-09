@@ -4,8 +4,8 @@
         <div class="title"><strong>{{ post.user.name }}</strong> <span class="px-2">·</span> <small hx-get="/feed/post/ago/{{ post.id }}" hx-trigger="load, every 1m" hx-target="this" hx-swap="textContent"></small></div>
         <div class="body">{{ post.body|raw }}</div>
         <div class="actions d-flex justify-content-start">
-            <div hx-get="/feed/post/comment-button/{{ post.id }}" hx-trigger="load"></div>
-            <div hx-get="/feed/post/like-button/{{ post.id }}" hx-trigger="load"></div>
+            <div hx-get="/feed/post/comment-button/{{ post.id }}" hx-trigger="comment-btn, load"></div>
+            <div hx-get="/feed/post/like-button/{{ post.id }}" hx-trigger="like-btn, load"></div>
         </div>
     </div>
 </div>

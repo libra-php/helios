@@ -1,7 +1,5 @@
-<button class="btn btn-sm btn-primary link-light" hx-get="/admin/feed" hx-target="#feed" hx-select="#feed" hx-swap="outerHTML">Exit</button>
-
 <div id="comments" class="py-4" hx-disinherit="*">
-    <div id="original" class="py-4">
+    <div id="original" class="py-3">
     {% include "admin/feed/post.html" with {'post': post } %}
     </div>
 
@@ -12,6 +10,7 @@
             <div class="d-flex flex-column flex-grow-1">
                 <textarea name="body" id="new-post" class="w-100 form-control p-1" rows="3" onKeyUp="bodyChange(event)" placeholder="Post your reply"></textarea>
                 <div class="d-flex justify-content-end pt-2">
+                    <button class="btn btn-sm btn-primary link-light me-2" hx-get="/admin/feed" hx-target="#feed" hx-select="#feed" hx-swap="outerHTML">Cancel</button>
                     <button class="btn btm-sm btn-primary" id="btn-new-post" type="submit" onClick="clearPost()"disabled>Post</button>
                 </div>
             </div>
