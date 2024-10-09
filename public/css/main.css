@@ -279,6 +279,9 @@ a:active {
 }
 #feed #original img {
 }
+#feed .btn-like.inactive, #feed .btn-comment.inactive {
+    opacity: 0.7;
+}
 
 /**
  * Utils
