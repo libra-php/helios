@@ -21,13 +21,17 @@ class FeedController extends Controller
         ]);
         if ($valid) {
             if (trim($valid->body)) {
-                PostModel::new([
+                $post = PostModel::new([
                     "user_id" => user()->id,
                     "body" => $valid->body,
                 ]);
+                return $this->render("components/post.html", [
+                    "post" => $post,
+                    "user" => user()
+                ]);
             }
         }
-        return $this->posts();
+        return false;
     }
 
     #[Get("/posts", "feed.posts")]
@@ -120,12 +124,13 @@ class FeedController extends Controller
         if ($user->role()->permission_level == 0) {
             // Super admins see everything
             $posts = PostModel::search(["*"])
-                ->where(["parent_id IS NULL"])
+                ->where(["parent_id IS NULL AND created_at > NOW() - INTERVAL 1 MONTH"])
                 ->orderBy(["created_at DESC"])
                 ->execute()->fetchAll();
         } else {
             $posts = PostModel::search(["*"])
                 ->where(["parent_id IS NULL 
+                AND created_at > NOW() - INTERVAL 1 MONTH
                 AND (user_id = 1 
                 OR user_id = ? 
                 OR EXISTS (SELECT * 
@@ -139,7 +144,6 @@ class FeedController extends Controller
         foreach ($posts as $i => &$post) {
             $user = User::find($post->user_id);
             $post->user = $user;
-            $post->ago = Carbon::parse($post->created_at)->diffForHumans();
             $hash = md5(strtolower(trim($user->email)));
             $size = 40;
             $post->gravatar = "http://www.gravatar.com/avatar/$hash?s=$size";

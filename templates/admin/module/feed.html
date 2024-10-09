@@ -15,7 +15,7 @@
 <div id="feed" class="tab-content container py-2" hx-disinherit="*">
     <div class="tab-pane fade show active" id="nav-feed" role="tabpanel" aria-labelledby="nav-feed-tab">
         <div id="post-control" class="mt-2">
-            <form hx-post="/feed/post" hx-target="#posts" hx-indicator="#request-spinner">
+            <form hx-post="/feed/post" hx-target="#posts" hx-swap="afterbegin" hx-indicator="#request-spinner">
             {{ csrf()|raw }}
             <div class="input-group">
                 <img src="{{ data.avatar_url }}" class="rounded-circle avatar me-2" alt="avatar" width="40" height="40" loading="lazy" />

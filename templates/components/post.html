@@ -1,7 +1,7 @@
 <div class="post d-flex w-100" id="post-{{ post.id }}">
     <img src="{{ post.user.gravatar }}" class="rounded-circle me-2 avatar" alt="avatar" width="40" height="40" loading="lazy" />
     <div class="content d-flex flex-column w-100">
-        <div class="title"><strong>{{ post.user.name }}</strong> <span class="px-2">·</span> <small hx-get="/feed/post/ago/{{ post.id }}" hx-trigger="every 1m" hx-swap="textContent">{{ post.ago }}</small></div>
+        <div class="title"><strong>{{ post.user.name }}</strong> <span class="px-2">·</span> <small hx-get="/feed/post/ago/{{ post.id }}" hx-trigger="load, every 30s" hx-swap="textContent"></small></div>
         <div class="body">{{ post.body|raw }}</div>
         <div class="actions d-flex justify-content-start">
             <button class="btn btn-sm" onClick="showComment(event)">💬<span class="msg-count ps-1" hx-trigger="load" hx-get="/feed/comment/count/{{ post.id }}" hx-swap="textContent"></span></button>
