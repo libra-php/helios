@@ -5,16 +5,16 @@
 {% if flash|length > 0 %}
 {% include "components/flash.html" %}
 {% endif %}
-<nav class="nav nav-tabs" id="nav-tab" role="tablist">
+<nav class="nav nav-tabs container" id="nav-tab" role="tablist">
   <a class="nav-link active" id="nav-feed-tab" data-bs-toggle="tab" href="#nav-feed" role="tab" aria-controls="nav-feed" aria-selected="true">Feed</a>
   <a class="nav-link" id="nav-users-tab" data-bs-toggle="tab" href="#nav-users" role="tab" aria-controls="nav-users" aria-selected="false">Users</a>
 </nav>
 {% endblock %}
 
 {% block middle %}
-<div id="feed" class="tab-content container py-2" hx-disinherit="*">
+<div id="feed" class="tab-content container py-4" hx-disinherit="*">
     <div class="tab-pane fade show active" id="nav-feed" role="tabpanel" aria-labelledby="nav-feed-tab">
-        <div id="post-control" class="mt-2">
+        <div id="post-control">
             <form hx-post="/feed/post" hx-target="#posts" hx-swap="afterbegin" hx-indicator="#request-spinner">
             {{ csrf()|raw }}
             <div class="input-group">
@@ -28,7 +28,7 @@
             </div>
             </form>
         </div>
-        <div id="posts" hx-get="/feed/posts" hx-trigger="load" hx-swap="innerHTML">
+        <div id="posts" hx-get="/feed/post/posts" hx-trigger="load" hx-swap="innerHTML">
             <div class="w-100 d-flex justify-content-center p-5">
                 <div id="request-spinner" class="htmx-indicator spinner-3">
                     <span class="visually-hidden">Loading...</span>

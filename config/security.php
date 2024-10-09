@@ -12,6 +12,6 @@ return [
     // eg) 'script-src' => "'self' https://trusted.cdn.com",
     "csp_directives" => [
     ],
-    "max_requests" => 120,
-    "decay_seconds" => 25,
+    "max_requests" => 500,
+    "decay_seconds" => 60,
 ];

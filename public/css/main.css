@@ -249,7 +249,7 @@ a:active {
 /**
  * Feed
  */
-#feed {
+#feed, #nav-tab {
     max-width: 598px;
 }
 #feed #post-control {

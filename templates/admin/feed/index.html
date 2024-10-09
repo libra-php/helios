@@ -1,0 +1,24 @@
+{% extends "layouts/admin.html" %}
+
+{% block top  %}
+{% include 'components/breadcrumbs.html' %}
+{% if flash|length > 0 %}
+{% include "components/flash.html" %}
+{% endif %}
+<nav class="nav nav-tabs container" id="nav-tab" role="tablist">
+  <a class="nav-link active" id="nav-feed-tab" data-bs-toggle="tab" href="#nav-feed" role="tab" aria-controls="nav-feed" aria-selected="true">Feed</a>
+  <a class="nav-link" id="nav-users-tab" data-bs-toggle="tab" href="#nav-users" role="tab" aria-controls="nav-users" aria-selected="false">Users</a>
+</nav>
+{% endblock %}
+
+{% block middle %}
+<div id="feed" class="tab-content container py-4" hx-disinherit="*">
+    <div hx-get="/feed" hx-trigger="load" class="tab-pane fade show active" id="nav-feed" role="tabpanel" aria-labelledby="nav-feed-tab">
+    </div>
+    <div class="tab-pane fade" id="nav-users" role="tabpanel" aria-labelledby="nav-users-tab">
+    </div>
+</div>
+{% endblock %}
+
+{% block bottom  %}
+{% endblock %}

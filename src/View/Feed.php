@@ -8,7 +8,7 @@ namespace Helios\View;
  */
 class Feed extends View
 {
-    protected string $template = "admin/module/feed.html";
+    protected string $template = "admin/feed/index.html";
 
     public function getTemplateData(): array
     {

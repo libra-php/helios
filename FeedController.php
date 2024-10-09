@@ -34,6 +34,24 @@ class FeedController extends Controller
         return false;
     }
 
+    #[Get("/post/show/{id}", "feed.show-post")]
+    public function showPost($id)
+    {
+        $post = PostModel::find($id);
+        $comments = PostModel::search(["*"])
+            ->where(["parent_id = ?"], $id)
+            ->execute()
+            ->fetchAll();
+        if ($post) {
+            return $this->render("components/post.html", [
+                "post" => $post,
+                "comments" => $comments,
+                "user" => user()
+            ]);
+        }
+        return '';
+    }
+
     #[Get("/posts", "feed.posts")]
     public function posts(): string
     {
