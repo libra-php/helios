@@ -1,9 +1,9 @@
 <div id="comments" class="py-4" hx-disinherit="*">
-    <div id="original" class="py-3">
+    <div id="original">
     {% include "admin/feed/post.html" with {'post': post } %}
     </div>
 
-    <form class="mt-2" hx-post="/feed/post/comment/{{ post.id }}" hx-target="#posts" hx-swap="afterbegin" hx-indicator="#request-spinner">
+    <form class="mt-4" hx-post="/feed/post/comment/{{ post.id }}" hx-target="#posts" hx-swap="afterbegin" hx-indicator="#request-spinner">
         {{ csrf()|raw }}
         <div class="input-group">
             <img src="{{ user.avatar }}" class="rounded-circle avatar me-2" alt="avatar" width="40" height="40" loading="lazy" />

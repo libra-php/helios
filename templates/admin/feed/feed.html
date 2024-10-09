@@ -1,5 +1,5 @@
 <div id="post-feed">
-    <div id="post-control">
+    <div id="post-control" class="mt-4">
         <form hx-post="/feed/post" hx-target="#posts" hx-swap="afterbegin" hx-indicator="#request-spinner">
             {{ csrf()|raw }}
             <div class="input-group">

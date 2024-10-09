@@ -276,11 +276,8 @@ a:active {
     border: 0;
 }
 #feed #original {
-    font-size: 1.3rem;
 }
 #feed #original img {
-    width: 65px;
-    height: 65px;
 }
 
 /**
