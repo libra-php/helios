@@ -260,7 +260,7 @@ a:active {
     border: 0;
 }
 #feed textarea {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     background: none;
 }
 #feed #posts .post {
@@ -279,7 +279,7 @@ a:active {
     padding: 0 6px 6px 0;
 }
 #feed #posts .post .actions > button {
-    margin-right: 8px;
+    margin-right: 12px;
     border: 0 !important;
 }
 #feed #posts .post:last-child {
