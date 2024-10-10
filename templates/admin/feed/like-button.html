@@ -1,4 +1,4 @@
 <form hx-post="/feed/post/like/{{ id }}" hx-target="find .btn-like" hx-swap="outerHTML">
     {{ csrf()|raw }}
-    <button class="btn btn-sm btn-like {% if count == 0 %}inactive{% endif %}" type="submit">❤️<span class="like-count ps-1">{{ count }}</span></button>
+    <button class="btn btn-sm btn-like {% if not liked_by_me %}inactive{% endif %}" type="submit">❤️<span class="like-count ps-1">{{ count }}</span></button>
 </form>

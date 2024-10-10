@@ -48,9 +48,14 @@ class PostController extends Controller
             ->where(["post_id = ?"], $id)
             ->execute()
             ->fetch(PDO::FETCH_COLUMN);
+        $liked_by_me = Like::search(["1"])
+            ->where(["post_id = ? AND user_id = ?"], $id, user()->id)
+            ->execute()
+            ->fetch();
         return $this->render("/admin/feed/like-button.html", [
             "id" => $id,
             "count" => $count,
+            "liked_by_me" => $liked_by_me,
         ]);
 
     }
