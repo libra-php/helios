@@ -159,6 +159,22 @@ class Model implements IModel
     }
 
     /**
+     * Find a model from the db by primary key or fail with 404
+     */
+    public static function findOrNotFound(string|int $key): Model|bool
+    {
+        $class = get_called_class();
+        try {
+            $model = new $class($key);
+            return $model;
+        } catch (Exception $ex) {
+            http_response_code(404);
+            header("HTTP/1.0 404 Not Found");
+            die;
+        }
+    }
+
+    /**
      * Find a model from the db by attribute
      */
     public static function findByAttribute(string $attribute, mixed $value): Model|bool
@@ -199,7 +215,7 @@ class Model implements IModel
     /**
      * Search for models in the db
      */
-    public static function search(array $columns): Querybuilder
+    public static function search(array $columns): QueryBuilder
     {
         $class = get_called_class();
         $model = new $class();

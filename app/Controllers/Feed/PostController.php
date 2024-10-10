@@ -16,7 +16,7 @@ class PostController extends Controller
     #[Get("/show/{id}", "post.show")]
     public function show($id)
     {
-        $post = PostModel::find($id);
+        $post = PostModel::findOrNotFound($id);
         if ($post) {
             $user = user();
             $user->avatar = $user->gravatar(40);
@@ -29,22 +29,16 @@ class PostController extends Controller
                 "user" => $user,
             ]); 
         }
-        http_response_code(404);
-        header("HTTP/1.0 404 Not Found");
-        die;
     }
 
     #[Get("/ago/{id}", "feed.post-ago")]
     public function postAgo($id)
     {
-        $post = PostModel::find($id);
+        $post = PostModel::findOrNotFound($id);
         if ($post) {
             $ago = Carbon::parse($post->created_at)->diffForHumans();
             return $ago;
         }
-        http_response_code(404);
-        header("HTTP/1.0 404 Not Found");
-        die;
     }
 
     #[Get("/like-button/{id}", "feed.like-button")]
@@ -85,6 +79,7 @@ class PostController extends Controller
         }
 
         trigger("likeButton");
+        return $this->likeButton($id);
     }
 
     #[Get("/comment-button/{id}", "feed.comment-button")]
@@ -116,13 +111,14 @@ class PostController extends Controller
                 ]);
                 $post->user = $user;
                 $post->user->avatar = $user->gravatar(40);
+                trigger("commentButton");
                 return $this->render("admin/feed/post.html", [
                     "post" => $post,
                     "user" => $user,
                 ]);
             }
         }
-        trigger("commentButton");
+        return $this->show($id);
     }
 
     #[Get("/comments/{id}", "feed.comments")]
