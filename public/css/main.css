@@ -271,11 +271,12 @@ a:active {
 #feed #posts .post .title {
     font-size: 0.9rem;
 }
-#feed #posts .post .body {
-    font-size: 1.1rem;
+#feed .body {
+    font-size: 1.0rem;
     padding: 12px 0;
 }
-#feed #posts .post .actions {
+#feed .actions {
+    margin-top: 10px;
     padding: 0 6px 6px 0;
 }
 #feed #posts .post .actions > button {
@@ -288,7 +289,11 @@ a:active {
 #feed .post a {
     text-decoration: underline;
 }
-#feed #original {
+#feed #original .title {
+    font-size: 1.0rem;
+}
+#feed #original .body {
+    font-size: 1.1rem;
 }
 #feed #original img {
 }
