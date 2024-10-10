@@ -285,6 +285,9 @@ a:active {
 #feed #posts .post:last-child {
     border: 0;
 }
+#feed .post a {
+    text-decoration: underline;
+}
 #feed #original {
 }
 #feed #original img {

@@ -108,12 +108,14 @@ class PostController extends Controller
             "body" => ["required", "min_length|1"],
         ]);
         if ($valid) {
-            if (trim($valid->body)) {
+            if (trim($valid->body) != '') {
+                $convertedPost = $this->convertBody($valid->body);
+
                 $user = user();
                 $post = PostModel::new([
                     "user_id" => $user->id,
                     "parent_id" => $id,
-                    "body" => $valid->body,
+                    "body" => $convertedPost,
                 ]);
                 $post->user = $user;
                 $post->user->avatar = $user->gravatar(40);
@@ -154,11 +156,12 @@ class PostController extends Controller
             "body" => ["required", "min_length|1"],
         ]);
         if ($valid) {
-            if (trim($valid->body)) {
+            if (trim($valid->body) != '') {
+                $convertedPost = $this->convertBody($valid->body);
                 $user = user();
                 $post = PostModel::new([
                     "user_id" => $user->id,
-                    "body" => $valid->body,
+                    "body" => $convertedPost,
                 ]);
                 $post->user = $user;
                 $post->user->avatar = $user->gravatar(40);
@@ -170,6 +173,15 @@ class PostController extends Controller
             }
         }
         return false;
+    }
+
+    private function convertBody($body)
+    {
+        $pattern = '/(https?:\/\/[^\s]+)/';
+        $replacement = '<a href="$1" target="_blank">$1</a>';
+        $body = preg_replace($pattern, $replacement, $body);
+        $body = nl2br($body);
+        return $body;
     }
 
     #[Get("/waiting", "feed.posts-waiting")]
