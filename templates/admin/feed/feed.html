@@ -13,6 +13,8 @@
             </div>
         </form>
     </div>
+    <div id="posts-waiting" hx-get="/feed/post/waiting" hx-trigger="updateWaiting from:body, every 10s" hx-swap="innerHTML">
+    </div>
     <div id="posts" hx-get="/feed/post/posts" hx-trigger="load" hx-swap="innerHTML">
         <div class="w-100 d-flex justify-content-center p-5">
             <div id="request-spinner" class="htmx-indicator spinner-3">

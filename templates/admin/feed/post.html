@@ -6,7 +6,7 @@
             <img class="name-badge ms-1" src="/images/verified.png" height="16" width="16" alt="verified" /> 
             <span class="ms-1">@{{ post.user.username }}</span> 
             <span class="px-2">·</span>
-            <span hx-get="/feed/post/ago/{{ post.id }}" hx-trigger="updateAgo from:body, load, every 5m" hx-target="this" hx-swap="textContent"></span>
+            <span hx-get="/feed/post/ago/{{ post.id }}" hx-trigger="updateAgo from:body, load, every 1m" hx-target="this" hx-swap="textContent"></span>
         </div>
         <div class="body">{{ post.body|raw }}</div>
         <div class="actions d-flex justify-content-start">

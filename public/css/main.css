@@ -252,7 +252,16 @@ a:active {
 #feed, #nav-tab {
     max-width: 538px;
 }
-#feed #post-control {
+#feed .form-control {
+    border: 0;
+}
+#feed .form-control:focus {
+    box-shadow: none !important;
+    border: 0;
+}
+#feed textarea {
+    font-size: 1.2rem;
+    background: none;
 }
 #feed #posts .post {
     min-height: 80px;

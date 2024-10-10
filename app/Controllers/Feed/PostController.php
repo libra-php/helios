@@ -2,13 +2,13 @@
 
 namespace App\Controllers\Feed;
 
+use App\Models\Feed;
 use App\Models\Like;
 use Helios\Web\Controller;
 use StellarRouter\{Get, Post, Group};
 use App\Models\Post as PostModel;
 use App\Models\User;
 use Carbon\Carbon;
-use DateTime;
 use PDO;
 
 #[Group(prefix: "/feed/post", middleware: ['auth'])]
@@ -29,7 +29,7 @@ class PostController extends Controller
             return $this->render("/admin/feed/show.html", [
                 "post" => $post,
                 "user" => $user,
-            ]); 
+            ]);
         }
     }
 
@@ -38,7 +38,7 @@ class PostController extends Controller
     {
         $post = PostModel::findOrNotFound($id);
         if ($post) {
-            $ago = Carbon::parse($post->created_at)->diffForHumans();
+            $ago = $this->twitterTimeFormat(Carbon::parse($post->created_at));
             return $ago;
         }
     }
@@ -59,7 +59,6 @@ class PostController extends Controller
             "count" => $count,
             "liked_by_me" => $liked_by_me,
         ]);
-
     }
 
     #[Post("/like/{id}", "feed.post-like")]
@@ -139,6 +138,10 @@ class PostController extends Controller
     #[Get("/posts", "feed.posts")]
     public function posts(): string
     {
+        // Update feed load ts for user
+        Feed::new([
+            "user_id" => user()->id
+        ]);
         return $this->render("admin/feed/posts.html", [
             "posts" => $this->getPosts()
         ]);
@@ -167,6 +170,73 @@ class PostController extends Controller
             }
         }
         return false;
+    }
+
+    #[Get("/waiting", "feed.posts-waiting")]
+    public function postsWaiting()
+    {
+        // Find out last load time
+        $last_load = Feed::search(["created_at"])
+            ->where(["user_id = ?"], user()->id)
+            ->orderBy(["id DESC"])
+            ->execute()
+            ->fetch(PDO::FETCH_COLUMN);
+        // Find out how mnay posts are waiting to be viewed
+        if ($last_load) {
+            $count = PostModel::search(["count(*)"])
+                ->where(["parent_id IS NULL 
+                AND created_at > ?
+                AND user_id != ?
+                AND (user_id = 1 
+                OR EXISTS (SELECT * 
+                    FROM follow 
+                    WHERE user_id = ? 
+                    AND friend_id = posts.user_id))"], $last_load, user()->id, user()->id)
+                ->orderBy(["created_at DESC"])
+                ->execute()->fetch(PDO::FETCH_COLUMN);
+            if ($count > 0) {
+                return $this->render("/admin/feed/posts-waiting-button.html", [
+                    "count" => $count,
+                ]);
+            }
+        }
+        return "";
+    }
+
+    private function twitterTimeFormat(Carbon $time)
+    {
+        $diffInSeconds = (int) $time->diffInSeconds();
+
+        if ($diffInSeconds < 60) {
+            return $diffInSeconds . 's';
+        }
+
+        $diffInMinutes = (int) floor($time->diffInMinutes());
+        if ($diffInMinutes < 60) {
+            return $diffInMinutes . 'm';
+        }
+
+        $diffInHours = (int) floor($time->diffInHours());
+        if ($diffInHours < 24) {
+            return $diffInHours . 'h';
+        }
+
+        $diffInDays = (int) floor($time->diffInDays());
+        if ($diffInDays < 7) {
+            return $diffInDays . 'd';
+        }
+
+        $diffInWeeks = (int) floor($time->diffInWeeks());
+        if ($diffInWeeks < 4) {
+            return $diffInWeeks . 'w';
+        }
+
+        $diffInMonths = (int) floor($time->diffInMonths());
+        if ($diffInMonths < 12) {
+            return $diffInMonths . 'mo';
+        }
+
+        return (int) floor($time->diffInYears()) . 'y';
     }
 
     private function getPosts()
