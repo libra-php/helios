@@ -3,7 +3,7 @@
 namespace App\Controllers\Feed;
 
 use Helios\Web\Controller;
-use StellarRouter\{Get, Post, Group};
+use StellarRouter\{Get, Group};
 
 #[Group(prefix: "/feed", middleware: ['auth'])]
 class FeedController extends Controller
