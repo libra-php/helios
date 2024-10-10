@@ -22,6 +22,7 @@ class Users extends Module
                 }
                 return true;
             }, "unique|users"],
+            "username" => ["required", "unique|users"],
             "user_role_id" => ["required"],
             "password" => ["required", "min_length|8", "regex|^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"],
             "password_match" => ["required", function ($value) {
@@ -34,6 +35,7 @@ class Users extends Module
             ->table("UUID", "uuid")
             ->table("Name", "name")
             ->table("Email", "email")
+            ->table("Username", "username")
             ->table("Created", "created_at");
 
         $user = user();
@@ -44,10 +46,12 @@ class Users extends Module
         $this->format("created_at", "ago");
 
         $this->search("name")
+            ->search("username")
             ->search("email");
 
         $this->form("Name", "name")
             ->form("Email", "email")
+            ->form("Username", "username")
             ->form("Role", "user_role_id")
             ->form("Password", "'' as password")
             ->form("Password (again)", "'' as password_match");

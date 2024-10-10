@@ -13,6 +13,7 @@ return new class implements IMigration
             $table->bigIncrements("id");
             $table->uuid("uuid")->default("(UUID())");
             $table->unsignedBigInteger("user_role_id")->default(3);
+            $table->varchar("username");
             $table->varchar("name");
             $table->varchar("email");
             $table->binary("password", 96);
@@ -21,6 +22,7 @@ return new class implements IMigration
             $table->unsignedTinyInteger("2fa_confirmed")->default(0);
             $table->char("2fa_secret", 16)->nullable();
             $table->timestamps();
+            $table->unique("username");
             $table->unique("email");
             $table->primaryKey("id");
             $table->foreignKey("user_role_id")->references("user_roles", "id");
@@ -34,6 +36,7 @@ return new class implements IMigration
                 "user_role_id",
                 "name",
                 "email",
+                "username",
                 "password",
                 "2fa_secret",
                 "2fa_enabled",
@@ -42,6 +45,7 @@ return new class implements IMigration
                 1,
                 "Administrator",
                 "administrator",
+                "admin",
                 Auth::hashPassword(config("security.default_admin_pass")),
                 Auth::google2FASecret(),
                 0,

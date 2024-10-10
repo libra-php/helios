@@ -8,6 +8,7 @@ use StellarRouter\{Get, Post, Group};
 use App\Models\Post as PostModel;
 use App\Models\User;
 use Carbon\Carbon;
+use DateTime;
 use PDO;
 
 #[Group(prefix: "/feed/post", middleware: ['auth'])]
@@ -24,6 +25,7 @@ class PostController extends Controller
             $post_user = User::find($post->user_id);
             $post_user->avatar = $post_user->gravatar(40);
             $post->user = $post_user;
+
             return $this->render("/admin/feed/show.html", [
                 "post" => $post,
                 "user" => $user,
@@ -116,7 +118,7 @@ class PostController extends Controller
                 ]);
                 $post->user = $user;
                 $post->user->avatar = $user->gravatar(40);
-                trigger("commentButton");
+                trigger("commentButton, updateAgo");
                 return $this->render("admin/feed/post.html", [
                     "post" => $post,
                     "user" => $user,
@@ -157,6 +159,7 @@ class PostController extends Controller
                 ]);
                 $post->user = $user;
                 $post->user->avatar = $user->gravatar(40);
+                trigger("updateAgo");
                 return $this->render("admin/feed/post.html", [
                     "post" => $post,
                     "user" => $user,

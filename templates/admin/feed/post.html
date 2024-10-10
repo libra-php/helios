@@ -1,7 +1,13 @@
 <div class="post d-flex w-100" id="post-{{ post.id }}">
     <img src="{{ post.user.avatar }}" class="rounded-circle me-2 avatar" alt="avatar" width="40" height="40" loading="lazy" />
     <div class="content d-flex flex-column w-100">
-        <div class="title"><strong>{{ post.user.name }}</strong> <span class="px-2">·</span> <small hx-get="/feed/post/ago/{{ post.id }}" hx-trigger="load, every 1m" hx-target="this" hx-swap="textContent"></small></div>
+        <div class="title d-flex align-items-center">
+            <strong>{{ post.user.name }}</strong>
+            <img class="name-badge ms-1" src="/images/verified.png" height="16" width="16" alt="verified" /> 
+            <span class="ms-1">@{{ post.user.username }}</span> 
+            <span class="px-2">·</span>
+            <span hx-get="/feed/post/ago/{{ post.id }}" hx-trigger="updateAgo from:body, load, every 5m" hx-target="this" hx-swap="textContent"></span>
+        </div>
         <div class="body">{{ post.body|raw }}</div>
         <div class="actions d-flex justify-content-start">
             <div hx-get="/feed/post/comment-button/{{ post.id }}" hx-trigger="commentButton from:body, load"></div>

@@ -260,6 +260,7 @@ a:active {
     margin: 15px 0;
 }
 #feed #posts .post .title {
+    font-size: 0.9rem;
 }
 #feed #posts .post .body {
     font-size: 1.1rem;
@@ -280,7 +281,8 @@ a:active {
 #feed #original img {
 }
 #feed .btn-like.inactive, #feed .btn-comment.inactive {
-    opacity: 0.65;
+    filter: grayscale(1);
+    opacity: 0.8;
 }
 
 /**
