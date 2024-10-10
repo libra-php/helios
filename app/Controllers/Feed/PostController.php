@@ -84,8 +84,7 @@ class PostController extends Controller
             ]);
         }
 
-        header("Hx-Trigger: like-btn");
-        return $this->likeButton($id);
+        trigger("likeButton");
     }
 
     #[Get("/comment-button/{id}", "feed.comment-button")]
@@ -117,14 +116,13 @@ class PostController extends Controller
                 ]);
                 $post->user = $user;
                 $post->user->avatar = $user->gravatar(40);
-                header("Hx-Trigger: comment-button");
                 return $this->render("admin/feed/post.html", [
                     "post" => $post,
                     "user" => $user,
                 ]);
             }
         }
-        return $this->show($id);
+        trigger("commentButton");
     }
 
     #[Get("/comments/{id}", "feed.comments")]

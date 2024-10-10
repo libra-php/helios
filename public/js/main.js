@@ -35,12 +35,6 @@ const clearPost = () => {
     setTimeout(() => {document.getElementById('new-post').value = ''});
 }
 
-const bodyChange = (e) => {
-    const value = e.currentTarget.value;
-    const button = e.currentTarget.closest('.d-flex').querySelector('button[type="submit"]');
-    button.disabled = value.length === 0;
-}
-
 const showComment = (e) => {
     const comment = e.currentTarget.closest('.actions').nextElementSibling;
     comment.classList.toggle("hidden");

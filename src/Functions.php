@@ -229,3 +229,11 @@ function template(string $path, array $data = []): string
     $twig = container()->get(Environment::class);
     return $twig->render($path, $data);
 }
+
+/**
+ * Create a Hx-Trigger
+ */
+function trigger(string $hook_name)
+{
+    header("Hx-Trigger: $hook_name");
+}
