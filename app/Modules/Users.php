@@ -16,13 +16,17 @@ class Users extends Module
         controller()->addErrorMessage("regex", "Must contain: 1 uppercase, 1 number, and 1 symbol");
         $this->rules = [
             "name" => ["required"],
+            //TODO: email should be unique -- if the value has changed 
+            // or is created for the first time
             "email" => ["required", function($value) {
                 if ($value !== 'administrator') {
                     return filter_var($value, FILTER_VALIDATE_EMAIL);
                 }
                 return true;
-            }, "unique|users"],
-            "username" => ["required", "unique|users"],
+            }],
+            //TODO: username should be unique -- if the value has changed 
+            // or is created for the first time
+            "username" => ["required"],
             "user_role_id" => ["required"],
             "password" => ["required", "min_length|8", "regex|^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"],
             "password_match" => ["required", function ($value) {
