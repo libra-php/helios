@@ -14,7 +14,7 @@
             <div hx-get="/feed/post/like-button/{{ post.id }}" hx-trigger="likeButton from:body, load"></div>
             {% if show_back %}
                 <div class="d-flex justify-content-end flex-grow-1">
-                <button class="btn btn-lg" onClick="history.back()" hx-indicator="#request-spinner">🔙</button>
+                <button class="btn btn-sm btn-danger" onClick="history.back()" hx-indicator="#request-spinner">Back</button>
                 </div>
             {% endif %}
         </div>
