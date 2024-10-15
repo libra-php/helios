@@ -144,6 +144,7 @@ class PostController extends Controller
         Feed::new([
             "user_id" => user()->id
         ]);
+        header("HX-Push-Url: /admin/feed");
         return $this->render("admin/feed/posts.html", [
             "posts" => $this->getPosts()
         ]);

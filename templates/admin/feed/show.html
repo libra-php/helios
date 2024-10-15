@@ -1,5 +1,8 @@
 <div id="comments" class="py-4" hx-disinherit="*">
-    <div id="original">
+    <div class="d-flex justify-content-end">
+        <button class="btn btn-sm btn-primary me-2" onClick="history.back()" hx-indicator="#request-spinner">Back</button>
+    </div>
+    <div id="original" class="mt-3">
     {% include "admin/feed/post.html" with {'post': post } %}
     </div>
     <hr>
@@ -10,7 +13,7 @@
             <div class="d-flex flex-column flex-grow-1">
                 <textarea name="body" id="new-post" class="w-100 form-control p-1" rows="3" placeholder="Post your reply"></textarea>
                 <div class="d-flex justify-content-end pt-2">
-                    <button class="btn btn-sm btn-danger me-2" hx-get="/admin/feed" hx-target="#feed" hx-select="#feed" hx-swap="outerHTML">Cancel</button>
+                    <button class="btn btn-sm btn-danger me-2" hx-get="/admin/feed" hx-target="#module-content" hx-select="#module-content" hx-swap="outerHTML">Cancel</button>
                     <button class="btn btm-sm btn-primary" type="submit" onClick="clearPost()">Reply</button>
                 </div>
             </div>

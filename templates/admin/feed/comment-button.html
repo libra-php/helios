@@ -1,1 +1,1 @@
-<button class="btn btn-sm btn-comment {% if count == 0 %}inactive{% endif %}" hx-get="/feed/post/show/{{ id }}" hx-target="#post-feed">💬<span class="msg-count ps-1">{{ count }}</span></button>
+<button class="btn btn-sm btn-comment {% if count == 0 %}inactive{% endif %}" hx-get="/admin/feed/{{ id }}" hx-target="#module-content" hx-select="#module-content" hx-push-url="true" hx-indicator="#request-spinner">💬<span class="msg-count ps-1">{{ count }}</span></button>

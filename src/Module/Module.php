@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class Module
 {
+    protected ?int $id = null;
     protected bool $has_edit = true;
     protected bool $has_create = true;
     protected bool $has_delete = true;
@@ -40,7 +41,6 @@ class Module
     private int $total_pages = 1;
     private array $page_options = [5, 10, 25, 50, 100, 200, 500];
     private int $total_results = 0;
-    private ?int $id = null;
     private array $form = [];
     private array $control = [];
     private array $defaults = [];

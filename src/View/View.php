@@ -45,7 +45,7 @@ class View implements IView
         ];
     }
 
-    private function buildBreadcrumbs(string $module_id, array $breadcrumbs = []): array
+    protected function buildBreadcrumbs(string $module_id, array $breadcrumbs = []): array
     {
         $module = QueryBuilder::select()
             ->from("modules")
@@ -62,7 +62,7 @@ class View implements IView
         return array_reverse($breadcrumbs);
     }
 
-    private function getBreadcrumbs(?string $id): array
+    protected function getBreadcrumbs(?string $id): array
     {
         $module = module();
         $route = route();
@@ -87,7 +87,7 @@ class View implements IView
         return $breadcrumbs;
     }
 
-    private function buildLinks(?int $parent_module_id = null): array
+    protected function buildLinks(?int $parent_module_id = null): array
     {
         $user = user();
         if (is_null($parent_module_id)) {
