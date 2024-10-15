@@ -1,9 +1,6 @@
 <div id="comments" class="py-4" hx-disinherit="*">
-    <div class="d-flex justify-content-end">
-        <button class="btn btn-sm btn-primary me-2" onClick="history.back()" hx-indicator="#request-spinner">Back</button>
-    </div>
-    <div id="original" class="mt-3">
-    {% include "admin/feed/post.html" with {'post': post } %}
+    <div id="original" class="mt-1">
+    {% include "admin/feed/post.html" with {'post': post, 'show_back': true } %}
     </div>
     <hr>
     <form class="mt-4" hx-post="/feed/post/comment/{{ post.id }}" hx-target="#posts" hx-swap="afterbegin" hx-indicator="#request-spinner">
