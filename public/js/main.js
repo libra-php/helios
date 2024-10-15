@@ -13,7 +13,6 @@ const hideSidebar = () => {
 }
 
 const toggleSidebar = () => {
-    console.log("test");
     const sidebar = document.getElementById("sidebar");
     if (sidebar.classList.contains("active")) {
         hideSidebar();

@@ -1,5 +1,14 @@
 {% extends "layouts/admin.html" %}
 
+{% block head %}
+<meta name="description" content="{{ og.description }}">
+<meta property="og:title" content="{{ og.title }}">
+<meta property="og:description" content="{{ og.description }}">
+<!--<meta property="og:image" content="{{ og.image }}">-->
+<meta property="og:url" content="{{ og.url }}">
+<meta property="og:type" content="{{ og.type }}">
+{% endblock %}
+
 {% block top  %}
 {% include 'components/breadcrumbs.html' %}
 {% if flash|length > 0 %}
