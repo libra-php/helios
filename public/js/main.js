@@ -30,8 +30,18 @@ const clearSearch = () => {
     document.getElementById('filter-search').value = '';
 }
 
+const hide = (el) => {
+    el.classList.add("hidden");
+}
+
+const show = (el) => {
+    el.classList.remove("hidden");
+}
+
 const clearPost = () => {
     setTimeout(() => {document.getElementById('new-post').value = ''});
+    const warning = document.getElementById("no-posts");
+    hide(warning);
 }
 
 const showComment = (e) => {
