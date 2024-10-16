@@ -47,7 +47,7 @@ const copyLink = (e) => {
     document.execCommand('copy');
     document.body.removeChild(tempInput);
 
-    const toastEl = document.getElementById('copyToast');
+    const toastEl = document.getElementById('copy-toast');
     const toast = new bootstrap.Toast(toastEl);
     toast.show();
 }
