@@ -25,6 +25,7 @@ class PostController extends Controller
             $post_user = User::find($post->user_id);
             $post_user->avatar = $post_user->gravatar(40);
             $post->user = $post_user;
+            $post->link = config("app.url") . "/admin/feed/" . $post->id;
 
             return $this->render("/admin/feed/show.html", [
                 "post" => $post,
@@ -119,6 +120,7 @@ class PostController extends Controller
                 ]);
                 $post->user = $user;
                 $post->user->avatar = $user->gravatar(40);
+                $post->link = config("app.url") . "/admin/feed/" . $post->id;
                 trigger("commentButton, updateAgo");
                 return $this->render("admin/feed/post.html", [
                     "post" => $post,
@@ -166,6 +168,7 @@ class PostController extends Controller
                 ]);
                 $post->user = $user;
                 $post->user->avatar = $user->gravatar(40);
+                $post->link = config("app.url") . "/admin/feed/" . $post->id;
                 trigger("updateAgo");
                 return $this->render("admin/feed/post.html", [
                     "post" => $post,
@@ -279,6 +282,7 @@ class PostController extends Controller
             $user = User::find($post->user_id);
             $user->avatar = $user->gravatar(40);
             $post->user = $user;
+            $post->link = config("app.url") . "/admin/feed/" . $post->id;
         }
         return $posts;
     }
@@ -295,6 +299,7 @@ class PostController extends Controller
             $user = User::find($post->user_id);
             $user->avatar = $user->gravatar(40);
             $post->user = $user;
+            $post->link = config("app.url") . "/admin/feed/" . $post->id;
         }
         return $comments;
     }

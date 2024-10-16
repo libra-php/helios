@@ -38,6 +38,20 @@ const show = (el) => {
     el.classList.remove("hidden");
 }
 
+const copyLink = (e) => {
+    const link = e.currentTarget.dataset.link;
+    const tempInput = document.createElement('input');
+    tempInput.value = link;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+
+    const toastEl = document.getElementById('copyToast');
+    const toast = new bootstrap.Toast(toastEl);
+    toast.show();
+}
+
 const clearPost = () => {
     setTimeout(() => {document.getElementById('new-post').value = ''});
     const warning = document.getElementById("no-posts");
