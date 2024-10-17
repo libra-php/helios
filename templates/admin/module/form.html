@@ -33,7 +33,9 @@
     {% endfor %}
     <div class="m-0 mt-2 d-flex">
         <button hx-confirm="Are you sure you want to save your progress?" class="btn btn-success" type="submit">{% if id %}Save{% else %}Create{% endif %}</button>
+        {% if permissions.has_cancel %}
         <a class="btn btn-warning ms-2 text-dark text-decoration-none" href="/admin/{{ module.path }}">Cancel</a>
+        {% endif %}
     </div>
 </form>
 {% endblock %}

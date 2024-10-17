@@ -38,6 +38,7 @@ class View implements IView
             "links" => $this->buildLinks(),
             "breadcrumbs" => $this->getBreadcrumbs($this->module->getId()),
             "permissions" => [
+                "has_cancel" => $this->module->hasCancel(),
                 "has_edit" => $this->module->hasEdit(),
                 "has_create" => $this->module->hasCreate(),
                 "has_delete" => $this->module->hasDelete(),

@@ -199,7 +199,7 @@ a:active {
  * Controls
  */
 .control_image {
-    max-height: 255px;
+    max-width: 120px;
 }
 
 .diff {

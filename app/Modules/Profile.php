@@ -23,6 +23,8 @@ class Profile extends Users
         unset($this->rules["user_role_id"]);
         // No creation of new users
         $this->has_create = false;
+        // No cancel button (no table view)
+        $this->has_cancel = false;
 
         // You can only view your own profile
         $this->user = user();

@@ -17,6 +17,7 @@ class Module
     protected bool $has_edit = true;
     protected bool $has_create = true;
     protected bool $has_delete = true;
+    protected bool $has_cancel = true;
     protected bool $export_csv = true;
     protected string $model;
     protected array $rules = [];
@@ -109,6 +110,11 @@ class Module
     public function hasDelete(): bool
     {
         return $this->has_delete;
+    }
+
+    public function hasCancel(): bool
+    {
+        return $this->has_cancel;
     }
 
     public function hasDeletePermission(int $id): bool
@@ -208,15 +214,16 @@ class Module
                 }
             }
             // TODO: does http foundation work with array of checkboxes?
-            if (isset($_REQUEST["delete_image"])) {
-                $images_to_delete = $_REQUEST["delete_image"];
-                if (is_array($images_to_delete) && !empty($images_to_delete)) {
-                    foreach ($images_to_delete as $i => $file_id) {
+            if (isset($_REQUEST["delete_file"])) {
+                $to_delete = $_REQUEST["delete_file"];
+                if (is_array($to_delete) && !empty($to_delete)) {
+                    foreach ($to_delete as $i => $file_id) {
                         $file = File::find($file_id);
                         if ($file) {
+                            // Also removes the asset
                             $result = $file->destroy();
                             if ($result) {
-                                unset($_REQUEST["delete_image[$i]"]);
+                                unset($_REQUEST["delete_file[$i]"]);
                                 Flash::add("success", "File successfully deleted");
                             } else {
                                 Flash::add("warning", "Failed to delete file");

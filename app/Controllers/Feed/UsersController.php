@@ -20,7 +20,7 @@ class UsersController extends Controller
             ->fetchAll();
         foreach ($users as &$user) {
             $user = User::find($user->id);
-            $user->avatar = $user->gravatar(40);
+            $user->avatar = $user->avatar();
         }
         return $this->render("/admin/feed/users.html", [
             "user" => user(),
