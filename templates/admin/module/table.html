@@ -7,7 +7,7 @@
 {% include "components/flash.html" %}
 {% endif %}
 <section id="actions" class="d-flex">
-    {% if permissions.has_edit %}
+    {% if permissions.has_create %}
     <div id="create-new" class="me-1 py-2">
         <form hx-get="/admin/{{ module.path }}/create">
             <button type="submit" class="btn btn-sm btn-success link-light">Create New</button>

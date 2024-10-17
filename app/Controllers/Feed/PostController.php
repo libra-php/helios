@@ -20,10 +20,10 @@ class PostController extends Controller
         $post = PostModel::findOrNotFound($id);
         if ($post) {
             $user = user();
-            $user->avatar = $user->gravatar(40);
+            $user->avatar = $user->avatar();
 
             $post_user = User::find($post->user_id);
-            $post_user->avatar = $post_user->gravatar(40);
+            $post_user->avatar = $post_user->avatar();
             $post->user = $post_user;
             $post->link = config("app.url") . "/admin/feed/" . $post->id;
 
@@ -119,7 +119,7 @@ class PostController extends Controller
                     "body" => $convertedPost,
                 ]);
                 $post->user = $user;
-                $post->user->avatar = $user->gravatar(40);
+                $post->user->avatar = $user->avatar();
                 $post->link = config("app.url") . "/admin/feed/" . $post->id;
                 trigger("commentButton, updateAgo");
                 return $this->render("admin/feed/post.html", [
@@ -167,7 +167,7 @@ class PostController extends Controller
                     "body" => $convertedPost,
                 ]);
                 $post->user = $user;
-                $post->user->avatar = $user->gravatar(40);
+                $post->user->avatar = $user->avatar();
                 $post->link = config("app.url") . "/admin/feed/" . $post->id;
                 trigger("updateAgo");
                 return $this->render("admin/feed/post.html", [
@@ -280,7 +280,7 @@ class PostController extends Controller
 
         foreach ($posts as $i => &$post) {
             $user = User::find($post->user_id);
-            $user->avatar = $user->gravatar(40);
+            $user->avatar = $user->avatar();
             $post->user = $user;
             $post->link = config("app.url") . "/admin/feed/" . $post->id;
         }
@@ -297,7 +297,7 @@ class PostController extends Controller
 
         foreach ($comments as $i => &$post) {
             $user = User::find($post->user_id);
-            $user->avatar = $user->gravatar(40);
+            $user->avatar = $user->avatar();
             $post->user = $user;
             $post->link = config("app.url") . "/admin/feed/" . $post->id;
         }

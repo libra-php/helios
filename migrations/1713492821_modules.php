@@ -46,6 +46,7 @@ return new class implements IMigration
             ["Audit", "audit", "App\\\Modules\\\Audit", 3, 0, 1],
             ["Files", "files", "App\\\Modules\\\Files", 4, 0, 2],
             ["Feed", "feed", "App\\\Modules\\\Feed", 0, 2, 4],
+            ["Profile", "profile", "App\\\Modules\\\Profile", 0, 2, 3],
         );
     }
 

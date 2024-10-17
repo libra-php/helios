@@ -16,6 +16,16 @@ class User extends Model
         return UserRole::findOrFail($this->user_role_id);
     }
 
+    public function avatar(): string
+    {
+        if ($this->avatar) {
+            $file = File::findOrFail($this->avatar);
+            $uploads_dir = config("paths.public_uploads");
+            return $uploads_dir . $file->filename;
+        }
+        return $this->gravatar(40);
+    }
+
     public function gravatar(int $size = 150): string
     {
         $hash = md5(strtolower(trim($this->email)));

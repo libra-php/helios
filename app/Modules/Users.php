@@ -3,9 +3,9 @@
 namespace App\Modules;
 
 use App\Models\User;
-use Helios\Admin\Auth;
-use Helios\Model\Model;
 use Helios\Module\Module;
+use Helios\Model\Model;
+use Helios\Admin\Auth;
 
 class Users extends Module
 {
@@ -24,6 +24,7 @@ class Users extends Module
                 }
                 return true;
             }],
+            "avatar" => [""],
             //TODO: username should be unique -- if the value has changed 
             // or is created for the first time
             "username" => ["required"],
@@ -53,7 +54,8 @@ class Users extends Module
             ->search("username")
             ->search("email");
 
-        $this->form("Name", "name")
+        $this->form("Avatar", "avatar")
+            ->form("Name", "name")
             ->form("Email", "email")
             ->form("Username", "username")
             ->form("Role", "user_role_id")
@@ -61,6 +63,7 @@ class Users extends Module
             ->form("Password (again)", "'' as password_match");
 
         $this->control("user_role_id", db()->fetchAll("SELECT id as value, name as label FROM user_roles ORDER BY name"))
+            ->control("avatar", "image")
             ->control("password", "password")
             ->control("password_match", "password");
 

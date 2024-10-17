@@ -93,7 +93,7 @@ class Module
 
     public function hasEdit(): bool
     {
-        return !empty($this->form) && $this->has_edit;
+        return $this->has_edit;
     }
 
     public function hasEditPermission(int $id): bool
@@ -103,12 +103,12 @@ class Module
 
     public function hasCreate(): bool
     {
-        return !empty($this->form) && $this->has_create;
+        return $this->has_create;
     }
 
     public function hasDelete(): bool
     {
-        return !empty($this->table) && $this->has_delete;
+        return $this->has_delete;
     }
 
     public function hasDeletePermission(int $id): bool
@@ -207,9 +207,27 @@ class Module
                     Flash::add("warning", "File upload failed");
                 }
             }
+            // TODO: does http foundation work with array of checkboxes?
+            if (isset($_REQUEST["delete_image"])) {
+                $images_to_delete = $_REQUEST["delete_image"];
+                if (is_array($images_to_delete) && !empty($images_to_delete)) {
+                    foreach ($images_to_delete as $i => $file_id) {
+                        $file = File::find($file_id);
+                        if ($file) {
+                            $result = $file->destroy();
+                            if ($result) {
+                                unset($_REQUEST["delete_image[$i]"]);
+                                Flash::add("success", "File successfully deleted");
+                            } else {
+                                Flash::add("warning", "Failed to delete file");
+                            }
+                        }
+                    }
+                }
+            }
         }
         $old = $this->model::find($id);
-        // Updated at should be set
+        // updated_at should be set
         if (isset($old->updated_at)) {
             $data['updated_at'] = date("Y-m-d H:i:s");
         }
@@ -350,9 +368,27 @@ class Module
         return $this;
     }
 
+    protected function removeForm(string $title): Module
+    {
+        unset($this->form[$title]);
+        return $this;
+    }
+
+    protected function clearFilterLinks(): Module
+    {
+        $this->filter_links = [];
+        return $this;
+    }
+
     protected function search(string $column): Module
     {
         $this->searchable[] = $column;
+        return $this;
+    }
+
+    protected function clearSearch(): Module
+    {
+        $this->searchable = [];
         return $this;
     }
 

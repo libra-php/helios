@@ -5,7 +5,12 @@
             <a hx-boost="false" target="_blank" href="/uploads/{{ file.filename }}"><img src="/uploads/{{ file.filename }}" alt="image" class="control control_image" /></a>
         </div>
         <div onClick="toggleFileUpload(event)"><small class="mt-1 text-secondary">🚩 Click to modify</small></div>
-        <div class="hidden mt-2">{{ input|raw }}</div>
+        <div class="hidden mt-2">
+            <label class="mb-2">Delete image
+                <input type="checkbox" name="delete_image[]" value="{{ file.id }}" />
+            </label>
+            {{ input|raw }}
+        </div>
         <div>{{ hidden|raw }}</div>
     </div>
 {% else %}

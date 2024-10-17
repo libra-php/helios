@@ -18,5 +18,9 @@ class Files extends Module
             ->table("Original", "original_name")
             ->table("Mime Type", "mime_type")
             ->table("Size", "size");
+
+        $this->search("filename")
+             ->search("original_name")
+             ->search("mime_type");
     }
 }

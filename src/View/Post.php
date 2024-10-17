@@ -31,7 +31,7 @@ class Post extends View
             return [
                 'title' => '@' . $post->user()->username . "'s post on " . $app['name'],
                 'description' => substr($post->body, 0, 150) . '...',
-                // 'image' => $post->image()->name,
+                'image' => $app['url'] . $post->user()->avatar(),
                 'url' => $app['url'] . "/admin/feed/" . $post->id,
                 'type' => 'article'
             ];

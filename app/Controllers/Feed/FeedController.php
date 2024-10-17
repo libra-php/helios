@@ -12,7 +12,7 @@ class FeedController extends Controller
     public function index(): string
     {
         $user = user();
-        $user->avatar = $user->gravatar(40);
+        $user->avatar = $user->avatar();
         return $this->render("admin/feed/feed.html", [
             "user" => $user,
         ]);

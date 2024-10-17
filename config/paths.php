@@ -8,6 +8,7 @@ $migrations = $root . "migrations/";
 $templates = $root . "templates/";
 $storage = $root . "storage/";
 $jobs = $root . "jobs/";
+$public = "/public/";
 
 return [
     "root" => $root,
@@ -19,6 +20,7 @@ return [
     "jobs" => $jobs,
     "logs" => $storage . "logs/",
     "uploads" => $storage . "uploads/",
+    "public_uploads" => "/uploads/",
     "templates" => $templates,
     "template-cache" => $storage . "templates/.cache/",
     "migrations" => $migrations,

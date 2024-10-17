@@ -13,6 +13,7 @@ return new class implements IMigration
             $table->bigIncrements("id");
             $table->uuid("uuid")->default("(UUID())");
             $table->unsignedBigInteger("user_role_id")->default(3);
+            $table->unsignedBigInteger("avatar")->nullable();
             $table->varchar("username");
             $table->varchar("name");
             $table->varchar("email");
@@ -26,6 +27,7 @@ return new class implements IMigration
             $table->unique("email");
             $table->primaryKey("id");
             $table->foreignKey("user_role_id")->references("user_roles", "id");
+            $table->foreignKey("avatar")->references("files", "id")->onDelete("SET NULL");
         });
     }
 
