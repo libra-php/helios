@@ -3,7 +3,7 @@
         <p class="lead"><small>There are currently no other users.</small></p>
     {% endif %}
     {% for user in users %}
-    <div class="user d-flex w-100 p-3">
+    <div class="user d-flex align-items-center w-100 p-3">
         <img src="{{ user.avatar }}" class="rounded-circle me-2 avatar" alt="avatar" width="40" height="40" loading="lazy" />
         <div class="content d-flex flex-column w-100">
             <div class="title d-flex align-items-center">
