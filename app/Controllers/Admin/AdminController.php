@@ -8,10 +8,9 @@ use StellarRouter\{Get, Group};
 #[Group(prefix: "/admin")]
 class AdminController extends Controller
 {
-    #[Get("/", "admin.index")]
+    #[Get("/", "admin.index", ["auth"])]
     public function index()
     {
-        // $route = user() ? route("profile.index") : route("sign-in.index");
-        // redirect($route);
+        redirect(config("security.auth_route"));
     }
 }

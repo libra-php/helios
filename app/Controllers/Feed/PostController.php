@@ -84,8 +84,6 @@ class PostController extends Controller
                 "post_id" => $id,
             ]);
         }
-
-        trigger("likeButton");
         return $this->likeButton($id);
     }
 
@@ -258,7 +256,7 @@ class PostController extends Controller
     private function getPosts()
     {
         $user = user();
-        if ($user->role()->permission_level == 0) {
+        if ($user->role()->id < 2) {
             // Super admins see everything
             $posts = PostModel::search(["*"])
                 ->where(["parent_id IS NULL AND created_at > NOW() - INTERVAL 1 MONTH"])

@@ -24,9 +24,15 @@ class ModuleRequest implements IMiddleware
             $module = Module::findByAttribute("path", $parameters["module"]);
             // The target module class is defined in class_name
             if ($module && class_exists($module->module_class) && $module->enabled) {
+                // Does the user meet the requirements to see this module?
+                if ($module->user_role_id < user()->role()->id) {
+                    // Permission denied
+                    // The module doesn't seem to exist
+                    redirect(findRoute("error.permission-denied"));
+                }
                 $request->attributes->add(["module" => $module]);
             } else {
-                // The module doesn't seem to exist (or is disabled)
+                // The module doesn't seem to exist
                 redirect(findRoute("error.page-not-found"));
             }
         }

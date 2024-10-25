@@ -38,6 +38,9 @@ class ModuleController extends Controller
             return $this->module->view(new Table);
         } catch (Exception $ex) {
             error_log("fatal error: module.index => " . print_r($ex, true));
+            if (config("app.debug")) {
+                dump($ex->getMessage());
+            }
         }
         return "Fatal error";
     }
@@ -54,6 +57,9 @@ class ModuleController extends Controller
             return $this->module->view(new Form);
         } catch (Exception $ex) {
             error_log("fatal error: module.create => " . print_r($ex, true));
+            if (config("app.debug")) {
+                dump($ex->getMessage());
+            }
         }
         return "Fatal error";
     }
@@ -70,6 +76,9 @@ class ModuleController extends Controller
             return $this->module->view(new Form, $id);
         } catch (Exception $ex) {
             error_log("fatal error: module.edit => " . print_r($ex, true));
+            if (config("app.debug")) {
+                dump($ex->getMessage());
+            }
         }
         return "Fatal error";
     }

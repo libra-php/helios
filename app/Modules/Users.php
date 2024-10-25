@@ -89,7 +89,7 @@ class Users extends Module
         $user = user();
         if ($id == $user->id) return true;
 
-        if ($user->role()->permission_level < 1) {
+        if ($user->role()->id < 2) {
             return true;
         }
 
@@ -101,7 +101,7 @@ class Users extends Module
         $user = user();
         if ($id == $user->id) return true;
 
-        if ($user->role()->permission_level < 1) {
+        if ($user->role()->id < 2) {
             return true;
         }
 

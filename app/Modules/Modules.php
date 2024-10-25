@@ -18,16 +18,16 @@ class Modules extends Module
             "title" => ["required"],
             "module_class" => ["class_exists"],
             "item_order" => [],
-            "max_permission_level" => [],
+            "user_role_id" => [],
             "parent_module_id" => [],
         ];
 
         $this->table("ID", "id")
             ->table("Enabled", "enabled")
             ->table("Title", "title")
-            ->table("Access Level", "(SELECT name 
+            ->table("User Role", "(SELECT name 
                 FROM user_roles 
-                WHERE permission_level = max_permission_level) as max_permission_level")
+                WHERE id = user_role_id) as user_role")
             ->table("Created", "created_at");
 
         $this->filterLink("Root", "parent_module_id IS NULL")
@@ -36,13 +36,13 @@ class Modules extends Module
 
         $this->format("created_at", "ago")
              ->format("enabled", "check")
-             ->format("max_permission_level", fn($column, $value) => !$value ? 'n/a' : $value);
+             ->format("user_role", fn($column, $value) => !$value ? 'n/a' : $value);
 
         $this->form("Enabled", "enabled")
             ->form("Title", "title")
             ->form("Module Class", "module_class")
             ->form("Item Order", "item_order")
-            ->form("Access Level", "max_permission_level")
+            ->form("User Role", "user_role_id")
             ->form("Parent Module", "parent_module_id");
 
         $this->control("enabled", "switch")
@@ -62,7 +62,7 @@ class Modules extends Module
             ->control("parent_module_id", db()->fetchAll("SELECT id as value, title as label 
                 FROM modules 
                 ORDER BY title"))
-            ->control("max_permission_level", db()->fetchAll("SELECT permission_level as value, name as label 
+            ->control("user_role_id", db()->fetchAll("SELECT id value, name as label 
                 FROM user_roles 
                 ORDER BY name"));
 
@@ -72,6 +72,6 @@ class Modules extends Module
 
     public function hasDeletePermission(?int $id): bool
     {
-        return $id > 8;
+        return $id > 7;
     }
 }

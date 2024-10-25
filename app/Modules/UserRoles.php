@@ -13,34 +13,15 @@ class UserRoles extends Module
     {
         $this->rules = [
             "name" => ["required"],
-            "permission_level" => ["required", "min|0", "max|10", function($value, $id) {
-                controller()->addErrorMessage("permission_level", "Permission level must be unique");
-                if (!$id) {
-                    return !db()->fetch("SELECT 1 
-                        FROM user_roles 
-                        WHERE permission_level = ?", $value);
-                }
-                return !db()->fetch("SELECT 1 
-                    FROM user_roles 
-                    WHERE permission_level = ? AND id != ?", $value, $id);
-            }],
         ];
 
         $this->table("ID", "id")
             ->table("Name", "name")
-            ->table("Access Level", "permission_level")
             ->table("Created", "created_at");
 
         $this->format("created_at", "ago");
 
-        $this->form("Name", "name")
-            ->form("Access Level", "permission_level");
-
-        $this->control("permission_level", "number");
-
-        $max_permission = db()->var("SELECT max(permission_level)+1 
-            FROM user_roles");
-        $this->default("permission_level", $max_permission);
+        $this->form("Permission Level", "permission_level");
     }
 
     public function hasEditPermission(int $id): bool

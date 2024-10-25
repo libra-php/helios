@@ -94,27 +94,22 @@ class View implements IView
         if (is_null($parent_module_id)) {
             $modules = QueryBuilder::select()
                 ->from("modules")
-                ->where(["parent_module_id IS NULL AND enabled = 1"])
+                ->where(["parent_module_id IS NULL 
+                AND enabled = 1 AND user_role_id >= ?"], $user->role()->id)
                 ->orderBy(["item_order"])
                 ->execute()
                 ->fetchAll();
         } else {
             $modules = QueryBuilder::select()
                 ->from("modules")
-                ->where(["parent_module_id = ? AND enabled = 1"], $parent_module_id)
+                ->where(["parent_module_id = ? 
+                AND enabled = 1 AND user_role_id >= ?"], $parent_module_id, $user->role()->id)
                 ->orderBy(["item_order"])
                 ->execute()
                 ->fetchAll();
         }
         $sidebar_links = [];
         foreach ($modules as $module) {
-            // Skip the modules that the user doesn't have permission to
-            if (
-                !is_null($module->max_permission_level) &&
-                $user->role()->permission_level > $module->max_permission_level
-            ) {
-                continue;
-            }
             $link = [
                 "id" => $module->id,
                 "label" => $module->title,
