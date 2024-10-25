@@ -87,11 +87,7 @@ class Users extends Module
     public function hasEditPermission(int $id): bool
     {
         $user = user();
-        if ($id == $user->id) return true;
-
-        if ($user->role()->id < 2) {
-            return true;
-        }
+        if ($id == $user->id || $user->role()->id == 1) return true;
 
         return false;
     }
@@ -99,11 +95,7 @@ class Users extends Module
     public function hasDeletePermission(?int $id): bool
     {
         $user = user();
-        if ($id == $user->id) return true;
-
-        if ($user->role()->id < 2) {
-            return true;
-        }
+        if ($id == $user->id || $user->role()->id == 1) return true;
 
         return false;
     }

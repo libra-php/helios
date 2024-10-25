@@ -21,7 +21,7 @@ class UserRoles extends Module
 
         $this->format("created_at", "ago");
 
-        $this->form("Permission Level", "permission_level");
+        $this->form("Name", "name");
     }
 
     public function hasEditPermission(int $id): bool

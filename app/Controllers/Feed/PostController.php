@@ -256,7 +256,7 @@ class PostController extends Controller
     private function getPosts()
     {
         $user = user();
-        if ($user->role()->id < 2) {
+        if ($user->role()->id == 1) {
             // Super admins see everything
             $posts = PostModel::search(["*"])
                 ->where(["parent_id IS NULL AND created_at > NOW() - INTERVAL 1 MONTH"])
