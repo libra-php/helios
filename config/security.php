@@ -3,6 +3,7 @@
 return [
     "default_admin_pass" => "Admin2024!",
     "auth_route" => "/admin/feed",
+    "register_enabled" => true,
     "whitelist" => [
     ],
     "blacklist" => [

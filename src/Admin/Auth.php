@@ -13,8 +13,11 @@ class Auth
     public static function user(): ?User
     {
         $user_id = session()->get("user_id");
-        $user = User::find($user_id);
-        return $user;
+        if ($user_id) {
+            $user = User::find($user_id);
+            return $user;
+        }
+        return null;
     }
 
     /**

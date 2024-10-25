@@ -3,6 +3,7 @@
 {% block content %}
 <section id="sign-in" class="h-100">
     <form hx-post="{{ route('sign-in.index') }}" hx-swap="outerHTML" class="d-flex flex-column align-items-center justify-content-center h-100">
+        <h3>Sign in</h3>
         {{ csrf()|raw }}
         <div class="form-floating mb-3 w-100">
             <input type="input" class="form-control w-100 {% if request_errors.email is defined %}is-invalid{% endif %}" name="email" id="email" placeholder="" value="{{ old('email') }}">
@@ -19,9 +20,12 @@
             <label class="form-check-label" for="remember-me">Remember me</label>
         </div>
         <div class="w-100 mb-3">
-            <button type="submit" class="btn btn-primary fw-bold w-100 btn-lg">Sign in</button>
+            <button type="submit" class="btn btn-primary fw-bold w-100 btn-lg">Enter</button>
         </div>
-        <div class="mb-3">
+        <div hx-boost="true" class="mb-3 d-flex flex-column">
+            {% if register_enabled %}
+            <a href="/register">Don't have an account?</a>
+            {% endif %}
             <a href="#">Forgotten password?</a>
         </div>
         <div class="d-flex align-items-center">

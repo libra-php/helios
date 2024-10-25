@@ -9,12 +9,16 @@ use StellarRouter\{Get, Post};
 class SignInController extends Controller
 {
     #[Get("/sign-in", "sign-in.index")]
-    public function index() {
-        return $this->render("admin/sign-in/index.html");
+    public function index()
+    {
+        return $this->render("admin/sign-in/index.html", [
+            "register_enabled" => config("security.register_enabled")
+        ]);
     }
 
     #[Post("/sign-in", "sign-in.post")]
-    public function post() {
+    public function post()
+    {
         $valid = $this->validateRequest([
             'email' => ['required'],
             'password' => ['required'],

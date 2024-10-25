@@ -25,7 +25,7 @@ class ModuleRequest implements IMiddleware
             // The target module class is defined in class_name
             if ($module && class_exists($module->module_class) && $module->enabled) {
                 // Does the user meet the requirements to see this module?
-                if ($module->user_role_id < user()->role()->id) {
+                if ($module->user_role_id < user()?->role()->id) {
                     // Permission denied
                     // The module doesn't seem to exist
                     redirect(findRoute("error.permission-denied"));
