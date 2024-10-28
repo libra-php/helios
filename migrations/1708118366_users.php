@@ -13,7 +13,6 @@ return new class implements IMigration
             $table->bigIncrements("id");
             $table->uuid("uuid")->default("(UUID())");
             $table->unsignedBigInteger("user_role_id")->default(3);
-            $table->unsignedBigInteger("privs")->nullable();
             $table->unsignedBigInteger("avatar")->nullable();
             $table->varchar("username");
             $table->varchar("name");

@@ -18,16 +18,15 @@ class ModuleRequest implements IMiddleware
         $route = $request->get("route");
         $middleware = $route?->getMiddleware() ?? [];
         $parameters = $route?->getParameters() ?? [];
+        $user = user();
 
-        if (key_exists("module", $parameters) && in_array("module", $middleware)) {
+        if ($user && key_exists("module", $parameters) && in_array("module", $middleware)) {
             // Fetch from db
             $module = Module::findByAttribute("path", $parameters["module"]);
             // The target module class is defined in class_name
             if ($module && class_exists($module->module_class) && $module->enabled) {
-                // Does the user meet the requirements to see this module?
-                if ($module->user_role_id < user()?->role()->id) {
+                if ($user->id != 1 && $module->user_role_id < $user?->role()->id) {
                     // Permission denied
-                    // The module doesn't seem to exist
                     redirect(findRoute("error.permission-denied"));
                 }
                 $request->attributes->add(["module" => $module]);

@@ -18,7 +18,7 @@ class Profile extends Users
         $this->clearSearch();
         // No filter links
         $this->clearFilterLinks();
-        // User cannot edit role
+        // User cannot edit role / privs
         $this->removeForm("Role");
         unset($this->rules["user_role_id"]);
         // No creation of new users

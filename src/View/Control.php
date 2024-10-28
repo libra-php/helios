@@ -3,6 +3,7 @@
 namespace Helios\View;
 
 use App\Models\File;
+use App\Models\Module;
 
 class Control
 {

@@ -18,7 +18,7 @@ class Users extends Module
             "name" => ["required"],
             //TODO: email should be unique -- if the value has changed 
             // or is created for the first time
-            "email" => ["required", function($value) {
+            "email" => ["required", function ($value) {
                 if ($value !== 'administrator') {
                     return filter_var($value, FILTER_VALIDATE_EMAIL);
                 }
@@ -74,6 +74,7 @@ class Users extends Module
     {
         unset($data["password_match"]);
         $data["password"] = Auth::hashPassword($data["password"]);
+
         return parent::create($data);
     }
 
@@ -81,6 +82,7 @@ class Users extends Module
     {
         unset($data["password_match"]);
         $data["password"] = Auth::hashPassword($data["password"]);
+
         return parent::save($id, $data);
     }
 
