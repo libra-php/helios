@@ -47,8 +47,14 @@ class PostController extends Controller
     #[Get("/like-button/{id}", "feed.like-button")]
     public function likeButton($id)
     {
-        $count = Like::var("count(*)", ["post_id = ?"], $id);
-        $liked_by_me = Like::var("1", ["post_id = ? AND user_id = ?"], $id, user()->id);
+        $count = Like::search(["count(*)"])
+            ->where(["post_id = ?"], $id)
+            ->execute()
+            ->fetch(PDO::FETCH_COLUMN);
+        $liked_by_me = Like::search(["1"])
+            ->where(["post_id = ? AND user_id = ?"], $id, user()->id)
+            ->execute()
+            ->fetch();
         return $this->render("/admin/feed/like-button.html", [
             "id" => $id,
             "count" => $count,
@@ -61,13 +67,20 @@ class PostController extends Controller
     {
         $user = user();
         // Check if the user has liked this already
-        $model = Like::fetch(["1"], ["user_id = ? AND post_id = ?"], $user->id, $id);
+        $exists = Like::search(["1"])
+            ->where(["user_id = ? AND post_id = ?"], $user->id, $id)
+            ->execute()
+            ->fetch();
 
-        if ($model) {
-            $model->destroy();
+        if ($exists) {
+            // TODO: model delete
+            db()->query("DELETE 
+                FROM likes 
+                WHERE post_id = ? 
+                AND user_id = ?", $id, $user->id);
         } else {
             Like::new([
-                "user_id" => $user->id,
+                "user_id" => user()->id,
                 "post_id" => $id,
             ]);
         }
@@ -77,7 +90,10 @@ class PostController extends Controller
     #[Get("/comment-button/{id}", "feed.comment-button")]
     public function commentButton($id)
     {
-        $count = PostModel::var("count(*)", ["parent_id = ?"], $id);
+        $count = PostModel::search(["count(*)"])
+            ->where(["parent_id = ?"], $id)
+            ->execute()
+            ->fetch(PDO::FETCH_COLUMN);
         return $this->render("/admin/feed/comment-button.html", [
             "id" => $id,
             "count" => $count,

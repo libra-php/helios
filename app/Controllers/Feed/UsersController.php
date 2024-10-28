@@ -32,7 +32,10 @@ class UsersController extends Controller
     public function followButton($id)
     {
         // Are we following this user?
-        $following = Follow::var("1", ["user_id = ? AND friend_id = ?"], user()->id, $id);
+        $following = Follow::search(["1"])
+            ->where(["user_id = ? AND friend_id = ?"], user()->id, $id)
+            ->execute()
+            ->fetch();
         return $this->render("/admin/feed/follow-button.html", [
             "id" => $id,
             "following" => $following,
@@ -43,7 +46,10 @@ class UsersController extends Controller
     public function follow($id)
     {
         $user = user();
-        $following = Follow::var("1", ["user_id = ? AND friend_id = ?"], $user->id, $id);
+        $following = Follow::search(["1"])
+            ->where(["user_id = ? AND friend_id = ?"], $user->id, $id)
+            ->execute()
+            ->fetch();
         if ($following) {
             // Unfollow user
             db()->query("DELETE FROM follow WHERE user_id = ? AND friend_id = ?", $user->id, $id);
