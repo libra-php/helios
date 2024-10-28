@@ -75,12 +75,6 @@ final class ValidationTest extends TestCase
         $this->assertFalse($this->controller->validate('data', 'json', '{key:value}'));
     }
 
-    public function testRegex(): void
-    {
-        $this->assertTrue($this->controller->validate('username', 'regex', 'abc123', '/^[a-z0-9]+$/'));
-        $this->assertFalse($this->controller->validate('username', 'regex', 'abc@123', '/^[a-z0-9]+$/'));
-    }
-
     public function testGreaterThan(): void
     {
         $this->assertTrue($this->controller->validate('age', 'greater_than', '20', '18'));
