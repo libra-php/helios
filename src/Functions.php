@@ -6,9 +6,6 @@
 
 use App\Console\Kernel as ConsoleKernel;
 use App\Http\Kernel as HttpKernel;
-use App\Models\User;
-use App\Models\Module;
-use Helios\Admin\Auth;
 use Helios\Application;
 use Helios\Web\Controller;
 use Helios\Session\Session;
@@ -156,27 +153,11 @@ function controller(): ?Controller
 }
 
 /**
- * Return admin module
- */
-function module(): ?Module
-{
-    return request()->get("module");
-}
-
-/**
  * Return app session
  */
 function session(): Session
 {
     return Session::getInstance();
-}
-
-/**
- * Return app user
- */
-function user(): ?User
-{
-    return Auth::user();
 }
 
 /**

@@ -2,7 +2,6 @@
 
 namespace Helios\Web;
 
-use Helios\View\Flash;
 use InvalidArgumentException;
 use Twig\Environment;
 
@@ -75,11 +74,6 @@ class Controller
     public function render(string $path, array $data = []): string
     {
         $twig = container()->get(Environment::class);
-        $data["request_errors"] = $this->request_errors;
-        if (count($this->request_errors) > 0) {
-            Flash::add("warning", "Validation error");
-        }
-        $data["flash"] = Flash::get();
         $data["nonce"] = session()->get("nonce");
         return $twig->render($path, $data);
     }

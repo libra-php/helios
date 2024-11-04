@@ -3,7 +3,6 @@
 namespace App\Controllers\Auth;
 
 use Helios\Web\Controller;
-use Helios\Admin\Auth;
 use StellarRouter\{Get, Post};
 
 class SignInController extends Controller
@@ -25,10 +24,8 @@ class SignInController extends Controller
             'remember_me' => [],
         ]);
 
+        dump("WIP!");
         if ($valid) {
-            if (Auth::authenticateUser($valid->email, $valid->password, isset($valid->remember_me))) {
-                redirect(config("security.auth_route"));
-            }
             $this->addRequestError("password", "Invalid email or password");
         }
 
