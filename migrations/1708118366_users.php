@@ -2,7 +2,6 @@
 
 namespace Nebula\Migrations;
 
-use Helios\Admin\Auth;
 use Helios\Database\{Blueprint, Schema, IMigration};
 
 return new class implements IMigration
@@ -12,8 +11,6 @@ return new class implements IMigration
         return Schema::create("users", function (Blueprint $table) {
             $table->bigIncrements("id");
             $table->uuid("uuid")->default("(UUID())");
-            $table->unsignedBigInteger("user_role_id")->default(3);
-            $table->unsignedBigInteger("avatar")->nullable();
             $table->varchar("username");
             $table->varchar("name");
             $table->varchar("email");
@@ -26,8 +23,6 @@ return new class implements IMigration
             $table->unique("username");
             $table->unique("email");
             $table->primaryKey("id");
-            $table->foreignKey("user_role_id")->references("user_roles", "id");
-            $table->foreignKey("avatar")->references("files", "id")->onDelete("SET NULL");
         });
     }
 
@@ -35,7 +30,6 @@ return new class implements IMigration
     {
         return Schema::insert("users",
             [
-                "user_role_id",
                 "name",
                 "email",
                 "username",
@@ -44,12 +38,11 @@ return new class implements IMigration
                 "2fa_enabled",
             ],
             [
-                1,
                 "Administrator",
                 "administrator",
                 "admin",
-                Auth::hashPassword(config("security.default_admin_pass")),
-                Auth::google2FASecret(),
+                password_hash(config("security.default_admin_pass"), PASSWORD_ARGON2I),
+                '',
                 0,
             ]
         );
