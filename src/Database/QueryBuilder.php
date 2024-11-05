@@ -12,6 +12,7 @@ class QueryBuilder
     private array $insert = [];
     private array $update = [];
     private array $where = [];
+    private array $orWhere = [];
     private array $having = [];
     private array $group_by = [];
     private array $order_by = [];
@@ -100,6 +101,13 @@ class QueryBuilder
         return $this;
     }
 
+    public function orWhere(array $clauses, ...$replacements): QueryBuilder
+    {
+        $this->orWhere = $clauses;
+        $this->addQueryParams($replacements);
+        return $this;
+    }
+
     public function groupBy(array $clauses): QueryBuilder
     {
         $this->group_by = $clauses;
@@ -155,16 +163,17 @@ class QueryBuilder
     {
         if ($this->offset && $this->limit) {
             $limit = " LIMIT $this->offset, $this->limit";
-        } else if ($this->limit) {
+        } else if ($this->limit > 0) {
             $limit = " LIMIT $this->limit";
         } else {
             $limit = '';
         }
         $sql = sprintf(
-            "SELECT %s FROM `%s`%s%s%s%s%s",
+            "SELECT %s FROM `%s`%s%s%s%s%s%s",
             implode(", ", $this->select),
             $this->table,
             $this->where ? " WHERE " . implode(" AND ", $this->where) : '',
+            $this->orWhere ? " OR " . implode(" OR ", $this->orWhere): '',
             $this->group_by ? " GROUP BY " . implode(", ", $this->group_by) : '',
             $this->having ? " HAVING " . implode(" AND ", $this->having) : '',
             $this->order_by ? " ORDER BY " . implode(", ", $this->order_by) : '',
