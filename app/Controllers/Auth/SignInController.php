@@ -24,7 +24,6 @@ class SignInController extends Controller
             'remember_me' => [],
         ]);
 
-        dump("WIP!");
         if ($valid) {
             $this->addRequestError("password", "Invalid email or password");
         }

@@ -74,6 +74,7 @@ class Controller
     public function render(string $path, array $data = []): string
     {
         $twig = container()->get(Environment::class);
+        $data["request_errors"] = $this->request_errors;
         $data["nonce"] = session()->get("nonce");
         return $twig->render($path, $data);
     }
