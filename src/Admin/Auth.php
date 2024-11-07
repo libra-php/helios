@@ -6,6 +6,20 @@ use App\Models\User;
 
 class Auth
 {
+    public static function user(): ?User
+    {
+        $session_uuid = session()->get("user_uuid");
+        $cookie_uuid = request()->cookies->get("user_uuid");
+
+        if ($cookie_uuid || $session_uuid) {
+            $user = User::where("uuid", $cookie_uuid ?? $session_uuid)->get(1);
+            if ($user) {
+                return $user;
+            }
+        }
+        return null;
+    }
+
     public static function testPassword(string $password, string $hash): bool
     {
         return password_verify($password, $hash);
