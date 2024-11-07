@@ -17,7 +17,7 @@ class ForgotPasswordController extends Controller
     public function post(): string
     {
         $valid = $this->validateRequest([
-            'email' => ['required'],
+            'email' => ['required', 'email'],
         ]);
 
         if ($valid) {
