@@ -28,22 +28,15 @@ class RouteAuth implements IMiddleware
 
     private function userAuth(Request $request): bool
     {
-        $id = session()->get("user_id");
-        $uuid = $request->cookies->get("user_uuid");
+        $session_uuid = session()->get("user_uuid");
+        $cookie_uuid = $request->cookies->get("user_uuid");
 
-        // Cookie
-        if ($uuid) {
-            $user = User::findByAttribute("uuid", $uuid);
-            if ($user) {
-                return true;
-            }
-        } else if ($id) {
-            $user = User::find($id);
+        if ($cookie_uuid || $session_uuid) {
+            $user = User::where("uuid", $cookie_uuid ?? $session_uuid);
             if ($user) {
                 return true;
             }
         }
-
         return false;
     }
 }
