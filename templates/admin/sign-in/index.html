@@ -1,14 +1,15 @@
 {% extends "layouts/base.html" %}
 
 {% block content %}
-<section id="sign-in" class="h-100">
-    <form hx-post="{{ route('sign-in.index') }}" hx-swap="outerHTML" class="d-flex flex-column align-items-center justify-content-center h-100">
-        <h3>Sign in</h3>
+<section id="sign-in" class="auth-cont h-100 d-flex flex-column align-items-center justify-content-center">
+    <form hx-post="{{ route('sign-in.index') }}" hx-swap="outerHTML" class="auth-form p-4 d-flex flex-column align-items-center rounded">
+        <h1>Sign in</h1>
         {{ csrf()|raw }}
+        <p class="lead">Please enter your email (or username) and password to access your account.</p>
         <div class="form-floating mb-3 w-100">
-            <input type="input" class="form-control w-100 {% if request_errors.email is defined %}is-invalid{% endif %}" name="email" id="email" placeholder="" value="{{ old('email') }}">
-            <label for="email">Email address</label>
-            {% include 'errors/validation.html' with {'validate': 'email'} %}
+            <input type="input" class="form-control w-100 {% if request_errors.email_or_username is defined %}is-invalid{% endif %}" name="email_or_username" id="email-or-username" placeholder="" value="{{ old('email_or_username') }}">
+            <label for="email">Email or username</label>
+            {% include 'errors/validation.html' with {'validate': 'email_or_username'} %}
         </div>
         <div class="form-floating mb-3 w-100">
             <input type="password" class="form-control w-100 {% if request_errors.password is defined %}is-invalid{% endif %}" name="password" id="password" placeholder="" autocomplete="new-password">
@@ -24,9 +25,9 @@
         </div>
         <div hx-boost="true" class="mb-3 d-flex flex-column">
             {% if register_enabled %}
-            <a href="/register">Don't have an account?</a>
+            <a href="{{ route('register.index')}}">Don't have an account?</a>
             {% endif %}
-            <a href="#">Forgotten password?</a>
+            <a href="{{ route('forgot-password.index')}}">Forgotten password?</a>
         </div>
         <div class="d-flex align-items-center">
             <img width="12" height="12" src="/images/nebula.jpeg" />

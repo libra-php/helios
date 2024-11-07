@@ -1,6 +1,0 @@
-{% for post in posts %}
-{% include "admin/feed/post.html" with {'post': post } %}
-{% endfor %}
-{% if posts|length == 0 %}
-    <p id="no-posts" class="lead"><small>There are currently no posts.</small></p>
-{% endif %}

@@ -1,10 +1,11 @@
 {% extends "layouts/base.html" %}
 
 {% block content %}
-<section id="register" class="h-100">
-    <form hx-post="{{ route('register.index') }}" hx-swap="outerHTML" class="d-flex flex-column align-items-center justify-content-center h-100">
+<section id="register" class="auth-cont h-100 d-flex flex-column align-items-center justify-content-center">
+    <form hx-post="{{ route('register.index') }}" hx-swap="outerHTML" class="auth-form p-4 d-flex flex-column align-items-center rounded">
         <h3>Create new account</h3>
         {{ csrf()|raw }}
+        <p class="lead">Fill in the details below to set up your account. Once registered, you’ll be able to sign in and start using all features.</p>
         <div class="form-floating mb-3 w-100">
             <input type="input" class="form-control w-100 {% if request_errors.name is defined %}is-invalid{% endif %}" name="name" id="name" placeholder="" value="{{ old('name') }}">
             <label for="name">Name</label>

@@ -1,4 +1,0 @@
-<button class="btn btn-sm btn-comment {% if count == 0 %}inactive{% endif %}" hx-get="/admin/feed/{{ id }}" hx-target="#module-content" hx-select="#module-content" hx-push-url="true" hx-indicator="#request-spinner">
-    <img src="/images/chat.png" width="16" height="16" alt="comment" title="Comment" />
-    <span class="msg-count ps-1">{{ count }}</span>
-</button>

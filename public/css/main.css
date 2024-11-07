@@ -5,6 +5,7 @@ body {
 }
 
 body {
+    background-color: #f3f4f8;
     color: #222;
 }
 
@@ -45,7 +46,15 @@ a:active {
     border: 3px solid #ffffff;
 }
 
-#sign-in, #register {
+.auth-cont {
     max-width: 364px;
     margin: auto;
+}
+.auth-form {
+    background-color: #fff;
+    box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
+    border: 1px solid #ddd;
+}
+.auth-form .lead {
+    font-size: 1.1rem;
 }

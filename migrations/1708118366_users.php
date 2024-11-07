@@ -16,6 +16,7 @@ return new class implements IMigration
             $table->varchar("email");
             $table->binary("password", 96);
             $table->timestamp("login_at")->default("CURRENT_TIMESTAMP");
+            $table->unsignedTinyInteger("failed_login")->default(0);
             $table->unsignedTinyInteger("2fa_enabled")->default(1);
             $table->unsignedTinyInteger("2fa_confirmed")->default(0);
             $table->char("2fa_secret", 16)->nullable();
