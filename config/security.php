@@ -2,7 +2,7 @@
 
 return [
     "default_admin_pass" => "Admin2024!",
-    "auth_route" => "admin.index",
+    "auth_route" => moduleRoute("module.index", "users"),
     "register_enabled" => true,
     "max_failed_login" => 10,
     "whitelist" => [

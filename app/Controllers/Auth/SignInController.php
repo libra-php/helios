@@ -28,7 +28,11 @@ class SignInController extends Controller
         if ($valid) {
             if (Auth::signIn($valid)) {
                 $route = config("security.auth_route");
-                redirect(findRoute($route));
+                redirect($route, [
+                    "target" => "#sign-in",
+                    "select" => "#admin",
+                    "swap" => "outerHTML",
+                ]);
             }
             $this->addRequestError("password", "Invalid email or password");
         }

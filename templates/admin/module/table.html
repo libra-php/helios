@@ -1,0 +1,16 @@
+<table id="table" class="table table-sm">
+    <thead>
+        {% for header in table.headers %}
+        <th nowrap>{{ header }}</th>
+        {% endfor %}
+    </thead>
+    <tbody>
+        {% for datum in table.data %}
+        <tr>
+            {% for column,value in datum %}
+            <td nowrap>{{ value }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

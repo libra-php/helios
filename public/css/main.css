@@ -7,6 +7,7 @@ body {
 body {
     background-color: #f3f4f8;
     color: #222;
+    overflow: hidden;
 }
 
 a:link {
@@ -46,6 +47,12 @@ a:active {
     border: 3px solid #ffffff;
 }
 
+.truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .auth-cont {
     max-width: 364px;
     margin: auto;
@@ -57,4 +64,24 @@ a:active {
 }
 .auth-form .lead {
     font-size: 1.1rem;
+}
+
+#module {
+    overflow: hidden;
+}
+.module-content {
+    overflow: auto;
+}
+#sidebar {
+    width: 224px;
+}
+#sidebar ul {
+    list-style: none; 
+    padding: 0;
+}
+#sidebar ul li {
+    padding-left: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

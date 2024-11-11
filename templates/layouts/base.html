@@ -14,12 +14,11 @@
 </head>
 
 <body>
-    <main id="content" class="h-100">
-        {% block content %}{% endblock %}
-    </main>
+    {% block content %}{% endblock %}
+    {% block scripts %}
     <script src="/js/bootstrap.bundle.min.js"></script>
     <script src="/js/main.js" defer></script>
-    <script src="/js/sidebar.js" nonce="{{ nonce }}"></script>
+    {% endblock %}
 </body>
 
 </html>

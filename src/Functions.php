@@ -171,6 +171,32 @@ function user(): ?User
 }
 
 /**
+ * Find a module route by name, module
+ */
+function moduleRoute(string $name, string $module, ...$replacements): ?string
+{
+    $router = app()->router();
+    $route = array_filter($router->getRoutes(), function($route) use ($name, $module) {
+        $route_name = $route->getName();
+        $middleware = $route->getMiddleware();
+        return isset($middleware['module']) && $middleware['module'] === $module && $route_name === $name;
+    });
+
+    if (empty($route)) {
+        return null;
+    }
+    $route = array_pop($route);
+
+    $path = $route->getPath();
+
+    foreach ($replacements as $replacement) {
+        $path = preg_replace('/\{\w+\}/', $replacement, $path, 1);
+    }
+
+    return $path;
+}
+
+/**
  * Find a route by name
  */
 function findRoute(string $name, ...$replacements): ?string
@@ -195,8 +221,8 @@ function findRoute(string $name, ...$replacements): ?string
  * Redirect to an enpoint (htmx)
  */
 function redirect(string $path, array $options = [
-    "target" => "main",
-    "select" => "main",
+    "target" => "body",
+    "select" => "body",
     "swap" => "outerHTML"
 ]): void
 {
