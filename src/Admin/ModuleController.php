@@ -69,6 +69,7 @@ class ModuleController extends Controller
     #[Get("/filter-link/{index}", "module.filter-link")]
     public function filterLink(int $index): string
     {
+        $this->handlePage(1);
         $this->handleFilterLink($index);
         return $this->index();
     }
