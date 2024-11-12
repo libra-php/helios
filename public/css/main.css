@@ -4,6 +4,14 @@ body {
     width: 100%;
 }
 
+#module {
+    overflow: hidden;
+    background-color: #fff;
+}
+.module-content {
+    overflow: auto;
+}
+
 body {
     background-color: #f3f4f8;
     color: #222;
@@ -66,12 +74,6 @@ a:active {
     font-size: 1.1rem;
 }
 
-#module {
-    overflow: hidden;
-}
-.module-content {
-    overflow: auto;
-}
 #sidebar {
     width: 224px;
 }

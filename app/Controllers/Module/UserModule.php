@@ -8,9 +8,9 @@ use StellarRouter\Group;
 #[Group(prefix: "/admin/users", middleware: ["module" => "users"])]
 class UserModule extends ModuleController
 {
-    protected string $title = "Users";
-    protected string $parent = "Administration";
-    protected string $route = "users";
+    protected string $module_title = "Users";
+    protected string $module_parent = "Administration";
+
     protected string $table = "users";
     protected array $table_columns = [
         "ID" => "id",

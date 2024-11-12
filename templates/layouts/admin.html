@@ -4,13 +4,14 @@
 <section id="admin" class="d-flex h-100 w-100">
     <section id="sidebar" class="h-100 d-none d-sm-block" hx-boost="true" hx-swap="outerHTML" hx-target="#module" hx-select="#module">
         <ul class="mt-3">
-            <li>Administration</li>
+            <li class="fw-bold">Administration</li>
             <ul class="mt-1 ps-2">
                 <a href="/admin/users"><li>Users</li></a>
+                <a href="/admin/test"><li>Test</li></a>
             </ul>
         </ul>
     </section>
-    <section id="module" class="d-flex flex-column flex-grow-1">
+    <section id="module" class="d-flex flex-column flex-grow-1 p-2">
         {% block top %}
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" hx-boost="true" hx-swap="outerHTML" hx-target="#module" hx-select="#module">
             <ol class="breadcrumb">
@@ -18,7 +19,7 @@
                 {% block breadcrumb %}{% endblock %}
             </ol>
         </nav>
-        <h1>{{ module.title }}</h1>
+        <h1 class="fw-bold">{{ module.title }}</h1>
         {% endblock %}
         {% block module %}{% endblock %}
         {% block bottom %}{% endblock %}

@@ -98,7 +98,7 @@ class Controller
         $validated = [];
 
         foreach ($rules as $key => $ruleset) {
-            $value = request()->request->has($key) ? request()->request->get($key) : request()->files->get($key);
+            $value = request()->get($key) || request()->files->get($key);
             // Ruleset can be provided as | delimited
             if (is_string($ruleset)) {
                 $ruleset = explode("|", $ruleset);

@@ -4,9 +4,9 @@
 
 {% block breadcrumb %}
 {% if module.parent %}
-<li class="breadcrumb-item">{{ module.parent }}</li>
+    <li class="breadcrumb-item">{{ module.parent }}</li>
 {% endif %}
-    <li class="breadcrumb-item active" aria-current="page"><a href="/admin/{{ module.route }}">{{ module.title }}</a></li>
+<li class="breadcrumb-item active" aria-current="page"><a href="/admin/{{ module.route }}">{{ module.title }}</a></li>
 {% endblock %}
 
 {% block module %}
@@ -16,6 +16,5 @@
 {% endblock %}
 
 {% block bottom %}
+{% include "admin/module/pagination.html" %}
 {% endblock %}
-
-
