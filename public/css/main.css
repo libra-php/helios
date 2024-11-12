@@ -60,6 +60,9 @@ a:active {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.text-underline {
+    text-decoration: underline;
+}
 
 .auth-cont {
     max-width: 364px;
@@ -75,7 +78,8 @@ a:active {
 }
 
 #sidebar {
-    width: 224px;
+    width: 200px;
+    min-width: 200px;
 }
 #sidebar ul {
     list-style: none; 

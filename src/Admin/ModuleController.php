@@ -21,6 +21,7 @@ class ModuleController extends Controller
     protected string $table = '';
     protected array $where = [];
     protected array $order_by = [];
+    protected array $params = [];
     protected int $per_page = 10;
     protected int $page = 1;
 
@@ -28,6 +29,11 @@ class ModuleController extends Controller
     protected array $table_columns = [];
     // Table format
     protected array $table_format = [];
+
+
+    // Filters
+    protected array $filter_links = [];
+    protected int $filter_link_index = 0;
 
 
     public function __construct()
@@ -48,7 +54,23 @@ class ModuleController extends Controller
             "module" => $this->getModuleData(),
             "table" => $this->getTableData(),
             "pagination" => $this->getPaginationData(),
+            "filters" => $this->getFilterData(),
         ]);
+    }
+
+    #[Get("/filter-link-count/{index}", "module.filter-link-count")]
+    public function filterLinkCount(int $index): string
+    {
+        $filters = array_values($this->filter_links);
+        $this->addWhere($filters[$index]);
+        return $this->getTotalResults();
+    }
+
+    #[Get("/filter-link/{index}", "module.filter-link")]
+    public function filterLink(int $index): string
+    {
+        $this->handleFilterLink($index);
+        return $this->index();
     }
 
     #[Get("/page/{page}", "module.page")]
@@ -74,10 +96,31 @@ class ModuleController extends Controller
 
     protected function setState(): void
     {
+        // Current page
         $this->page = $this->getSession("page") ?? $this->page;
+
+        // Filter link
+        $this->filter_link_index = $this->getSession("filter_link") ?? $this->filter_link_index;
+        if (!empty($this->filter_links)) {
+            $filters = array_values($this->filter_links);
+            $this->addWhere($filters[$this->filter_link_index]);
+        }
     }
 
     protected function processRequest(): void {}
+
+    protected function addWhere($clause, ...$replacements)
+    {
+        $this->where[] = $clause;
+        foreach ($replacements as $replacement) {
+            $this->params[] = $replacement;
+        }
+    }
+
+    protected function handleFilterLink(int $index)
+    {
+        $this->setSession("filter_link", $index);
+    }
 
     protected function handlePage(int $page): void
     {
@@ -107,6 +150,14 @@ class ModuleController extends Controller
         ];
     }
 
+    protected function getFilterData(): array
+    {
+        return [
+            "filter_links" => array_keys($this->filter_links),
+            "filter_link_index" => $this->filter_link_index,
+        ];
+    }
+
     protected function getPaginationData(): array
     {
         $total_results = $this->getTotalResults();
@@ -129,6 +180,7 @@ class ModuleController extends Controller
             ->orderBy($this->order_by)
             ->limit($this->per_page)
             ->offset($offset)
+            ->params($this->params)
             ->execute()
             ->fetchAll(PDO::FETCH_ASSOC);
         return [
@@ -146,6 +198,7 @@ class ModuleController extends Controller
             ->from($this->table)
             ->where($this->where)
             ->orderBy($this->order_by)
+            ->params($this->params)
             ->execute()
             ->rowCount();
     }

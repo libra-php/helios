@@ -18,5 +18,11 @@ class TestModule extends ModuleController
         "Name" => "name",
         "Number" => "number",
     ];
+
+    protected array $filter_links = [
+        "All" => "1 = 1",
+        "Is 7" => "number = 7",
+        "Over 5" => "number > 5",
+    ];
 }
 

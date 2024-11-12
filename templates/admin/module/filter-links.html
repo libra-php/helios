@@ -1,0 +1,19 @@
+{% if filters.filter_links %}
+<nav class="mt-3">
+{% for link in filters.filter_links %}
+<button type="button" 
+        class="btn btn-sm {% if filters.filter_link_index == loop.index0 %}fw-bold text-dark{% else %}text-secondary{% endif %}"
+    hx-get="/admin/{{ module.route }}/filter-link/{{ loop.index0 }}"
+    hx-target="#module"
+    hx-select="#module"
+    hx-swap="outerHTML"
+    >
+    {{ link }}
+    [<span hx-get="/admin/{{ module.route }}/filter-link-count/{{ loop.index0 }}" 
+        hx-trigger="load"
+        hx-target="this"
+        hx-swap="textContent">??</span>]
+</button>
+{% endfor %}
+</nav>
+{% endif %}
