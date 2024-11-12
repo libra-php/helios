@@ -15,11 +15,10 @@
         {% block top %}
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" hx-boost="true" hx-swap="outerHTML" hx-target="#module" hx-select="#module">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item">Admin</li>
                 {% block breadcrumb %}{% endblock %}
             </ol>
         </nav>
-        <h1 class="fw-bold">{{ module.title }}</h1>
+        {% block header %}<h1 class="fw-bold">{{ module.title }}</h1>{% endblock %}
         {% endblock %}
         {% block module %}{% endblock %}
         {% block bottom %}{% endblock %}

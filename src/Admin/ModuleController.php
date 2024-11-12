@@ -7,6 +7,7 @@ use Helios\Web\Controller;
 use PDO;
 use StellarRouter\{Get, Group};
 
+/** @package Helios\Admin */
 #[Group(middleware: ["auth"])]
 class ModuleController extends Controller
 {
@@ -18,6 +19,7 @@ class ModuleController extends Controller
     protected string $module_parent = '';
 
     // The sql stuff
+    protected string $primary_key = 'id';
     protected string $table = '';
     protected array $where = [];
     protected array $order_by = [];
@@ -30,6 +32,10 @@ class ModuleController extends Controller
     // Table format
     protected array $table_format = [];
 
+    // Permissions
+    protected bool $has_edit = true;
+    protected bool $has_create = true;
+    protected bool $has_delete = true;
 
     // Filters
     protected array $filter_links = [];
@@ -54,6 +60,7 @@ class ModuleController extends Controller
             "module" => $this->getModuleData(),
             "table" => $this->getTableData(),
             "pagination" => $this->getPaginationData(),
+            "permissions" => $this->getPermissionData(),
             "filters" => $this->getFilterData(),
         ]);
     }
@@ -84,15 +91,21 @@ class ModuleController extends Controller
     #[Get("/edit/{id}", "module.edit")]
     public function edit(int $id): string
     {
+        $path = "/admin/{$this->module}/edit/$id";
+        header("HX-Push-Url: $path");
+
         return $this->render("/admin/module/edit.html", [
             "id" => $id,
+            "module" => $this->getModuleData(),
         ]);
     }
 
     #[Get("/create", "module.create")]
     public function create(): string
     {
-        return $this->render("/admin/module/create.html", []);
+        return $this->render("/admin/module/create.html", [
+            "module" => $this->getModuleData(),
+        ]);
     }
 
     protected function setState(): void
@@ -110,7 +123,7 @@ class ModuleController extends Controller
 
     protected function processRequest(): void {}
 
-    protected function addWhere($clause, ...$replacements)
+    protected function addWhere($clause, ...$replacements): void
     {
         $this->where[] = $clause;
         foreach ($replacements as $replacement) {
@@ -118,7 +131,7 @@ class ModuleController extends Controller
         }
     }
 
-    protected function handleFilterLink(int $index)
+    protected function handleFilterLink(int $index): void
     {
         $this->setSession("filter_link", $index);
     }
@@ -148,6 +161,7 @@ class ModuleController extends Controller
             "title" => $this->module_title,
             "parent" => $this->module_parent,
             "route" => $this->module,
+            "primary_key" => $this->primary_key,
         ];
     }
 
@@ -156,6 +170,15 @@ class ModuleController extends Controller
         return [
             "filter_links" => array_keys($this->filter_links),
             "filter_link_index" => $this->filter_link_index,
+        ];
+    }
+
+    protected function getPermissionData(): array
+    {
+        return [
+            "has_edit" => $this->has_edit,
+            "has_create" => $this->has_create,
+            "has_delete" => $this->has_delete,
         ];
     }
 

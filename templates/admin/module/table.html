@@ -3,13 +3,17 @@
         {% for header in table.headers %}
         <th nowrap>{{ header }}</th>
         {% endfor %}
+        <th></th>
     </thead>
     <tbody>
         {% for datum in table.data %}
-        <tr>
+        <tr valign="middle">
             {% for column,value in datum %}
             <td nowrap>{{ value }}</td>
             {% endfor %}
+            <td class="actions d-flex justify-content-end">
+                <button type="button" class="btn btn-primary btn-sm" hx-get="/admin/{{ module.route }}/edit/{{ datum[module.primary_key] }}" hx-swap="outerHTML" hx-target="#module" hx-select="#module">Edit</button>
+            </td>
         </tr>
         {% endfor %}
     </tbody>

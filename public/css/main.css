@@ -63,6 +63,9 @@ a:active {
 .text-underline {
     text-decoration: underline;
 }
+.bg-gray {
+    background-color: #f3f4f8;
+}
 
 .auth-cont {
     max-width: 364px;
