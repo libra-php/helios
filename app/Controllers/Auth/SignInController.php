@@ -27,7 +27,7 @@ class SignInController extends Controller
 
         if ($valid) {
             if (Auth::signIn($valid)) {
-                $route = config("security.auth_route");
+                $route = moduleRoute("module.index", "users");
                 redirect($route, [
                     "target" => "#sign-in",
                     "select" => "#admin",

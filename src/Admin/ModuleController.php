@@ -35,7 +35,7 @@ class ModuleController extends Controller
         $this->module = route()->getMiddleware()["module"];
     }
 
-    #[Get("/", "module.index")]
+    #[Get("/", "module.index", ["auth"])]
     public function index(): string
     {
         $path = "/admin/{$this->module}";

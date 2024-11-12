@@ -10,7 +10,8 @@ class RegisterController extends Controller
     public function __construct()
     {
         if (!config("security.register_enabled")) {
-            redirect(config("security.auth_route"));
+            $route = moduleRoute("module.index", "users");
+            redirect($route);
         }
     }
 
