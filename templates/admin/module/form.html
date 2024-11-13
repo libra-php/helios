@@ -1,0 +1,8 @@
+<form method="post" class="mt-2 px-2">
+    {% for datum in form %}
+    <div>
+        <label for="{{ datum.column }}" class="form-label">{{ datum.label }}</label>
+        <input type="" class="form-control" id="{{ datum.column}}" placeholder="">
+    </div>
+    {% endfor %}
+</form>

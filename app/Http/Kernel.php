@@ -17,7 +17,7 @@ class Kernel extends Http
         \Helios\Middleware\XSSProtection::class,
         \Helios\Middleware\ContentSecurityPolicy::class,
         \Helios\Middleware\HSTS::class,
-        \Helios\Middleware\Logging::class,
+        // \Helios\Middleware\Logging::class,
         \Helios\Middleware\MaintenanceMode::class,
     ];
 }

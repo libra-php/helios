@@ -24,5 +24,10 @@ class TestModule extends ModuleController
         "Is 7" => "number = 7",
         "Over 5" => "number > 5",
     ];
+
+    protected array $form_columns = [
+        "Name" => "name",
+        "Number" => "number",
+    ];
 }
 

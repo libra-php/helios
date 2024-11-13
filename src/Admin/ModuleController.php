@@ -13,9 +13,7 @@ class ModuleController extends Controller
 {
     // The module
     private string $module;
-    // The module title
     protected string $module_title = '';
-    // The module parent
     protected string $module_parent = '';
 
     // The sql stuff
@@ -27,10 +25,13 @@ class ModuleController extends Controller
     protected int $per_page = 10;
     protected int $page = 1;
 
-    // Table columns 
+    // Table stuff 
     protected array $table_columns = [];
-    // Table format
     protected array $table_format = [];
+
+    // Form stuff
+    protected array $form_columns = [];
+    protected array $form_controls = [];
 
     // Permissions
     protected bool $has_edit = true;
@@ -97,6 +98,7 @@ class ModuleController extends Controller
         return $this->render("/admin/module/edit.html", [
             "id" => $id,
             "module" => $this->getModuleData(),
+            "form" => $this->getFormData($id),
         ]);
     }
 
@@ -105,6 +107,7 @@ class ModuleController extends Controller
     {
         return $this->render("/admin/module/create.html", [
             "module" => $this->getModuleData(),
+            "form" => $this->getFormData(),
         ]);
     }
 
@@ -191,6 +194,28 @@ class ModuleController extends Controller
             "total_pages" => ceil($total_results / $this->per_page),
             "link_range" => 3,
         ];
+    }
+
+    protected function getFormData(?int $id = null): array
+    {
+        if ($id) {
+            $this->addWhere("{$this->primary_key} = ?", $id);
+        }
+        $qb = new QueryBuilder;
+        $result = $qb
+            ->select(array_values($this->form_columns))
+            ->from($this->table)
+            ->where($this->where)
+            ->params($this->params)
+            ->execute()
+            ->fetch(PDO::FETCH_ASSOC);
+        return array_map(function($label, $column, $value) { 
+            return [
+                "label" => $label,
+                "column" => $column,
+                "value" => $value,
+            ];
+        }, array_keys($this->form_columns), array_keys($result), array_values($result));
     }
 
     protected function getTableData(): mixed
