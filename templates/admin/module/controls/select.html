@@ -1,0 +1,15 @@
+<select 
+    id="{{ id }}" 
+    class="{{ class }}" 
+    title="{{ title }}" 
+    value="{{ value }}" 
+    name="{{ name }}"
+    {% if onchange %}onchange="{{ onchange }}"{% endif %}
+    {{ attrs }}>
+    <option value="NULL">Please select an option</option>
+    {% for option in options %}
+    {% set option_value = option.value ?? option[value] %}
+    {% set option_label = option.label ?? option[label] %}
+    <option value="{{ option_value }}" {% if option_value==value %}selected{% endif %}>{{ option_label }}</option>
+    {% endfor %}
+</select>

@@ -40,6 +40,8 @@ class TestModule extends ModuleController
         "comment" => "textarea"
     ];
     protected array $validation_rules = [
+        "name" => ["required"],
+        "number" => ["required"],
         "comment" => ["required"],
     ];
 

@@ -1,0 +1,12 @@
+<textarea 
+    id="{{ id }}" 
+    class="{{ class }}" 
+    name="{{ name }}" 
+    title="{{ title }}"
+    rows="{{ rows }}"
+    {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+    {% if onchange %}onchange="{{ onchange }}"{% endif %}
+    {% if readonly %}readonly{% endif %}
+    {% if disabled %}disabled{% endif %}
+    {% if required %}required{% endif %} 
+    {{ attrs }}>{{ value }}</textarea>

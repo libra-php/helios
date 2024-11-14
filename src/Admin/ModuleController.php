@@ -3,6 +3,7 @@
 namespace Helios\Admin;
 
 use Helios\Database\QueryBuilder;
+use Helios\View\Flash;
 use Helios\Web\Controller;
 use PDO;
 use StellarRouter\{Get, Post};
@@ -48,6 +49,9 @@ class ModuleController extends Controller
         $this->module = route()->getMiddleware()["module"];
     }
 
+    /**
+     * Table endpoint
+     */
     #[Get("/", "module.index", ["auth"])]
     public function index(): string
     {
@@ -66,6 +70,9 @@ class ModuleController extends Controller
         ]);
     }
 
+    /**
+     * Table filter link count endpoint
+     */
     #[Get("/filter-link-count/{index}", "module.filter-link-count", ["auth"])]
     public function filterLinkCount(int $index): string
     {
@@ -74,6 +81,9 @@ class ModuleController extends Controller
         return $this->getTotalResults();
     }
 
+    /**
+     * Table filter link endpoint
+     */
     #[Get("/filter-link/{index}", "module.filter-link", ["auth"])]
     public function filterLink(int $index): string
     {
@@ -82,6 +92,9 @@ class ModuleController extends Controller
         return $this->index();
     }
 
+    /**
+     * Table page endpoint
+     */
     #[Get("/page/{page}", "module.page", ["auth"])]
     public function page(int $page): string
     {
@@ -89,6 +102,9 @@ class ModuleController extends Controller
         return $this->index();
     }
 
+    /**
+     * Edit module endpoint
+     */
     #[Get("/edit/{id}", "module.edit", ["auth"])]
     public function edit(int $id): string
     {
@@ -102,6 +118,9 @@ class ModuleController extends Controller
         ]);
     }
 
+    /**
+     * Create module endpoint
+     */
     #[Get("/create", "module.create", ["auth"])]
     public function create(): string
     {
@@ -111,16 +130,29 @@ class ModuleController extends Controller
         ]);
     }
 
+    /**
+     * Update module endpoint
+     */
     #[Post("/{id}", "module.update", ["auth"])]
     public function update(int $id): string
     {
         $valid = $this->validateRequest($this->validation_rules);
         if ($valid) {
-
+            $success = $this->save($id, (array) $valid);
+            if ($success) {
+                Flash::add("success", "Save successful");
+            } else {
+                Flash::add("danger", "Save failed");
+            }
+        } else {
+            Flash::add("warning", "Validation error");
         }
         return $this->edit($id);
     }
 
+    /**
+     * Set the module state
+     */
     protected function setState(): void
     {
         // Current page
@@ -134,8 +166,14 @@ class ModuleController extends Controller
         }
     }
 
+    /**
+     * Process the module request
+     */
     protected function processRequest(): void {}
 
+    /**
+     * Form controls
+     */
     protected function control(string $type, string $label, string $column, ?string $value = null)
     {
         return match ($type) {
@@ -207,11 +245,14 @@ class ModuleController extends Controller
         return $this->render("admin/module/controls/textarea.html", $opts);
     }
 
-    public function format()
-    {
+    /**
+     * Table formats
+     */
+    public function format() {}
 
-    }
-
+    /**
+     * Add to where clause and params
+     */
     protected function addWhere($clause, ...$replacements): void
     {
         $this->where[] = $clause;
@@ -220,11 +261,17 @@ class ModuleController extends Controller
         }
     }
 
+    /**
+     * Handle filter link request
+     */
     protected function handleFilterLink(int $index): void
     {
         $this->setSession("filter_link", $index);
     }
 
+    /**
+     * Handle page request
+     */
     protected function handlePage(int $page): void
     {
         $pagination = $this->getPaginationData();
@@ -233,17 +280,26 @@ class ModuleController extends Controller
         $this->setSession("page", $page);
     }
 
+    /**
+     * Set the module session
+     */
     protected function setSession(string $key, mixed $value): void
     {
         session()->set($this->module . '_' . $key, $value);
     }
 
+    /**
+     * Return the module session
+     */
     protected function getSession(string $key): mixed
     {
         $session = session()->get($this->module . '_' . $key);
         return $session;
     }
 
+    /**
+     * Return the module data
+     */
     protected function getModuleData(): array
     {
         return [
@@ -254,6 +310,9 @@ class ModuleController extends Controller
         ];
     }
 
+    /**
+     * Return the filter data
+     */
     protected function getFilterData(): array
     {
         return [
@@ -262,6 +321,9 @@ class ModuleController extends Controller
         ];
     }
 
+    /**
+     * Return the permission data
+     */
     protected function getPermissionData(): array
     {
         return [
@@ -271,6 +333,9 @@ class ModuleController extends Controller
         ];
     }
 
+    /**
+     * Return the pagination data
+     */
     protected function getPaginationData(): array
     {
         $total_results = $this->getTotalResults();
@@ -282,6 +347,9 @@ class ModuleController extends Controller
         ];
     }
 
+    /**
+     * Return the form data
+     */
     protected function getFormData(?int $id = null): array
     {
         if ($id) {
@@ -295,11 +363,12 @@ class ModuleController extends Controller
             ->params($this->params)
             ->execute()
             ->fetch(PDO::FETCH_ASSOC);
-        $result = array_map(function($label, $column, $value) { 
+        $result = array_map(function ($label, $column, $value) {
             $type = $this->form_controls[$column] ?? null;
             if (is_null($type)) return [];
             return [
                 "label" => $label,
+                "column" => $column,
                 "control" => $this->control($type, $label, $column, $value),
             ];
         }, array_keys($this->form_columns), array_keys($result), array_values($result));
@@ -309,7 +378,10 @@ class ModuleController extends Controller
         ];
     }
 
-    protected function getTableData(): mixed
+    /**
+     * Return the table data
+     */
+    protected function getTableData(): array
     {
         $qb = new QueryBuilder;
         $offset = $this->per_page * ($this->page - 1);
@@ -329,6 +401,9 @@ class ModuleController extends Controller
         ];
     }
 
+    /**
+     * Get total results for a table query
+     */
     protected function getTotalResults(): int
     {
 
@@ -341,5 +416,22 @@ class ModuleController extends Controller
             ->params($this->params)
             ->execute()
             ->rowCount();
+    }
+
+    /**
+     * Save the module data to the database
+     */
+    protected function save(int $id, array $data): bool
+    {
+        $params = array_values($data);
+        $params[] = $id;
+        $qb = new QueryBuilder;
+        $result = $qb
+            ->update($data)
+            ->table($this->table)
+            ->where(["{$this->primary_key} = ?"])
+            ->params($params)
+            ->execute();
+        return $result ? true : false;
     }
 }

@@ -1,0 +1,24 @@
+<input 
+    id="{{ id }}"
+    class="{{ class }}"
+    type="{{ type }}"
+    name="{{ name }}"
+    title="{{ title }}"
+    {% if value %}value="{{ value }}"{% endif %}
+    {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+    {% if onchange %}onchange="{{ onchange }}"{% endif %}
+    {% if alt %}alt="{{ alt }}"{% endif %}
+    {% if min %}min="{{ min }}"{% endif %}
+    {% if max %}max="{{ max }}"{% endif %}
+    {% if minlength %}minlength="{{ minlength }}"{% endif %}
+    {% if maxlength %}maxlength="{{ maxlength }}"{% endif %}
+    {% if pattern %}pattern="{{ pattern }}"{% endif %}
+    {% if step %}step="{{ step }}"{% endif %}
+    {% if width %}width="{{ width }}"{% endif %}
+    {% if height %}height="{{ height }}"{% endif %}
+    {% if accept %}accept="{{ accept }}"{% endif %}
+    {% if readonly %}readonly{% endif %}
+    {% if disabled %}disabled{% endif %}
+    {% if required %}required{% endif %}
+    {% if checked %}checked{% endif %}
+    {{ attrs }} />

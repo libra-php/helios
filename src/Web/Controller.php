@@ -2,6 +2,7 @@
 
 namespace Helios\Web;
 
+use Helios\View\Flash;
 use InvalidArgumentException;
 use Twig\Environment;
 
@@ -76,6 +77,7 @@ class Controller
         $twig = container()->get(Environment::class);
         $data["request_errors"] = $this->request_errors;
         $data["nonce"] = session()->get("nonce");
+        $data["flash"] = Flash::get();
         return $twig->render($path, $data);
     }
 
