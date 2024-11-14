@@ -12,12 +12,16 @@ class TestModule extends ModuleController
     protected string $module_title = "Test";
     protected string $module_parent = "Administration";
     protected string $module_route = "test";
-
     protected string $table = "test";
+
     protected array $table_columns = [
         "ID" => "id",
         "Name" => "name",
         "Number" => "number",
+        "Created" => "created_at",
+    ];
+    protected array $table_format = [
+        "created_at" => "ago",
     ];
 
     protected array $filter_links = [
@@ -37,7 +41,7 @@ class TestModule extends ModuleController
         "name" => "input",
         "number" => "number",
         "checked" => "switch",
-        "comment" => "test"
+        "comment" => "textarea"
     ];
     protected array $validation_rules = [
         "name" => ["required"],

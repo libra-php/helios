@@ -22,7 +22,7 @@ trait FormControls
     protected function input(string $label, string $column, ?string $value): string
     {
         $opts = [
-            'id' => "control_$column",
+            'id' => "control-$column",
             'class' => 'form-control',
             'type' => 'input',
             'name' => $column,
@@ -35,7 +35,7 @@ trait FormControls
     protected function number(string $label, string $column, ?string $value): string
     {
         $opts = [
-            'id' => "control_$column",
+            'id' => "control-$column",
             'class' => 'form-control',
             'type' => 'number',
             'name' => $column,
@@ -48,7 +48,7 @@ trait FormControls
     protected function checkbox(string $label, string $column, ?string $value): string
     {
         $opts = [
-            'id' => "control_$column",
+            'id' => "control-$column",
             'class' => 'form-check-input',
             'type' => 'checkbox',
             'name' => $column,
@@ -69,7 +69,7 @@ trait FormControls
     protected function textarea(string $label, string $column, ?string $value): string
     {
         $opts = [
-            'id' => "control_$column",
+            'id' => "control-$column",
             'class' => 'form-control',
             'name' => $column,
             'title' => $label,

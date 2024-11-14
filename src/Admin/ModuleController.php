@@ -23,6 +23,7 @@ class ModuleController extends Controller
     protected string $primary_key = 'id';
     protected string $table = '';
     protected array $where = [];
+    protected array $having = [];
     protected array $order_by = [];
     protected array $params = [];
     protected int $per_page = 25;
@@ -365,18 +366,30 @@ class ModuleController extends Controller
     {
         $qb = new QueryBuilder;
         $offset = $this->per_page * ($this->page - 1);
-        $results = $qb
+        $data = $qb
             ->select(array_values($this->table_columns))
             ->from($this->table)
             ->where($this->where)
+            ->having($this->having)
             ->orderBy($this->order_by)
             ->limit($this->per_page)
             ->offset($offset)
             ->params($this->params)
             ->execute()
             ->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($data as &$result) {
+            $result = array_map(function($column, $value) use ($result) {
+                $format = $this->table_format[$column] ?? null;
+                return [
+                    "column" => $column,
+                    "raw" => $value,
+                    "formatted" => $this->format($format, $column, $value),
+                    "id" => $result[$this->primary_key],
+                ];
+            }, array_keys($result), array_values($result));
+        }
         return [
-            "data" => $results,
+            "data" => $data,
             "headers" => array_keys($this->table_columns)
         ];
     }
@@ -392,7 +405,7 @@ class ModuleController extends Controller
             ->select(array_values($this->table_columns))
             ->from($this->table)
             ->where($this->where)
-            ->orderBy($this->order_by)
+            ->having($this->having)
             ->params($this->params)
             ->execute()
             ->rowCount();
