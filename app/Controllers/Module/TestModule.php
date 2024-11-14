@@ -37,7 +37,7 @@ class TestModule extends ModuleController
         "name" => "input",
         "number" => "number",
         "checked" => "switch",
-        "comment" => "textarea"
+        "comment" => "test"
     ];
     protected array $validation_rules = [
         "name" => ["required"],
@@ -45,6 +45,5 @@ class TestModule extends ModuleController
         "comment" => ["required"],
         "checked" => [],
     ];
-
 }
 

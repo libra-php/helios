@@ -10,16 +10,13 @@ trait FormControls
     /**
      * Form controls
      */
-    protected function control(string $type, string $label, string $column, ?string $value = null)
+    protected function control(string $type, string $label, string $column, ?string $value = null): mixed
     {
-        return match ($type) {
-            'input' => $this->input($label, $column, $value),
-            'number' => $this->number($label, $column, $value),
-            'checkbox' => $this->checkbox($label, $column, $value),
-            'switch' => $this->switch($label, $column, $value),
-            'textarea' => $this->textarea($label, $column, $value),
-            default => throw new \Error("control type does not exist: $type"),
-        };
+        if (method_exists($this, $type)) {
+            return call_user_func([$this, $type], $label, $column, $value);
+        } else {
+            throw new \Error("control type does not exist: $type");
+        }
     }
 
     protected function input(string $label, string $column, ?string $value): string

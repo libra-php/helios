@@ -25,6 +25,7 @@
                         class="btn btn-danger btn-sm ms-1" 
                         hx-delete="/admin/{{ module.route }}/{{ datum[module.primary_key] }}" 
                         hx-swap="outerHTML" 
+                        hx-confirm="Are you sure you want to permanently delete this record?"
                         hx-target="#module" 
                         hx-select="#module">Delete</button>
                 </form>
