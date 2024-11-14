@@ -153,6 +153,9 @@ class ModuleController extends Controller
         return $this->edit($id);
     }
 
+    /**
+     * Store module endpoint
+     */
     #[Post("/", "module.store", ["auth"])]
     public function store(): string
     {
@@ -171,10 +174,19 @@ class ModuleController extends Controller
         return $this->create();
     }
 
+    /**
+     * Destroy module endpoint
+     */
     #[Delete("/{id}", "module.destroy", ["auth"])]
-    public function destroy(int $id)
+    public function destroy(int $id): string
     {
-        die("wip");
+        $result = $this->delete($id);
+        if ($result) {
+            Flash::add("success", "Successfully deleted record");
+        } else {
+            Flash::add("danger", "Delete failed");
+        }
+        return $this->index();
     }
 
     /**
@@ -387,7 +399,7 @@ class ModuleController extends Controller
     }
 
     /**
-     * Save the module data to the database
+     * Save the existing module data to the database
      */
     protected function save(int $id, array $data): bool
     {
@@ -403,6 +415,9 @@ class ModuleController extends Controller
         return $result ? true : false;
     }
 
+    /**
+     * Save the new module data to the database
+     */
     protected function new(array $data): ?int
     {
         $params = array_values($data);
@@ -415,8 +430,18 @@ class ModuleController extends Controller
         return $result ? db()->lastInsertId() : null;
     }
 
-    protected function delete(int $id)
+    /**
+     * Delete the module data from the database
+     */
+    protected function delete(int $id): bool
     {
-
+        $qb = new QueryBuilder;
+        $result = $qb
+            ->delete()
+            ->from($this->table)
+            ->where(["{$this->primary_key} = ?"])
+            ->params([$id])
+            ->execute();
+        return $result ? true : false;
     }
 }
