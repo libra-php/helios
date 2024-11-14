@@ -7,7 +7,7 @@ use Helios\View\Flash;
 use Helios\View\{FormControls, TableFormat};
 use Helios\Web\Controller;
 use PDO;
-use StellarRouter\{Get, Post};
+use StellarRouter\{Get, Post, Delete};
 
 /** @package Helios\Admin */
 class ModuleController extends Controller
@@ -170,6 +170,13 @@ class ModuleController extends Controller
         }
         return $this->create();
     }
+
+    #[Delete("/{id}", "module.destroy", ["auth"])]
+    public function destroy(int $id)
+    {
+        die("wip");
+    }
+
     /**
      * Set the module state
      */
@@ -406,5 +413,10 @@ class ModuleController extends Controller
             ->params($params)
             ->execute();
         return $result ? db()->lastInsertId() : null;
+    }
+
+    protected function delete(int $id)
+    {
+
     }
 }
