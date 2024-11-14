@@ -1,8 +1,13 @@
-<form method="post" class="mt-2 px-2">
-    {% for datum in form %}
-    <div>
-        <label for="{{ datum.column }}" class="form-label">{{ datum.label }}</label>
-        <input type="" class="form-control" id="{{ datum.column}}" placeholder="">
+<form class="p-2" method="post" hx-post="{{ form.action }}" hx-target="#module" hx-select="#module" hx-swap="outerHTML">
+    {{ csrf()|raw }}
+    {% for datum in form.data %}
+    <div class="d-flex flex-column mt-1">
+        <label for="{{ datum.column }}" class="form-label fw-bold">{{ datum.label }}</label>
+        <div>{{ datum.control|raw }}</div>
+        {% include 'errors/validation.html' with {'validate': datum.column} %}
     </div>
     {% endfor %}
+    <div hx-boost="true">
+        <button class="btn btn-sm btn-primary" type="submit">Save</button>
+    </div>
 </form>

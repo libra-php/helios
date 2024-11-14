@@ -5,6 +5,7 @@ namespace App\Controllers\Module;
 use Helios\Admin\ModuleController;
 use StellarRouter\Group;
 
+/** @package App\Controllers\Module */
 #[Group(prefix: "/admin/users", middleware: ["module" => "users"])]
 class UserModule extends ModuleController
 {

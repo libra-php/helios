@@ -5,6 +5,7 @@ namespace App\Controllers\Module;
 use Helios\Admin\ModuleController;
 use StellarRouter\Group;
 
+/** @package App\Controllers\Module */
 #[Group(prefix: "/admin/test", middleware: ["module" => "test"])]
 class TestModule extends ModuleController
 {
@@ -28,6 +29,19 @@ class TestModule extends ModuleController
     protected array $form_columns = [
         "Name" => "name",
         "Number" => "number",
+        "Checkbox" => "checked",
+        "Comment" => "comment",
+        "ID" => "id",
     ];
+    protected array $form_controls = [
+        "name" => "input",
+        "number" => "number",
+        "checked" => "switch",
+        "comment" => "textarea"
+    ];
+    protected array $validation_rules = [
+        "comment" => ["required"],
+    ];
+
 }
 

@@ -5,10 +5,9 @@ namespace Helios\Admin;
 use Helios\Database\QueryBuilder;
 use Helios\Web\Controller;
 use PDO;
-use StellarRouter\{Get, Group};
+use StellarRouter\{Get, Post};
 
 /** @package Helios\Admin */
-#[Group(middleware: ["auth"])]
 class ModuleController extends Controller
 {
     // The module
@@ -41,6 +40,7 @@ class ModuleController extends Controller
     // Filters
     protected array $filter_links = [];
     protected int $filter_link_index = 0;
+    protected array $validation_rules = [];
 
 
     public function __construct()
@@ -66,7 +66,7 @@ class ModuleController extends Controller
         ]);
     }
 
-    #[Get("/filter-link-count/{index}", "module.filter-link-count")]
+    #[Get("/filter-link-count/{index}", "module.filter-link-count", ["auth"])]
     public function filterLinkCount(int $index): string
     {
         $filters = array_values($this->filter_links);
@@ -74,7 +74,7 @@ class ModuleController extends Controller
         return $this->getTotalResults();
     }
 
-    #[Get("/filter-link/{index}", "module.filter-link")]
+    #[Get("/filter-link/{index}", "module.filter-link", ["auth"])]
     public function filterLink(int $index): string
     {
         $this->handlePage(1);
@@ -82,14 +82,14 @@ class ModuleController extends Controller
         return $this->index();
     }
 
-    #[Get("/page/{page}", "module.page")]
+    #[Get("/page/{page}", "module.page", ["auth"])]
     public function page(int $page): string
     {
         $this->handlePage($page);
         return $this->index();
     }
 
-    #[Get("/edit/{id}", "module.edit")]
+    #[Get("/edit/{id}", "module.edit", ["auth"])]
     public function edit(int $id): string
     {
         $path = "/admin/{$this->module}/edit/$id";
@@ -102,13 +102,23 @@ class ModuleController extends Controller
         ]);
     }
 
-    #[Get("/create", "module.create")]
+    #[Get("/create", "module.create", ["auth"])]
     public function create(): string
     {
         return $this->render("/admin/module/create.html", [
             "module" => $this->getModuleData(),
             "form" => $this->getFormData(),
         ]);
+    }
+
+    #[Post("/{id}", "module.update", ["auth"])]
+    public function update(int $id): string
+    {
+        $valid = $this->validateRequest($this->validation_rules);
+        if ($valid) {
+
+        }
+        return $this->edit($id);
     }
 
     protected function setState(): void
@@ -125,6 +135,82 @@ class ModuleController extends Controller
     }
 
     protected function processRequest(): void {}
+
+    protected function control(string $type, string $label, string $column, ?string $value = null)
+    {
+        return match ($type) {
+            'input' => $this->c_input($label, $column, $value),
+            'number' => $this->c_number($label, $column, $value),
+            'checkbox' => $this->c_checkbox($label, $column, $value),
+            'switch' => $this->c_switch($label, $column, $value),
+            'textarea' => $this->c_textarea($label, $column, $value),
+            default => throw new \Error("control type does not exist: $type"),
+        };
+    }
+
+    protected function c_input(string $label, string $column, ?string $value): string
+    {
+        $opts = [
+            'id' => "control_$column",
+            'class' => 'form-control',
+            'type' => 'input',
+            'name' => $column,
+            'value' => $value,
+            'title' => $label,
+        ];
+        return $this->render("admin/module/controls/input.html", $opts);
+    }
+
+    protected function c_number(string $label, string $column, ?string $value): string
+    {
+        $opts = [
+            'id' => "control_$column",
+            'class' => 'form-control',
+            'type' => 'number',
+            'name' => $column,
+            'value' => $value,
+            'title' => $label,
+        ];
+        return $this->render("admin/module/controls/input.html", $opts);
+    }
+
+    protected function c_checkbox(string $label, string $column, ?string $value): string
+    {
+        $opts = [
+            'id' => "control_$column",
+            'class' => 'form-check-input',
+            'type' => 'checkbox',
+            'name' => $column,
+            'title' => $label,
+            'checked' => $value == 1,
+        ];
+        return $this->render("admin/module/controls/input.html", $opts);
+    }
+
+    protected function c_switch(string $label, string $column, ?string $value): string
+    {
+        return $this->render("admin/module/controls/switch.html", [
+            "checkbox" => $this->c_checkbox($label, $column, $value),
+        ]);
+    }
+
+    protected function c_textarea(string $label, string $column, ?string $value): string
+    {
+        $opts = [
+            'id' => "control_$column",
+            'class' => 'form-control',
+            'name' => $column,
+            'title' => $label,
+            'rows' => 10,
+            'value' => $value,
+        ];
+        return $this->render("admin/module/controls/textarea.html", $opts);
+    }
+
+    public function format()
+    {
+
+    }
 
     protected function addWhere($clause, ...$replacements): void
     {
@@ -209,13 +295,18 @@ class ModuleController extends Controller
             ->params($this->params)
             ->execute()
             ->fetch(PDO::FETCH_ASSOC);
-        return array_map(function($label, $column, $value) { 
+        $result = array_map(function($label, $column, $value) { 
+            $type = $this->form_controls[$column] ?? null;
+            if (is_null($type)) return [];
             return [
                 "label" => $label,
-                "column" => $column,
-                "value" => $value,
+                "control" => $this->control($type, $label, $column, $value),
             ];
         }, array_keys($this->form_columns), array_keys($result), array_values($result));
+        return [
+            "data" => $result,
+            "action" => $id ? "/admin/{$this->module}/$id" : "/admin/{$this->module}/create",
+        ];
     }
 
     protected function getTableData(): mixed
