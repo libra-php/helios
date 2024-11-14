@@ -4,6 +4,7 @@ namespace Helios\Admin;
 
 use Helios\Database\QueryBuilder;
 use Helios\View\Flash;
+use Helios\View\{FormControls, TableFormat};
 use Helios\Web\Controller;
 use PDO;
 use StellarRouter\{Get, Post};
@@ -11,6 +12,8 @@ use StellarRouter\{Get, Post};
 /** @package Helios\Admin */
 class ModuleController extends Controller
 {
+    use FormControls, TableFormat;
+
     // The module
     private string $module;
     protected string $module_title = '';
@@ -22,27 +25,24 @@ class ModuleController extends Controller
     protected array $where = [];
     protected array $order_by = [];
     protected array $params = [];
-    protected int $per_page = 10;
+    protected int $per_page = 25;
     protected int $page = 1;
 
     // Table stuff 
     protected array $table_columns = [];
-    protected array $table_format = [];
-
-    // Form stuff
-    protected array $form_columns = [];
-    protected array $form_controls = [];
-
-    // Permissions
-    protected bool $has_edit = true;
-    protected bool $has_create = true;
-    protected bool $has_delete = true;
 
     // Filters
     protected array $filter_links = [];
     protected int $filter_link_index = 0;
     protected array $validation_rules = [];
 
+    // Form stuff
+    protected array $form_columns = [];
+
+    // Permissions
+    protected bool $has_edit = true;
+    protected bool $has_create = true;
+    protected bool $has_delete = true;
 
     public function __construct()
     {
@@ -114,7 +114,7 @@ class ModuleController extends Controller
         return $this->render("/admin/module/edit.html", [
             "id" => $id,
             "module" => $this->getModuleData(),
-            "form" => $this->getFormData($id),
+            "form" => $this->getEditFormData($id),
         ]);
     }
 
@@ -124,9 +124,12 @@ class ModuleController extends Controller
     #[Get("/create", "module.create", ["auth"])]
     public function create(): string
     {
+        $path = "/admin/{$this->module}/create";
+        header("HX-Push-Url: $path");
+
         return $this->render("/admin/module/create.html", [
             "module" => $this->getModuleData(),
-            "form" => $this->getFormData(),
+            "form" => $this->getCreateFormData(),
         ]);
     }
 
@@ -140,7 +143,7 @@ class ModuleController extends Controller
         if ($valid) {
             $success = $this->save($id, (array) $valid);
             if ($success) {
-                Flash::add("success", "Save successful");
+                Flash::add("success", "Successfully saved record");
             } else {
                 Flash::add("danger", "Save failed");
             }
@@ -150,6 +153,23 @@ class ModuleController extends Controller
         return $this->edit($id);
     }
 
+    #[Post("/", "module.store", ["auth"])]
+    public function store(): string
+    {
+        $valid = $this->validateRequest($this->validation_rules);
+        if ($valid) {
+            $id = $this->new((array) $valid);
+            if ($id) {
+                Flash::add("success", "Successfully created record");
+                return $this->edit($id);
+            } else {
+                Flash::add("danger", "Create failed");
+            }
+        } else {
+            Flash::add("warning", "Validation error");
+        }
+        return $this->create();
+    }
     /**
      * Set the module state
      */
@@ -170,85 +190,6 @@ class ModuleController extends Controller
      * Process the module request
      */
     protected function processRequest(): void {}
-
-    /**
-     * Form controls
-     */
-    protected function control(string $type, string $label, string $column, ?string $value = null)
-    {
-        return match ($type) {
-            'input' => $this->c_input($label, $column, $value),
-            'number' => $this->c_number($label, $column, $value),
-            'checkbox' => $this->c_checkbox($label, $column, $value),
-            'switch' => $this->c_switch($label, $column, $value),
-            'textarea' => $this->c_textarea($label, $column, $value),
-            default => throw new \Error("control type does not exist: $type"),
-        };
-    }
-
-    protected function c_input(string $label, string $column, ?string $value): string
-    {
-        $opts = [
-            'id' => "control_$column",
-            'class' => 'form-control',
-            'type' => 'input',
-            'name' => $column,
-            'value' => $value,
-            'title' => $label,
-        ];
-        return $this->render("admin/module/controls/input.html", $opts);
-    }
-
-    protected function c_number(string $label, string $column, ?string $value): string
-    {
-        $opts = [
-            'id' => "control_$column",
-            'class' => 'form-control',
-            'type' => 'number',
-            'name' => $column,
-            'value' => $value,
-            'title' => $label,
-        ];
-        return $this->render("admin/module/controls/input.html", $opts);
-    }
-
-    protected function c_checkbox(string $label, string $column, ?string $value): string
-    {
-        $opts = [
-            'id' => "control_$column",
-            'class' => 'form-check-input',
-            'type' => 'checkbox',
-            'name' => $column,
-            'title' => $label,
-            'checked' => $value == 1,
-        ];
-        return $this->render("admin/module/controls/input.html", $opts);
-    }
-
-    protected function c_switch(string $label, string $column, ?string $value): string
-    {
-        return $this->render("admin/module/controls/switch.html", [
-            "checkbox" => $this->c_checkbox($label, $column, $value),
-        ]);
-    }
-
-    protected function c_textarea(string $label, string $column, ?string $value): string
-    {
-        $opts = [
-            'id' => "control_$column",
-            'class' => 'form-control',
-            'name' => $column,
-            'title' => $label,
-            'rows' => 10,
-            'value' => $value,
-        ];
-        return $this->render("admin/module/controls/textarea.html", $opts);
-    }
-
-    /**
-     * Table formats
-     */
-    public function format() {}
 
     /**
      * Add to where clause and params
@@ -327,8 +268,8 @@ class ModuleController extends Controller
     protected function getPermissionData(): array
     {
         return [
-            "has_edit" => $this->has_edit,
-            "has_create" => $this->has_create,
+            "has_edit" => $this->has_edit && !empty($this->form_columns),
+            "has_create" => $this->has_create && !empty($this->form_columns),
             "has_delete" => $this->has_delete,
         ];
     }
@@ -348,13 +289,11 @@ class ModuleController extends Controller
     }
 
     /**
-     * Return the form data
+     * Return the edit form data
      */
-    protected function getFormData(?int $id = null): array
+    protected function getEditFormData(int $id = null): array
     {
-        if ($id) {
-            $this->addWhere("{$this->primary_key} = ?", $id);
-        }
+        $this->addWhere("{$this->primary_key} = ?", $id);
         $qb = new QueryBuilder;
         $result = $qb
             ->select(array_values($this->form_columns))
@@ -363,7 +302,8 @@ class ModuleController extends Controller
             ->params($this->params)
             ->execute()
             ->fetch(PDO::FETCH_ASSOC);
-        $result = array_map(function ($label, $column, $value) {
+        $data = array_map(function ($label, $column, $value) {
+            $value = request()->request->get($column) ?? $value;
             $type = $this->form_controls[$column] ?? null;
             if (is_null($type)) return [];
             return [
@@ -373,8 +313,29 @@ class ModuleController extends Controller
             ];
         }, array_keys($this->form_columns), array_keys($result), array_values($result));
         return [
-            "data" => $result,
-            "action" => $id ? "/admin/{$this->module}/$id" : "/admin/{$this->module}/create",
+            "data" => $data,
+            "action" => "/admin/{$this->module}/$id",
+        ];
+    }
+
+    /**
+     * Return the create form data
+     */
+    protected function getCreateFormData(): array
+    {
+        $data = array_map(function ($label, $column) {
+            $value = request()->request->get($column) ?? null;
+            $type = $this->form_controls[$column] ?? null;
+            if (is_null($type)) return [];
+            return [
+                "label" => $label,
+                "column" => $column,
+                "control" => $this->control($type, $label, $column, $value),
+            ];
+        }, array_keys($this->form_columns), array_values($this->form_columns));
+        return [
+            "data" => $data,
+            "action" => "/admin/{$this->module}",
         ];
     }
 
@@ -433,5 +394,17 @@ class ModuleController extends Controller
             ->params($params)
             ->execute();
         return $result ? true : false;
+    }
+
+    protected function new(array $data): ?int
+    {
+        $params = array_values($data);
+        $qb = new QueryBuilder;
+        $result = $qb
+            ->insert($data)
+            ->into($this->table)
+            ->params($params)
+            ->execute();
+        return $result ? db()->lastInsertId() : null;
     }
 }

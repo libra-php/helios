@@ -43,6 +43,7 @@ class TestModule extends ModuleController
         "name" => ["required"],
         "number" => ["required"],
         "comment" => ["required"],
+        "checked" => [],
     ];
 
 }

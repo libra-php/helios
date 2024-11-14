@@ -90,6 +90,7 @@ a:active {
 }
 #sidebar ul li {
     padding-left: 20px;
+    margin-top: 4px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

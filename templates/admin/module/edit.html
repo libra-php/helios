@@ -1,6 +1,6 @@
 {% extends "layouts/admin.html" %}
 
-{% block title %}{{ parent() }} - Admin: {{ module.title }} Edit {{id}}{% endblock %}
+{% block title %}{{ parent() }} [Admin {{ module.title }}] Edit: {{id}}{% endblock %}
 
 {% block breadcrumb %}
 {% if module.parent %}
@@ -12,7 +12,7 @@
 
 {% block header %}
 <h1 class="fw-bold">Edit</h1>
-<div class="bg-gray fw-bold">
+<div class="bg-gray fw-bold mx-2">
     ID: {{ id }}
 </div>
 {% endblock %}

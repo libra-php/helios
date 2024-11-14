@@ -1,12 +1,26 @@
 {% extends "layouts/admin.html" %}
 
-{% block title %}{{ parent() }} - Admin: {{ module.title }}{% endblock %}
+{% block title %}{{ parent() }} [Admin {{ module.title }}]{% endblock %}
 
 {% block breadcrumb %}
 {% if module.parent %}
     <li class="breadcrumb-item">{{ module.parent }}</li>
 {% endif %}
 <li class="breadcrumb-item active" aria-current="page"><a href="/admin/{{ module.route }}">{{ module.title }}</a></li>
+{% endblock %}
+
+{% block top %}
+{{ parent() }}
+<section id="table-actions" class="d-flex">
+    {% if permissions.has_create %}
+        <button class="btn btn-sm btn-primary" 
+            type="button" 
+            hx-get="/admin/{{ module.route }}/create" 
+            hx-select="#module" 
+            hx-target="#module" 
+            hx-swap="outerHTML">Create</button>
+    {% endif %}
+</section>
 {% endblock %}
 
 {% block module %}

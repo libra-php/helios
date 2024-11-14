@@ -12,7 +12,14 @@
             <td nowrap>{{ value }}</td>
             {% endfor %}
             <td class="actions d-flex justify-content-end">
-                <button type="button" class="btn btn-primary btn-sm" hx-get="/admin/{{ module.route }}/edit/{{ datum[module.primary_key] }}" hx-swap="outerHTML" hx-target="#module" hx-select="#module">Edit</button>
+                {% if permissions.has_edit %}
+                <button type="button" 
+                    class="btn btn-primary btn-sm" 
+                    hx-get="/admin/{{ module.route }}/edit/{{ datum[module.primary_key] }}" 
+                    hx-swap="outerHTML" 
+                    hx-target="#module" 
+                    hx-select="#module">Edit</button>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}

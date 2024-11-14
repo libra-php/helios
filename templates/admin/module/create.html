@@ -1,0 +1,30 @@
+{% extends "layouts/admin.html" %}
+
+{% block title %}{{ parent() }} [Admin {{ module.title }}] Create{% endblock %}
+
+{% block breadcrumb %}
+{% if module.parent %}
+    <li class="breadcrumb-item">{{ module.parent }}</li>
+{% endif %}
+<li class="breadcrumb-item active"><a href="/admin/{{ module.route }}">{{ module.title }}</a></li>
+<li class="breadcrumb-item active" aria-current="page"><a href="/admin/{{ module.route }}/create">Create</a></li>
+{% endblock %}
+
+{% block header %}
+<h1 class="fw-bold">Create</h1>
+<div class="bg-gray fw-bold mx-2">
+    New record
+</div>
+{% endblock %}
+
+{% block module %}
+{% include "components/flash.html" %}
+<section id="edit" class="module-content">
+    {% include "admin/module/form.html" %}
+</section>
+{% endblock %}
+
+{% block bottom %}
+{% endblock %}
+
+
