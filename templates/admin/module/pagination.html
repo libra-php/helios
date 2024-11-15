@@ -2,21 +2,21 @@
 <nav id="pagination" class="mt-2" aria-label="page controls" hx-boost="true" hx-select="#module" hx-target="#module" hx-swap="outerHTML">
     <ul class="pagination pagination-sm m-0">
         {% if pagination.page > 2 %}
-        <li class="page-item"><a class="page-link" href="/admin/{{ module.route }}/page/1">First</a></li>
+        <li class="page-item"><a class="page-link" href="{{ module.route }}/page/1">First</a></li>
         {% endif %}
         {% if pagination.page - 1 > 0 %}
-            <li class="page-item"><a class="page-link" href="/admin/{{ module.route }}/page/{{ pagination.page - 1 }}">Previous</a></li>
+            <li class="page-item"><a class="page-link" href="{{ module.route }}/page/{{ pagination.page - 1 }}">Previous</a></li>
         {% endif %}
         {% for i in range(pagination.page - pagination.link_range,pagination.page + pagination.link_range) %}
         {% if i > 0 and i <= pagination.total_pages %}
-            <li class="page-item"><a class="page-link {% if i == pagination.page %}active{% endif %}" href="/admin/{{ module.route }}/page/{{ i }}">{{ i }}</a></li>
+            <li class="page-item"><a class="page-link {% if i == pagination.page %}active{% endif %}" href="{{ module.route }}/page/{{ i }}">{{ i }}</a></li>
         {% endif %}
         {% endfor %}
         {% if pagination.page + 1 <= pagination.total_pages %}
-            <li class="page-item"><a class="page-link" href="/admin/{{ module.route }}/page/{{ pagination.page + 1 }}">Next</a></li>
+            <li class="page-item"><a class="page-link" href="{{ module.route }}/page/{{ pagination.page + 1 }}">Next</a></li>
         {% endif %}
         {% if pagination.page < pagination.total_pages - 1 %}
-        <li class="page-item"><a class="page-link" href="/admin/{{ module.route }}/page/{{ pagination.total_pages }}">Last</a></li>
+        <li class="page-item"><a class="page-link" href="{{ module.route }}/page/{{ pagination.total_pages }}">Last</a></li>
         {% endif %}
     </ul>
 </nav>

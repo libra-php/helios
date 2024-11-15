@@ -13,7 +13,7 @@
         <button class="btn btn-sm btn-primary" type="submit">Save</button>
         <button class="btn btn-sm btn-secondary ml-2" 
             type="button" 
-            hx-get="/admin/{{ module.route}}" 
+            hx-get="{{ module.route}}" 
             hx-target="#module" 
             hx-select="#module" 
             hx-swap="outerHTML">Back</button>

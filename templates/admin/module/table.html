@@ -19,13 +19,13 @@
                     {{ csrf()|raw }}
                     <button type="button" 
                         class="btn btn-primary btn-sm" 
-                        hx-get="/admin/{{ module.route }}/edit/{{ id }}" 
+                        hx-get="{{ module.route }}/edit/{{ id }}" 
                         hx-swap="outerHTML" 
                         hx-target="#module" 
                         hx-select="#module">Edit</button>
                     <button type="button" 
                         class="btn btn-danger btn-sm ms-1" 
-                        hx-delete="/admin/{{ module.route }}/{{ id }}" 
+                        hx-delete="{{ module.route }}/{{ id }}" 
                         hx-swap="outerHTML" 
                         hx-confirm="Are you sure you want to permanently delete this record?"
                         hx-target="#module" 

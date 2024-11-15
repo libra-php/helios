@@ -306,9 +306,10 @@ class ModuleController extends Controller
     protected function getModuleData(): array
     {
         return [
+            "module" => $this->module,
             "title" => $this->module_title,
             "parent" => $this->module_parent,
-            "route" => $this->module,
+            "route" => rtrim(moduleRoute("module.index", $this->module), DIRECTORY_SEPARATOR),
             "primary_key" => $this->primary_key,
         ];
     }

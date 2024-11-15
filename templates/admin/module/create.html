@@ -6,8 +6,8 @@
 {% if module.parent %}
     <li class="breadcrumb-item">{{ module.parent }}</li>
 {% endif %}
-<li class="breadcrumb-item active"><a href="/admin/{{ module.route }}">{{ module.title }}</a></li>
-<li class="breadcrumb-item active" aria-current="page"><a href="/admin/{{ module.route }}/create">Create</a></li>
+<li class="breadcrumb-item active"><a href="{{ module.route }}">{{ module.title }}</a></li>
+<li class="breadcrumb-item active" aria-current="page"><a href="{{ module.route }}/create">Create</a></li>
 {% endblock %}
 
 {% block header %}
