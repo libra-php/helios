@@ -23,11 +23,14 @@ class TestModule extends ModuleController
     protected array $table_format = [
         "created_at" => "ago",
     ];
-
     protected array $filter_links = [
         "All" => "1 = 1",
         "Is 7" => "number = 7",
         "Over 5" => "number > 5",
+    ];
+    protected array $searchable = [
+        "name",
+        "number"
     ];
 
     protected array $form_columns = [

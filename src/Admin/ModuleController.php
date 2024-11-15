@@ -35,10 +35,12 @@ class ModuleController extends Controller
     // Filters
     protected array $filter_links = [];
     protected int $filter_link_index = 0;
-    protected array $validation_rules = [];
+    protected array $searchable = [];
+    protected string $search_term = '';
 
     // Form stuff
     protected array $form_columns = [];
+    protected array $validation_rules = [];
 
     // Permissions
     protected bool $has_edit = true;
@@ -59,7 +61,7 @@ class ModuleController extends Controller
         $path = "/admin/{$this->module}";
         header("HX-Push-Url: $path");
 
-        $this->processRequest();
+        // Sets the class properties from session
         $this->setState();
 
         return $this->render("/admin/module/index.html", [
@@ -77,6 +79,8 @@ class ModuleController extends Controller
     #[Get("/filter-link-count/{index}", "module.filter-link-count", ["auth"])]
     public function filterLinkCount(int $index): string
     {
+        // We call set state so that the other filters are considered
+        $this->setState();
         $filters = array_values($this->filter_links);
         $this->addWhere($filters[$index]);
         return $this->getTotalResults();
@@ -90,6 +94,21 @@ class ModuleController extends Controller
     {
         $this->handlePage(1);
         $this->handleFilterLink($index);
+        return $this->index();
+    }
+
+    /**
+     * Table search
+     */
+    #[Post("/search")]
+    public function search(): string
+    {
+        $valid = $this->validateRequest([
+            "search_term" => [],
+        ]);
+        if ($valid) {
+            $this->handleSearch($valid->search_term);
+        }
         return $this->index();
     }
 
@@ -195,21 +214,24 @@ class ModuleController extends Controller
      */
     protected function setState(): void
     {
-        // Current page
-        $this->page = $this->getSession("page") ?? $this->page;
+        // Search
+        if (!empty($this->searchable)) {
+            $this->search_term = $this->getSession("search_term") ?? $this->search_term;
+            $map = array_map(fn($column) => "$column LIKE ?", $this->searchable);
+            $clause = "((" . implode(") OR (", $map) . "))";
+            $this->addWhere($clause, ...array_fill(0, count($this->searchable), "%$this->search_term%"));
+        }
 
         // Filter link
-        $this->filter_link_index = $this->getSession("filter_link") ?? $this->filter_link_index;
         if (!empty($this->filter_links)) {
+            $this->filter_link_index = $this->getSession("filter_link") ?? $this->filter_link_index;
             $filters = array_values($this->filter_links);
             $this->addWhere($filters[$this->filter_link_index]);
         }
-    }
 
-    /**
-     * Process the module request
-     */
-    protected function processRequest(): void {}
+        // Current page
+        $this->page = $this->getSession("page") ?? $this->page;
+    }
 
     /**
      * Add to where clause and params
@@ -231,6 +253,18 @@ class ModuleController extends Controller
     }
 
     /**
+     * Handle search request
+     */
+    protected function handleSearch(string $search_term): void
+    {
+        if ($search_term !== '') {
+            $this->setSession("search_term", $search_term);
+        } else {
+            $this->deleteSession("search_term");
+        }
+    }
+
+    /**
      * Handle page request
      */
     protected function handlePage(int $page): void
@@ -242,7 +276,7 @@ class ModuleController extends Controller
     }
 
     /**
-     * Set the module session
+     * Set the module session key
      */
     protected function setSession(string $key, mixed $value): void
     {
@@ -250,12 +284,20 @@ class ModuleController extends Controller
     }
 
     /**
-     * Return the module session
+     * Return the module session key
      */
     protected function getSession(string $key): mixed
     {
         $session = session()->get($this->module . '_' . $key);
         return $session;
+    }
+
+    /**
+     * Delete the module session key
+     */
+    protected function deleteSession(string $key): void
+    {
+        session()->delete($this->module . '_' . $key);
     }
 
     /**
@@ -279,6 +321,8 @@ class ModuleController extends Controller
         return [
             "filter_links" => array_keys($this->filter_links),
             "filter_link_index" => $this->filter_link_index,
+            "search_term" => $this->search_term,
+            "searchable" => $this->searchable,
         ];
     }
 
@@ -378,7 +422,7 @@ class ModuleController extends Controller
             ->execute()
             ->fetchAll(PDO::FETCH_ASSOC);
         foreach ($data as &$result) {
-            $result = array_map(function($column, $value) use ($result) {
+            $result = array_map(function ($column, $value) use ($result) {
                 $format = $this->table_format[$column] ?? null;
                 return [
                     "column" => $column,

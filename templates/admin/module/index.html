@@ -1,6 +1,6 @@
 {% extends "layouts/admin.html" %}
 
-{% block title %}{{ parent() }} [Admin {{ module.title }}]{% endblock %}
+{% block title %}{{ parent() }} [Admin] {{ module.title }}{% endblock %}
 
 {% block breadcrumb %}
 {% if module.parent %}
@@ -11,7 +11,7 @@
 
 {% block top %}
 {{ parent() }}
-<section id="table-actions" class="d-flex">
+<section id="table-actions" class="p-2 d-flex">
     {% if permissions.has_create %}
         <button class="btn btn-sm btn-primary" 
             type="button" 
@@ -25,6 +25,7 @@
 
 {% block module %}
 <section id="index" class="module-content">
+    {% include "admin/module/search.html" %}
     {% include "admin/module/filter-links.html" %}
     {% include "admin/module/table.html" %}
 </section>
