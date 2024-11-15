@@ -68,7 +68,7 @@ class ModuleController extends Controller
             "module" => $this->getModuleData(),
             "table" => $this->getTableData(),
             "pagination" => $this->getPaginationData(),
-            "permissions" => $this->getPermissionData(),
+            "permissions" => $this->getPermissions(),
             "filters" => $this->getFilterData(),
         ]);
     }
@@ -328,15 +328,53 @@ class ModuleController extends Controller
     }
 
     /**
-     * Return the permission data
+     * Return create permission
      */
-    protected function getPermissionData(): array
+    public function hasCreatePermission(): bool
     {
-        return [
-            "has_edit" => $this->has_edit && !empty($this->form_columns),
-            "has_create" => $this->has_create && !empty($this->form_columns),
-            "has_delete" => $this->has_delete,
-        ];
+        return $this->has_create;
+    }
+
+    /**
+     * Return edit permission
+     */
+    public function hasEditPermission(int $id): bool
+    {
+        return $this->has_edit && !empty($this->form_columns);
+    }
+
+    /**
+     * Return delete permission
+     */
+    public function hasDeletePermission(int $id): bool
+    {
+        return $this->has_delete && !empty($this->form_columns);
+    }
+
+    /**
+     * Return the permission functions
+     */
+    protected function getPermissions(): object
+    {
+        $functions = new class($this) {
+            public function __construct(private ModuleController $module) {
+            }
+            public function hasCreate(): bool
+            {
+                return $this->module->hasCreatePermission();
+            }
+
+            public function hasEdit(int $id): bool
+            {
+                return $this->module->hasEditPermission($id);
+            }
+
+            public function hasDelete(int $id): bool
+            {
+                return $this->module->hasDeletePermission($id);
+            }
+        };
+        return $functions;
     }
 
     /**

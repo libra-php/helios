@@ -12,7 +12,7 @@
 {% block top %}
 {{ parent() }}
 <section id="table-actions" class="p-2 d-flex">
-    {% if permissions.has_create %}
+    {% if permissions.hasCreate() %}
         <button class="btn btn-sm btn-primary" 
             type="button" 
             hx-get="{{ module.route }}/create" 

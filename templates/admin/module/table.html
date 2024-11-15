@@ -14,15 +14,17 @@
             <td nowrap>{{ cell.formatted|raw }}</td>
             {% endfor %}
             <td class="actions d-flex justify-content-end">
-                {% if permissions.has_edit %}
                 <form>
                     {{ csrf()|raw }}
+                    {% if permissions.hasEdit(id) %}
                     <button type="button" 
                         class="btn btn-primary btn-sm" 
                         hx-get="{{ module.route }}/edit/{{ id }}" 
                         hx-swap="outerHTML" 
                         hx-target="#module" 
                         hx-select="#module">Edit</button>
+                    {% endif %}
+                    {% if permissions.hasDelete(id) %}
                     <button type="button" 
                         class="btn btn-danger btn-sm ms-1" 
                         hx-delete="{{ module.route }}/{{ id }}" 
@@ -30,8 +32,8 @@
                         hx-confirm="Are you sure you want to permanently delete this record?"
                         hx-target="#module" 
                         hx-select="#module">Delete</button>
+                    {% endif %}
                 </form>
-                {% endif %}
             </td>
         </tr>
         {% endfor %}
