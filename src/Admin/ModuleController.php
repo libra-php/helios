@@ -128,6 +128,9 @@ class ModuleController extends Controller
     #[Get("/edit/{id}", "module.edit", ["auth"])]
     public function edit(int $id): string
     {
+        if (!$this->hasEditPermission($id)) {
+            redirect("/permission-denied");
+        }
         $path = "/admin/{$this->module}/edit/$id";
         header("HX-Push-Url: $path");
 
@@ -144,6 +147,9 @@ class ModuleController extends Controller
     #[Get("/create", "module.create", ["auth"])]
     public function create(): string
     {
+        if (!$this->hasCreatePermission()) {
+            redirect("/permission-denied");
+        }
         $path = "/admin/{$this->module}/create";
         header("HX-Push-Url: $path");
 
@@ -159,6 +165,9 @@ class ModuleController extends Controller
     #[Post("/{id}", "module.update", ["auth"])]
     public function update(int $id): string
     {
+        if (!$this->hasEditPermission($id)) {
+            redirect("/permission-denied");
+        }
         $valid = $this->validateRequest($this->validation_rules);
         if ($valid) {
             $success = $this->save($id, (array) $valid);
@@ -179,6 +188,9 @@ class ModuleController extends Controller
     #[Post("/", "module.store", ["auth"])]
     public function store(): string
     {
+        if (!$this->hasCreatePermission()) {
+            redirect("/permission-denied");
+        }
         $valid = $this->validateRequest($this->validation_rules);
         if ($valid) {
             $id = $this->new((array) $valid);
@@ -200,6 +212,9 @@ class ModuleController extends Controller
     #[Delete("/{id}", "module.destroy", ["auth"])]
     public function destroy(int $id): string
     {
+        if (!$this->hasDeletePermission($id)) {
+            redirect("/permission-denied");
+        }
         $result = $this->delete($id);
         if ($result) {
             Flash::add("success", "Successfully deleted record");
