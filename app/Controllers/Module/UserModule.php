@@ -22,4 +22,8 @@ class UserModule extends ModuleController
         "Created" => "created_at",
         "Updated" => "updated_at"
     ];
+    protected array $table_format = [
+        "created_at" => "ago",
+        "updated_at" => "ago",
+    ];
 }

@@ -21,12 +21,13 @@
             hx-swap="outerHTML">Create</button>
     {% endif %}
 </section>
+{% include "admin/module/search.html" %}
+{% include "admin/module/filter-links.html" %}
 {% endblock %}
 
 {% block module %}
+{% include "components/flash.html" %}
 <section id="index" class="module-content">
-    {% include "admin/module/search.html" %}
-    {% include "admin/module/filter-links.html" %}
     {% include "admin/module/table.html" %}
 </section>
 {% endblock %}

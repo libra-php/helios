@@ -501,7 +501,7 @@ class ModuleController extends Controller
                     "label" => $label,
                     "column" => $column,
                     "raw" => $value,
-                    "formatted" => $this->format($format, $column, $value),
+                    "formatted" => $value ? $this->format($format, $column, $value) : '',
                     "id" => $result[$this->primary_key],
                 ];
             },array_keys($this->table_columns), array_keys($result), array_values($result));
