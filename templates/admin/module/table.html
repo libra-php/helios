@@ -1,7 +1,9 @@
 <table id="table" class="table table-sm">
     <thead class="sticky-top bg-white">
         {% for header in table.headers %}
-        <th nowrap>{{ header }}</th>
+            {% if header != 'skip' %}
+                <th nowrap>{{ header }}</th>
+            {% endif %}
         {% endfor %}
         <th></th>
     </thead>
@@ -10,8 +12,10 @@
         <tr valign="middle">
             {% set id = "" %}
             {% for column,cell in datum %}
-                {% set id = cell.id %}
-            <td nowrap>{{ cell.formatted|raw }}</td>
+                {% if cell.label != 'skip' %}
+                    {% set id = cell.id %}
+                    <td nowrap>{{ cell.formatted|raw }}</td>
+                {% endif %}
             {% endfor %}
             <td class="actions d-flex justify-content-end" nowrap>
                 &nbsp;

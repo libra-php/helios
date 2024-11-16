@@ -478,7 +478,7 @@ class ModuleController extends Controller
         $offset = $this->per_page * ($this->page - 1);
         // Always include primary key
         if (!in_array($this->primary_key, $this->table_columns)) {
-            $this->table_columns[] = $this->primary_key;
+            $this->table_columns['skip'] = $this->primary_key;
         }
         // Fetch the table data
         $qb = new QueryBuilder;
@@ -495,15 +495,16 @@ class ModuleController extends Controller
             ->fetchAll(PDO::FETCH_ASSOC);
         // Prepare the data structure for the table
         foreach ($data as &$result) {
-            $result = array_map(function ($column, $value) use ($result) {
+            $result = array_map(function ($label, $column, $value) use ($result) {
                 $format = $this->table_format[$column] ?? null;
                 return [
+                    "label" => $label,
                     "column" => $column,
                     "raw" => $value,
                     "formatted" => $this->format($format, $column, $value),
                     "id" => $result[$this->primary_key],
                 ];
-            }, array_keys($result), array_values($result));
+            },array_keys($this->table_columns), array_keys($result), array_values($result));
         }
         return [
             "data" => $data,
