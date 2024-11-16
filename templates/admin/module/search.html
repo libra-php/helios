@@ -2,12 +2,15 @@
 <form hx-post="{{ module.route }}/search" hx-target="#module" hx-select="#module" hx-swap="outerHTML">
     {{ csrf()|raw }}
     <div class="p-2 input-group">
-        <input type='search'
+        <input type="input"
             id="search"
             class="form-control"
             name="search_term"
             value="{{ filters.search_term }}" />
         <button class="btn btn-sm btn-primary" type="submit">Search</button>
+        {% if filters.search_term %}
+            <button class="btn btn-sm btn-danger" type="submit" onClick="document.querySelector('#search').value = '';">Clear</button>
+        {% endif %}
     </div>
 </form>
 {% endif %}

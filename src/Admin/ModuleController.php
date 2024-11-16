@@ -49,6 +49,7 @@ class ModuleController extends Controller
 
     public function __construct()
     {
+        // The module is defined by the calling class
         $this->module = route()->getMiddleware()["module"];
     }
 
@@ -83,7 +84,7 @@ class ModuleController extends Controller
         $this->setState();
         $filters = array_values($this->filter_links);
         $this->addWhere($filters[$index]);
-        return $this->getTotalResults();
+        return $this->getTotalResultsCount();
     }
 
     /**
@@ -92,6 +93,7 @@ class ModuleController extends Controller
     #[Get("/filter-link/{index}", "module.filter-link", ["auth"])]
     public function filterLink(int $index): string
     {
+        // Reset to page 1 when the filter is activated
         $this->handlePage(1);
         $this->handleFilterLink($index);
         return $this->index();
@@ -285,6 +287,7 @@ class ModuleController extends Controller
     protected function handlePage(int $page): void
     {
         $pagination = $this->getPaginationData();
+        // Check out of bounds
         if ($page < 0) $page = 1;
         if ($page > $pagination['total_pages']) $page = $pagination['total_pages'];
         $this->setSession("page", $page);
@@ -320,6 +323,7 @@ class ModuleController extends Controller
      */
     protected function getModuleData(): array
     {
+        // Data used by modules
         return [
             "module" => $this->module,
             "title" => $this->module_title,
@@ -334,6 +338,7 @@ class ModuleController extends Controller
      */
     protected function getFilterData(): array
     {
+        // Data used by table filters
         return [
             "filter_links" => array_keys($this->filter_links),
             "filter_link_index" => $this->filter_link_index,
@@ -371,9 +376,9 @@ class ModuleController extends Controller
      */
     protected function getPermissions(): object
     {
+        // Giving twig access to some methods
         $functions = new class($this) {
-            public function __construct(private ModuleController $module) {
-            }
+            public function __construct(private ModuleController $module) {}
             public function hasCreate(): bool
             {
                 return $this->module->hasCreatePermission();
@@ -397,7 +402,8 @@ class ModuleController extends Controller
      */
     protected function getPaginationData(): array
     {
-        $total_results = $this->getTotalResults();
+        // This data is used for pagination at the bottom of the table
+        $total_results = $this->getTotalResultsCount();
         return [
             "page" => $this->page,
             "total_results" => $total_results,
@@ -411,7 +417,9 @@ class ModuleController extends Controller
      */
     protected function getEditFormData(int $id = null): array
     {
+        // Add the primary key to the where clause
         $this->addWhere("{$this->primary_key} = ?", $id);
+        // The fetch the form data
         $qb = new QueryBuilder;
         $result = $qb
             ->select(array_values($this->form_columns))
@@ -420,6 +428,7 @@ class ModuleController extends Controller
             ->params($this->params)
             ->execute()
             ->fetch(PDO::FETCH_ASSOC);
+        // Prepare the edit form data
         $data = array_map(function ($label, $column, $value) {
             $value = request()->request->get($column) ?? $value;
             $type = $this->form_controls[$column] ?? null;
@@ -441,6 +450,7 @@ class ModuleController extends Controller
      */
     protected function getCreateFormData(): array
     {
+        // Prepare the create form data structure
         $data = array_map(function ($label, $column) {
             $value = request()->request->get($column) ?? null;
             $type = $this->form_controls[$column] ?? null;
@@ -462,8 +472,14 @@ class ModuleController extends Controller
      */
     protected function getTableData(): array
     {
-        $qb = new QueryBuilder;
+        // Calculate the page offset
         $offset = $this->per_page * ($this->page - 1);
+        // Always include primary key
+        if (!in_array($this->primary_key, $this->table_columns)) {
+            $this->table_columns[] = $this->primary_key;
+        }
+        // Fetch the table data
+        $qb = new QueryBuilder;
         $data = $qb
             ->select(array_values($this->table_columns))
             ->from($this->table)
@@ -475,6 +491,7 @@ class ModuleController extends Controller
             ->params($this->params)
             ->execute()
             ->fetchAll(PDO::FETCH_ASSOC);
+        // Prepare the data structure for the table
         foreach ($data as &$result) {
             $result = array_map(function ($column, $value) use ($result) {
                 $format = $this->table_format[$column] ?? null;
@@ -495,9 +512,9 @@ class ModuleController extends Controller
     /**
      * Get total results for a table query
      */
-    protected function getTotalResults(): int
+    protected function getTotalResultsCount(): int
     {
-
+        // Return the total table result count
         $qb = new QueryBuilder;
         return $qb
             ->select(array_values($this->table_columns))
@@ -506,7 +523,7 @@ class ModuleController extends Controller
             ->having($this->having)
             ->params($this->params)
             ->execute()
-            ->rowCount();
+            ->rowCount() ?? 0;
     }
 
     /**
@@ -514,9 +531,12 @@ class ModuleController extends Controller
      */
     protected function save(int $id, array $data): bool
     {
+        // The update values
         $params = array_values($data);
+        // The primary key is required for the update
         $params[] = $id;
         $qb = new QueryBuilder;
+        // Update query
         $result = $qb
             ->update($data)
             ->table($this->table)
@@ -531,13 +551,16 @@ class ModuleController extends Controller
      */
     protected function new(array $data): ?int
     {
+        // The insert values
         $params = array_values($data);
+        // Insert query
         $qb = new QueryBuilder;
         $result = $qb
             ->insert($data)
             ->into($this->table)
             ->params($params)
             ->execute();
+        // The id will be returned if successful
         return $result ? db()->lastInsertId() : null;
     }
 
@@ -546,6 +569,7 @@ class ModuleController extends Controller
      */
     protected function delete(int $id): bool
     {
+        // Delete query
         $qb = new QueryBuilder;
         $result = $qb
             ->delete()

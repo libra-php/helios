@@ -14,7 +14,6 @@ class TestModule extends ModuleController
     protected string $table = "test";
 
     protected array $table_columns = [
-        "ID" => "id",
         "Name" => "name",
         "Number" => "number",
         "Created" => "created_at",
