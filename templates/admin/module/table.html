@@ -13,7 +13,7 @@
                 {% set id = cell.id %}
             <td nowrap>{{ cell.formatted|raw }}</td>
             {% endfor %}
-            <td class="actions d-flex justify-content-end">
+            <td class="actions d-flex justify-content-end" nowrap>
                 &nbsp;
                 <form>
                     {{ csrf()|raw }}
