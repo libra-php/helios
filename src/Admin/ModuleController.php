@@ -354,7 +354,7 @@ class ModuleController extends Controller
      */
     public function hasCreatePermission(): bool
     {
-        return $this->has_create;
+        return $this->has_create && !empty($this->form_columns);
     }
 
     /**
