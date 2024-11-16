@@ -1,4 +1,5 @@
 <form class="p-2" method="post" hx-post="{{ form.action }}" hx-target="#module" hx-select="#module" hx-swap="outerHTML">
+    {% include "components/flash.html" %}
     {{ csrf()|raw }}
     {% for datum in form.data %}
         {% if datum.label %}

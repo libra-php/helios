@@ -1,14 +1,19 @@
 <table id="table" class="table table-sm caption-top">
+    {% if flash %}
+        <caption>
+            {% include "components/flash.html" %}
+        </caption>
+    {% endif %}
     <thead class="sticky-top bg-white">
-        {% for header in table.headers %}
-            {% if header != 'skip' %}
-                <th nowrap>{{ header }}</th>
-            {% endif %}
-        {% endfor %}
-        <th></th>
+    {% for header in table.headers %}
+        {% if header != 'skip' %}
+            <th nowrap>{{ header }}</th>
+        {% endif %}
+    {% endfor %}
+    <th></th>
     </thead>
     <tbody>
-        {% for i,datum in table.data %}
+    {% for i,datum in table.data %}
         <tr valign="middle">
             {% set id = "" %}
             {% for column,cell in datum %}
@@ -41,6 +46,6 @@
                 </form>
             </td>
         </tr>
-        {% endfor %}
+    {% endfor %}
     </tbody>
 </table>
