@@ -1,9 +1,9 @@
 {% if filters.filter_links %}
 <nav>
-{% for link in filters.filter_links %}
+{% for i,link in filters.filter_links %}
 <button type="button" 
         class="btn btn-sm {% if filters.filter_link_index == loop.index0 %}fw-bold text-dark{% else %}text-secondary{% endif %}"
-    hx-get="{{ module.route }}/filter-link/{{ loop.index0 }}"
+    hx-get="{{ module.route }}/filter-link/{{ i }}"
     hx-target="#module"
     hx-select="#module"
     hx-swap="outerHTML"

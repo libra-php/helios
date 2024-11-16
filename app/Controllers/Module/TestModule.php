@@ -51,4 +51,3 @@ class TestModule extends ModuleController
         "checked" => [],
     ];
 }
-

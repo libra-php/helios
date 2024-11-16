@@ -81,7 +81,7 @@ class ModuleController extends Controller
     public function filterLinkCount(int $index): string
     {
         // We call set state so that the other filters are considered
-        $this->setState();
+        $this->setState(true);
         $filters = array_values($this->filter_links);
         $this->addWhere($filters[$index]);
         return $this->getTotalResultsCount();
@@ -229,7 +229,7 @@ class ModuleController extends Controller
     /**
      * Set the module state
      */
-    protected function setState(): void
+    protected function setState($skip_filter_links = false): void
     {
         // Search
         if (!empty($this->searchable)) {
@@ -240,10 +240,12 @@ class ModuleController extends Controller
         }
 
         // Filter link
-        if (!empty($this->filter_links)) {
-            $this->filter_link_index = $this->getSession("filter_link") ?? $this->filter_link_index;
-            $filters = array_values($this->filter_links);
-            $this->addWhere($filters[$this->filter_link_index]);
+        if (!$skip_filter_links) {
+            if (!empty($this->filter_links)) {
+                $this->filter_link_index = $this->getSession("filter_link") ?? $this->filter_link_index;
+                $filters = array_values($this->filter_links);
+                $this->addWhere($filters[$this->filter_link_index]);
+            }
         }
 
         // Current page
