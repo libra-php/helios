@@ -45,7 +45,7 @@ class UserModule extends ModuleController
             "Email" => "email",
             "Username" => "username",
             "Password" => "password",
-            "Password (again)" => "'' as password_match",
+            "Repeat Password" => "'' as password_match",
         ];
         $this->form_controls = [
             "name" => "input",

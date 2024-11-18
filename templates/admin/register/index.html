@@ -28,7 +28,7 @@
         </div>
         <div class="form-floating mb-3 w-100">
             <input type="password" class="form-control w-100 {% if request_errors.password_match is defined %}is-invalid{% endif %}" name="password_match" id="password-match" placeholder="" autocomplete="new-password">
-            <label for="password-match">Password (again)</label>
+            <label for="password-match">Repeat Password</label>
             {% include 'errors/validation.html' with {'validate': 'password_match'} %}
         </div>
         <div class="w-100 mb-3">
