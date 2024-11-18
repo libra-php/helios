@@ -51,6 +51,7 @@ class ModuleController extends Controller
     {
         // The module is defined by the calling class
         $this->module = route()->getMiddleware()["module"];
+        $this->init();
     }
 
     /**
@@ -225,6 +226,11 @@ class ModuleController extends Controller
         }
         return $this->index();
     }
+
+    /**
+     * This method can be used to configure the module properties
+     */
+    public function init(): void {}
 
     /**
      * Set the module state

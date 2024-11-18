@@ -9,45 +9,47 @@ use StellarRouter\Group;
 #[Group(prefix: "/admin/test", middleware: ["module" => "test"])]
 class TestModule extends ModuleController
 {
-    protected string $module_title = "Test";
-    protected string $module_parent = "Administration";
-    protected string $table = "test";
+    public function init(): void
+    {
+        $this->table = "test";
+        $this->module_title = "Test";
+        $this->module_parent = "Administration";
 
-    protected array $table_columns = [
-        "Name" => "name",
-        "Number" => "number",
-        "Created" => "created_at",
-    ];
-    protected array $table_format = [
-        "created_at" => "ago",
-    ];
-    protected array $filter_links = [
-        "All" => "1 = 1",
-        "Is 7" => "number = 7",
-        "Over 5" => "number > 5",
-    ];
-    protected array $searchable = [
-        "name",
-        "number"
-    ];
+        $this->table_columns = [
+            "Name" => "name",
+            "Number" => "number",
+            "Created" => "created_at",
+        ];
+        $this->table_format = [
+            "created_at" => "ago",
+        ];
+        $this->filter_links = [
+            "All" => "1=1",
+            "Is 7" => "number=7",
+            "Over 5" => "number>5",
+        ];
+        $this->searchable = [
+            "name",
+            "number"
+        ];
 
-    protected array $form_columns = [
-        "Name" => "name",
-        "Number" => "number",
-        "Checkbox" => "checked",
-        "Comment" => "comment",
-        "ID" => "id",
-    ];
-    protected array $form_controls = [
-        "name" => "input",
-        "number" => "number",
-        "checked" => "switch",
-        "comment" => "textarea"
-    ];
-    protected array $validation_rules = [
-        "name" => ["required"],
-        "number" => ["required"],
-        "comment" => ["required"],
-        "checked" => [],
-    ];
+        $this->form_columns = [
+            "Name" => "name",
+            "Number" => "number",
+            "Checkbox" => "checked",
+            "Comment" => "comment",
+        ];
+        $this->form_controls = [
+            "name" => "input",
+            "number" => "number",
+            "checked" => "switch",
+            "comment" => "textarea"
+        ];
+        $this->validation_rules = [
+            "name" => ["required"],
+            "number" => ["required"],
+            "comment" => ["required"],
+            "checked" => [],
+        ];
+    }
 }

@@ -7,12 +7,12 @@
         {{ csrf()|raw }}
         <p class="lead">Please enter your email (or username) and password to access your account.</p>
         <div class="form-floating mb-3 w-100">
-            <input type="input" class="form-control w-100 {% if request_errors.email_or_username is defined %}is-invalid{% endif %}" name="email_or_username" id="email-or-username" placeholder="" value="{{ old('email_or_username') }}">
+            <input type="input" class="form-control w-100 {% if request_errors.email_or_username is defined %}is-invalid{% endif %}" name="email_or_username" id="email-or-username" placeholder="" value="{{ old('email_or_username') }}" autocomplete="email username">
             <label for="email">Email or username</label>
             {% include 'errors/validation.html' with {'validate': 'email_or_username'} %}
         </div>
         <div class="form-floating mb-3 w-100">
-            <input type="password" class="form-control w-100 {% if request_errors.password is defined %}is-invalid{% endif %}" name="password" id="password" placeholder="" autocomplete="new-password">
+            <input type="password" class="form-control w-100 {% if request_errors.password is defined %}is-invalid{% endif %}" name="password" id="password" placeholder="" autocomplete="current-password">
             <label for="password">Password</label>
             {% include 'errors/validation.html' with {'validate': 'password'} %}
         </div>

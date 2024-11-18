@@ -7,17 +7,17 @@
         {{ csrf()|raw }}
         <p class="lead">Fill in the details below to set up your account. Once registered, you’ll be able to sign in and start using all features.</p>
         <div class="form-floating mb-3 w-100">
-            <input type="input" class="form-control w-100 {% if request_errors.name is defined %}is-invalid{% endif %}" name="name" id="name" placeholder="" value="{{ old('name') }}">
+            <input type="input" class="form-control w-100 {% if request_errors.name is defined %}is-invalid{% endif %}" name="name" id="name" placeholder="" value="{{ old('name') }}" autocomplete="name">
             <label for="name">Name</label>
             {% include 'errors/validation.html' with {'validate': 'name'} %}
         </div>
         <div class="form-floating mb-3 w-100">
-            <input type="input" class="form-control w-100 {% if request_errors.username is defined %}is-invalid{% endif %}" name="username" id="username" placeholder="" value="{{ old('username') }}">
+            <input type="input" class="form-control w-100 {% if request_errors.username is defined %}is-invalid{% endif %}" name="username" id="username" placeholder="" value="{{ old('username') }}" autocomplete="username">
             <label for="username">Username</label>
             {% include 'errors/validation.html' with {'validate': 'username'} %}
         </div>
         <div class="form-floating mb-3 w-100">
-            <input type="input" class="form-control w-100 {% if request_errors.email is defined %}is-invalid{% endif %}" name="email" id="email" placeholder="" value="{{ old('email') }}">
+            <input type="input" class="form-control w-100 {% if request_errors.email is defined %}is-invalid{% endif %}" name="email" id="email" placeholder="" value="{{ old('email') }}" autocomplete="email">
             <label for="email">Email address</label>
             {% include 'errors/validation.html' with {'validate': 'email'} %}
         </div>

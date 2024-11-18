@@ -10,9 +10,11 @@ trait FormControls
     /**
      * Form controls
      */
-    protected function control(string $type, string $label, string $column, ?string $value = null): mixed
+    protected function control(mixed $type, string $label, string $column, ?string $value = null): mixed
     {
-        if (method_exists($this, $type)) {
+        if (is_callable($type)) {
+            return $type($label, $column, $value);
+        } else if (method_exists($this, $type)) {
             return call_user_func([$this, $type], $label, $column, $value);
         } else {
             throw new \Error("control type does not exist: $type");
@@ -38,6 +40,32 @@ trait FormControls
             'id' => "control-$column",
             'class' => 'form-control',
             'type' => 'number',
+            'name' => $column,
+            'value' => $value,
+            'title' => $label,
+        ];
+        return template("admin/module/controls/input.html", $opts);
+    }
+
+    protected function email(string $label, string $column, ?string $value): string
+    {
+        $opts = [
+            'id' => "control-$column",
+            'class' => 'form-control',
+            'type' => 'email',
+            'name' => $column,
+            'value' => $value,
+            'title' => $label,
+        ];
+        return template("admin/module/controls/input.html", $opts);
+    }
+
+    protected function password(string $label, string $column, ?string $value): string
+    {
+        $opts = [
+            'id' => "control-$column",
+            'class' => 'form-control',
+            'type' => 'password',
             'name' => $column,
             'value' => $value,
             'title' => $label,

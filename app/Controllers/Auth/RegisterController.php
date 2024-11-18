@@ -27,8 +27,8 @@ class RegisterController extends Controller
         $this->addErrorMessage("regex", "Must contain: 1 uppercase, 1 number, and 1 symbol");
         $valid = $this->validateRequest([
             "name" => ["required"],
-            "email" => ["required", "email"],
-            "username" => ["required"],
+            "email" => ["required", "email", "unique|users"],
+            "username" => ["required", "unique|users"],
             "password" => ["required", "min_length|8", "regex|^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"],
             "password_match" => ["required", function ($value) {
                 $this->addErrorMessage("password_match", "Passwords must match");

@@ -11,10 +11,12 @@ trait TableFormat
     /**
      * Table formatting
      */
-    protected function format(?string $type, string $column, ?string $value = null): mixed
+    protected function format(mixed $type, string $column, ?string $value = null): mixed
     {
         if (is_null($type)) return $value;
-        if (method_exists($this, $type)) {
+        if (is_callable($type)) {
+            return $type($column, $value);
+        } else if (method_exists($this, $type)) {
             return call_user_func([$this, $type], $column, $value);
         } else {
             throw new \Error("format type does not exist: $type");
