@@ -58,15 +58,21 @@ class UserModule extends ModuleController
         if ($id) {
             $this->validation_rules = [
                 "name" => ["required"],
-                "email" => ["required", ($id != 1 ? 'email' : ''), function ($value) {
-                    if (user()->email === $value) return true;
-                    $user = User::where("email", $value);
-                    return $user;
+                "email" => ["required", ($id != 1 ? 'email' : ''), function ($value) use ($id) {
+                    $user = User::find($id);
+                    if ($user && $user->email === $value) return true;
+                    if ($user) {
+                        $this->addErrorMessage("email", "Email must be unique");
+                    }
+                    return !$user;
                 }],
-                "username" => ["required", function ($value) {
-                    if (user()->username === $value) return true;
-                    $user = User::where("username", $value);
-                    return $user;
+                "username" => ["required", function ($value) use ($id) {
+                    $user = User::find($id);
+                    if ($user && $user->username === $value) return true;
+                    if ($user) {
+                        $this->addErrorMessage("username", "Username must be unique");
+                    }
+                    return !$user;
                 }],
                 "password" => ["min_length|8", "regex|^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"],
                 "password_match" => [function ($value) {
