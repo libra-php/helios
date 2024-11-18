@@ -4,7 +4,7 @@
     {% for datum in form.data %}
         {% if datum.label %}
         <div class="d-flex flex-column mt-1">
-            <label for="{{ datum.column }}" class="form-label fw-bold">{{ datum.label }}</label>
+            <label for="control-{{ datum.column }}" class="form-label fw-bold">{{ datum.label }}</label>
             <div>{{ datum.control|raw }}</div>
             {% include 'errors/validation.html' with {'validate': datum.column } %}
         </div>
