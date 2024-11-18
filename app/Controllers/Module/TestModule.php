@@ -9,7 +9,7 @@ use StellarRouter\Group;
 #[Group(prefix: "/admin/test", middleware: ["module" => "test"])]
 class TestModule extends ModuleController
 {
-    public function init(): void
+    public function init(?int $id): void
     {
         $this->table = "test";
         $this->module_title = "Test";

@@ -51,7 +51,8 @@ class ModuleController extends Controller
     {
         // The module is defined by the calling class
         $this->module = route()->getMiddleware()["module"];
-        $this->init();
+        $id = route()->getParameters()[$this->primary_key] ?? null;
+        $this->init($id);
     }
 
     /**
@@ -230,7 +231,7 @@ class ModuleController extends Controller
     /**
      * This method can be used to configure the module properties
      */
-    public function init(): void {}
+    public function init(?int $id): void {}
 
     /**
      * Set the module state
@@ -453,6 +454,12 @@ class ModuleController extends Controller
         ];
     }
 
+    protected function getAlias(string $column): string
+    {
+        $arr = explode(" as ", strtolower($column));
+        return end($arr);
+    }
+
     /**
      * Return the create form data
      */
@@ -460,6 +467,7 @@ class ModuleController extends Controller
     {
         // Prepare the create form data structure
         $data = array_map(function ($label, $column) {
+            $column = $this->getAlias($column);
             $value = request()->request->get($column) ?? null;
             $type = $this->form_controls[$column] ?? null;
             if (is_null($type)) return [];

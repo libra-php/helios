@@ -60,6 +60,34 @@ trait FormControls
         return template("admin/module/controls/input.html", $opts);
     }
 
+    protected function hidden(string $label, string $column, ?string $value): string
+    {
+        $opts = [
+            'id' => "control-$column",
+            'class' => 'form-control',
+            'type' => 'hidden',
+            'name' => $column,
+            'value' => $value,
+            'title' => $label,
+            'readonly' => true,
+        ];
+        return template("admin/module/controls/input.html", $opts);
+    }
+
+    protected function readonly(string $label, string $column, ?string $value): string
+    {
+        $opts = [
+            'id' => "control-$column",
+            'class' => 'form-control',
+            'type' => 'input',
+            'name' => $column,
+            'value' => $value,
+            'title' => $label,
+            'readonly' => true,
+        ];
+        return template("admin/module/controls/input.html", $opts);
+    }
+
     protected function password(string $label, string $column, ?string $value): string
     {
         $opts = [
