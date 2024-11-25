@@ -40,6 +40,9 @@ class Auth
 
         // If we find a user, test the password
         if ($user && self::testPassword($request->password, $user->password)) {
+            // Set user login_at
+            $user->login_at = date("Y-m-d H:i:s");
+            $user->save();
             // Set either the cookie or session
             if ($request->remember_me) {
                 $future_time = time() + 86400 * 30;

@@ -15,11 +15,11 @@ return new class implements IMigration
             $table->varchar("name");
             $table->varchar("email");
             $table->binary("password", 96);
-            $table->timestamp("login_at")->default("CURRENT_TIMESTAMP");
+            $table->timestamp("login_at")->nullable();
             $table->unsignedTinyInteger("failed_login")->default(0);
             $table->unsignedTinyInteger("2fa_enabled")->default(1);
             $table->unsignedTinyInteger("2fa_confirmed")->default(0);
-            $table->char("2fa_secret", 16)->nullable();
+            $table->binary("2fa_secret", 96)->nullable();
             $table->timestamps();
             $table->unique("username");
             $table->unique("email");
