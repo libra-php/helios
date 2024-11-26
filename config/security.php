@@ -4,6 +4,7 @@ return [
     "default_admin_pass" => "Admin2024!",
     "register_enabled" => true,
     "max_failed_login" => 10,
+    "lockout_time" => 60*5, // five minutes
     "whitelist" => [
     ],
     "blacklist" => [

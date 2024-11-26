@@ -17,9 +17,10 @@ return new class implements IMigration
             $table->binary("password", 96);
             $table->timestamp("login_at")->nullable();
             $table->unsignedTinyInteger("failed_login")->default(0);
+            $table->timestamp("locked_until")->nullable();
             $table->unsignedTinyInteger("2fa_enabled")->default(1);
             $table->unsignedTinyInteger("2fa_confirmed")->default(0);
-            $table->binary("2fa_secret", 96)->nullable();
+            $table->char("2fa_secret", 16)->nullable();
             $table->timestamps();
             $table->unique("username");
             $table->unique("email");

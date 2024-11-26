@@ -3,6 +3,7 @@
 namespace Helios\Admin;
 
 use App\Models\User;
+use Helios\View\Flash;
 
 class Auth
 {
@@ -39,7 +40,7 @@ class Auth
             ->orWhere("username", $request->email_or_username)->get(1);
 
         // If we find a user, test the password
-        if ($user && self::testPassword($request->password, $user->password)) {
+        if ($user && is_null($user->locked_until) && self::testPassword($request->password, $user->password)) {
             // Set user login_at
             $user->login_at = date("Y-m-d H:i:s");
             $user->save();
@@ -51,6 +52,30 @@ class Auth
                 session()->set("user_uuid", $user->uuid);
             }
             return true;
+        } else if ($user) {
+            $max_failed_login = config("security.max_failed_login");
+            if ($user->failed_login >= $max_failed_login) {
+                if (is_null($user->locked_until)) {
+                    // Lock the user
+                    $lockout_time = config("security.lockout_time");
+                    $lockout_future = time() + $lockout_time;
+                    $user->locked_until = date("Y-m-d H:i:s", $lockout_future);
+                    $user->save();
+                } else {
+                    $current_date = date("Y-m-d H:i:s");
+                    if ($current_date > $user->locked_until) {
+                        // Unlock the user
+                        $user->failed_login = 0;
+                        $user->locked_until = null;
+                        $user->save();
+                    }
+                }
+                Flash::add("warning", "This account is temporarily locked. Please try again later.");
+            } else {
+                // Failed login attempt
+                $user->failed_login++;
+                $user->save();
+            }
         }
         return false;
     }
