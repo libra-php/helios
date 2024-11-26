@@ -3,13 +3,14 @@
 {% block content %}
 <section id="2fa" class="auth-cont h-100 d-flex flex-column align-items-center justify-content-center">
     <form hx-post="{{ route('2fa.index') }}" hx-target=".auth-cont" hx-select=".auth-cont" hx-swap="outerHTML" class="auth-form p-4 d-flex flex-column align-items-center rounded">
-        <h2>2FA</h2>
+        <h2>Two-factor Authentication</h2>
         {{ csrf()|raw }}
         <p class="lead">Please enter your 2FA code to verify your identity and proceed.</p>
         {% include "components/flash.html" %}
         <div class="w-100 mb-3">
             <div class="form-floating mb-3">
-                <input type="tel" class="form-control" id="code" name="code" minlength="6" maxlength="6" required>
+                <input type="tel" class="form-control {% if request_errors.code is defined %}is-invalid{% endif %}" id="code" name="code" minlength="6" maxlength="6">
+                {% include 'errors/validation.html' with {'validate': 'code'} %}
                 <label for="code">Code</label>
             </div>
             <div class="keypad d-flex flex-column align-items-center">
@@ -30,7 +31,7 @@
                 </div>
                 <div class="d-flex justify-content-center">
                     <button type="button" class="key btn btn-lg btn-light me-2" value="0">0</button>
-                    <button type="button" class="key btn btn-lg btn-light" value="bs"><h2>⌫</h2></button>
+                    <button type="button" class="key bs btn btn-lg btn-light" value="bs">⌫</button>
                 </div>
             </div>
         </div>
