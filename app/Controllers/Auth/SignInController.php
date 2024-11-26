@@ -27,12 +27,22 @@ class SignInController extends Controller
 
         if ($valid) {
             if (Auth::signIn($valid)) {
-                $route = moduleRoute("module.index", "users");
-                redirect($route, [
-                    "target" => "#sign-in",
-                    "select" => "#admin",
-                    "swap" => "outerHTML",
-                ]);
+                $two_factor_enabled = config("security.two_factor_enabled");
+                if ($two_factor_enabled) {
+                    $route = findRoute("2fa.index");
+                    redirect($route, [
+                        "target" => "#sign-in",
+                        "select" => "#two-factor-authentication",
+                        "swap" => "outerHTML",
+                    ]);
+                } else {
+                    $route = moduleRoute("module.index", "users");
+                    redirect($route, [
+                        "target" => "#sign-in",
+                        "select" => "#admin",
+                        "swap" => "outerHTML",
+                    ]);
+                }
             }
             $this->addRequestError("password", "Invalid email or password");
         }

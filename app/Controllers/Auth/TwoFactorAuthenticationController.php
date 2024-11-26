@@ -8,10 +8,27 @@ use StellarRouter\{Get, Post};
 
 class TwoFactorAuthenticationController extends Controller
 {
+
+    public function __construct()
+    {
+        if (!user()) {
+            $route = findRoute("sign-in.index");
+            redirect($route, [
+                "target" => "#two-factor-authentication",
+                "select" => "#sign-in",
+                "swap" => "outerHTML",
+            ]);
+        }
+    }
+
     #[Get("/two-factor-authentication", "2fa.index")]
     public function index(): string
     {
-        return $this->render("admin/two-fa/index.html", []);
+        $user = user();
+        return $this->render("admin/two-fa/index.html", [
+            "show_qr" => !$user->two_fa_confirmed,
+            "qr_src" => !$user->two_fa_confirmed ? Auth::generateTwoFactorQR($user) : '',
+        ]);
     }
 
     #[Post("/two-factor-authentication", "sign-in.post")]
@@ -27,7 +44,16 @@ class TwoFactorAuthenticationController extends Controller
             ]
         ]);
         if ($valid) {
-            die("WIP");
+            if (Auth::testTwoFactorCode($valid->code)) {
+                $route = moduleRoute("module.index", "users");
+                redirect($route, [
+                    "target" => "#two-factor-authentication",
+                    "select" => "#admin",
+                    "swap" => "outerHTML",
+                ]);
+            } else {
+                $this->addRequestError("code", "Invalid code");
+            }
         }
         return $this->index();
     }

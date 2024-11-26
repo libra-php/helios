@@ -7,7 +7,7 @@ use StellarRouter\Get;
 
 class WelcomeController extends Controller
 {
-    #[Get("/welcome", "welcome.index")]
+    #[Get("/", "welcome.index")]
     public function index(): string
     {
         return $this->render("welcome.html");

@@ -2,7 +2,8 @@
 
 return [
     "default_admin_pass" => "Admin2024!",
-    "register_enabled" => true,
+    "two_factor_enabled" => env("TWO_FACTOR_ENABLED"),
+    "register_enabled" => env("REGISTER_ENABLED"),
     "max_failed_login" => 10,
     "lockout_time" => 60*5, // five minutes
     "whitelist" => [

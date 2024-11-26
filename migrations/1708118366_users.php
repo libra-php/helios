@@ -2,6 +2,7 @@
 
 namespace Nebula\Migrations;
 
+use Helios\Admin\Auth;
 use Helios\Database\{Blueprint, Schema, IMigration};
 
 return new class implements IMigration
@@ -18,9 +19,9 @@ return new class implements IMigration
             $table->timestamp("login_at")->nullable();
             $table->unsignedTinyInteger("failed_login")->default(0);
             $table->timestamp("locked_until")->nullable();
-            $table->unsignedTinyInteger("2fa_enabled")->default(1);
-            $table->unsignedTinyInteger("2fa_confirmed")->default(0);
-            $table->char("2fa_secret", 16)->nullable();
+            $table->unsignedTinyInteger("two_fa_enabled")->default(1);
+            $table->unsignedTinyInteger("two_fa_confirmed")->default(0);
+            $table->char("two_fa_secret", 16)->nullable();
             $table->timestamps();
             $table->unique("username");
             $table->unique("email");
@@ -36,16 +37,14 @@ return new class implements IMigration
                 "email",
                 "username",
                 "password",
-                "2fa_secret",
-                "2fa_enabled",
+                "two_fa_secret",
             ],
             [
                 "Administrator",
                 "administrator",
                 "admin",
-                password_hash(config("security.default_admin_pass"), PASSWORD_ARGON2I),
-                '',
-                0,
+                Auth::hashPassword(config("security.default_admin_pass")),
+                Auth::generateTwoFactorCode(),
             ]
         );
     }

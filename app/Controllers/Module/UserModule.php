@@ -49,8 +49,8 @@ class UserModule extends ModuleController
         ];
         $this->form_controls = [
             "name" => "input",
-            "password" => fn($label, $column, $value) => $this->password($label, $column, ''),
-            "password_match" => fn($label, $column, $value) => $this->password($label, $column, ''),
+            "password" => fn($label, $column, $value, $opts) => $this->password($label, $column, '', $opts),
+            "password_match" => fn($label, $column, $value, $opts) => $this->password($label, $column, '', $opts),
         ];
         $this->form_controls["email"] = $id == 1 ? "readonly" : "input";
         $this->form_controls["username"] = $id == 1 ? "readonly" : "input";

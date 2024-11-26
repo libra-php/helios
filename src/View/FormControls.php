@@ -10,22 +10,22 @@ trait FormControls
     /**
      * Form controls
      */
-    protected function control(mixed $type, string $label, string $column, ?string $value = null): mixed
+    protected function control(mixed $type, string $label, string $column, ?string $value = null, array $opts = []): mixed
     {
         if (is_callable($type)) {
-            return $type($label, $column, $value);
+            return $type($label, $column, $value, $opts);
         } else if (method_exists($this, $type)) {
-            return call_user_func([$this, $type], $label, $column, $value);
+            return call_user_func([$this, $type], $label, $column, $value, $opts);
         } else {
             throw new \Error("control type does not exist: $type");
         }
     }
 
-    protected function input(string $label, string $column, ?string $value): string
+    protected function input(string $label, string $column, ?string $value, array $opts = []): string
     {
         $opts = [
-            'id' => "control-$column",
-            'class' => 'form-control',
+            'id' => $opts["id"] ?? '',
+            'class' => $opts["class"] ?? '',
             'type' => 'input',
             'name' => $column,
             'value' => $value,
@@ -34,11 +34,11 @@ trait FormControls
         return template("admin/module/controls/input.html", $opts);
     }
 
-    protected function number(string $label, string $column, ?string $value): string
+    protected function number(string $label, string $column, ?string $value, array $opts = []): string
     {
         $opts = [
-            'id' => "control-$column",
-            'class' => 'form-control',
+            'id' => $opts["id"] ?? '',
+            'class' => $opts["class"] ?? '',
             'type' => 'number',
             'name' => $column,
             'value' => $value,
@@ -47,11 +47,11 @@ trait FormControls
         return template("admin/module/controls/input.html", $opts);
     }
 
-    protected function email(string $label, string $column, ?string $value): string
+    protected function email(string $label, string $column, ?string $value, array $opts = []): string
     {
         $opts = [
-            'id' => "control-$column",
-            'class' => 'form-control',
+            'id' => $opts["id"] ?? '',
+            'class' => $opts["class"] ?? '',
             'type' => 'email',
             'name' => $column,
             'value' => $value,
@@ -60,11 +60,11 @@ trait FormControls
         return template("admin/module/controls/input.html", $opts);
     }
 
-    protected function hidden(string $label, string $column, ?string $value): string
+    protected function hidden(string $label, string $column, ?string $value, array $opts = []): string
     {
         $opts = [
-            'id' => "control-$column",
-            'class' => 'form-control',
+            'id' => $opts["id"] ?? '',
+            'class' => $opts["class"] ?? '',
             'type' => 'hidden',
             'name' => $column,
             'value' => $value,
@@ -74,11 +74,11 @@ trait FormControls
         return template("admin/module/controls/input.html", $opts);
     }
 
-    protected function readonly(string $label, string $column, ?string $value): string
+    protected function readonly(string $label, string $column, ?string $value, array $opts = []): string
     {
         $opts = [
-            'id' => "control-$column",
-            'class' => 'form-control',
+            'id' => $opts["id"] ?? '',
+            'class' => $opts["class"] ?? '',
             'type' => 'input',
             'name' => $column,
             'value' => $value,
@@ -88,11 +88,11 @@ trait FormControls
         return template("admin/module/controls/input.html", $opts);
     }
 
-    protected function password(string $label, string $column, ?string $value): string
+    protected function password(string $label, string $column, ?string $value, array $opts = []): string
     {
         $opts = [
-            'id' => "control-$column",
-            'class' => 'form-control',
+            'id' => $opts["id"] ?? '',
+            'class' => $opts["class"] ?? '',
             'type' => 'password',
             'name' => $column,
             'value' => $value,
@@ -101,10 +101,10 @@ trait FormControls
         return template("admin/module/controls/input.html", $opts);
     }
 
-    protected function checkbox(string $label, string $column, ?string $value): string
+    protected function checkbox(string $label, string $column, ?string $value, array $opts = []): string
     {
         $opts = [
-            'id' => "control-$column",
+            'id' => $opts["id"] ?? '',
             'class' => 'form-check-input',
             'type' => 'checkbox',
             'name' => $column,
@@ -115,18 +115,18 @@ trait FormControls
         return template("admin/module/controls/input.html", $opts);
     }
 
-    protected function switch(string $label, string $column, ?string $value): string
+    protected function switch(string $label, string $column, ?string $value, array $opts = []): string
     {
         return template("admin/module/controls/switch.html", [
             "checkbox" => $this->checkbox($label, $column, $value),
         ]);
     }
 
-    protected function textarea(string $label, string $column, ?string $value): string
+    protected function textarea(string $label, string $column, ?string $value, array $opts = []): string
     {
         $opts = [
-            'id' => "control-$column",
-            'class' => 'form-control',
+            'id' => $opts["id"] ?? '',
+            'class' => $opts["class"] ?? '',
             'name' => $column,
             'title' => $label,
             'rows' => 10,

@@ -4,6 +4,11 @@ namespace Helios\Admin;
 
 use App\Models\User;
 use Helios\View\Flash;
+use PragmaRX\Google2FA\Google2FA;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
 
 class Auth
 {
@@ -29,6 +34,74 @@ class Auth
     public static function hashPassword(string $password): string
     {
         return password_hash($password, PASSWORD_ARGON2I);
+    }
+
+    public static function generateTwoFactorCode(): string
+    {
+        $google2fa = new Google2FA();
+        return $google2fa->generateSecretKey();
+    }
+
+    public static function generateTwoFactorQR(User $user): string
+    {
+        $google2fa = new Google2FA();
+        $g2faUrl = $google2fa->getQRCodeUrl(
+            config("app.name"),
+            $user->email,
+            $user->two_fa_secret,
+        );
+
+        $writer = new Writer(
+            new ImageRenderer(
+                new RendererStyle(300),
+                new ImagickImageBackEnd()
+            )
+        );
+
+        return base64_encode($writer->writeString($g2faUrl));
+    }
+
+    public static function testTwoFactorCode(int $code): bool
+    {
+        $user = user();
+        if (!$user) return false;
+
+        $google2fa = new Google2FA();
+        $result = $google2fa->verifyKey($user->two_fa_secret, $code);
+        $max_failed_login = config("security.max_failed_login");
+        $lockout_time = config("security.lockout_time");
+
+        if (!$result) {
+            // Failed login attempt
+            $user->failed_login++;
+            $user->save();
+
+            if ($user->failed_login >= $max_failed_login) {
+                if (is_null($user->locked_until)) {
+                    // Lock the user
+                    $lockout_future = time() + $lockout_time;
+                    $user->locked_until = date("Y-m-d H:i:s", $lockout_future);
+                    $user->save();
+                }
+                // Kill the session
+                self::signOut();
+                // Redirect to sign in
+                $route = findRoute("sign-in.index");
+                redirect($route, [
+                    "target" => "#two-factor-authentication",
+                    "select" => "#sign-in",
+                    "swap" => "outerHTML",
+                ]);
+            }
+            return false;
+        } else {
+            // Confirm the two fa code
+            session()->set("two_factor_confirmed", true);
+            $user->two_fa_confirmed = 1;
+            $user->save();
+        }
+
+        return $result ? true : false;
     }
 
     public static function signIn(object $request): bool
