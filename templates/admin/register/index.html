@@ -6,6 +6,7 @@
         <h2>Create New Account</h2>
         {{ csrf()|raw }}
         <p class="lead">Fill in the details below to set up your account. Once registered, you’ll be able to sign in and start using all features.</p>
+        {% include "components/flash.html" %}
         <div class="form-floating mb-3 w-100">
             <input type="input" class="form-control w-100 {% if request_errors.name is defined %}is-invalid{% endif %}" name="name" id="name" placeholder="" value="{{ old('name') }}" autocomplete="name">
             <label for="name">Name</label>
@@ -32,7 +33,7 @@
             {% include 'errors/validation.html' with {'validate': 'password_match'} %}
         </div>
         <div class="w-100 mb-3">
-            <button type="submit" class="btn btn-primary fw-bold w-100 btn-lg">Register</button>
+            <button type="submit" class="btn btn-success fw-bold w-100 btn-lg">Register</button>
         </div>
         <div hx-boost="true" class="mb-3 d-flex flex-column">
             <a href="/sign-in">Already have an account?</a>
