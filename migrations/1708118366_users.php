@@ -19,7 +19,6 @@ return new class implements IMigration
             $table->timestamp("login_at")->nullable();
             $table->unsignedTinyInteger("failed_login")->default(0);
             $table->timestamp("locked_until")->nullable();
-            $table->unsignedTinyInteger("two_fa_enabled")->default(1);
             $table->unsignedTinyInteger("two_fa_confirmed")->default(0);
             $table->char("two_fa_secret", 16)->nullable();
             $table->timestamps();
