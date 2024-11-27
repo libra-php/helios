@@ -3,7 +3,7 @@
 {% block title %}{{ parent() }} - Sign In{% endblock %}
 
 {% block content %}
-<section id="sign-in" class="auth-cont w-100 h-100 d-flex flex-column align-items-center justify-content-center">
+<section id="sign-in" class="auth-cont h-100 d-flex flex-column align-items-center justify-content-center">
     <form hx-post="{{ route('sign-in.index') }}" hx-target=".auth-cont" hx-select=".auth-cont" hx-swap="outerHTML" class="auth-form p-4 d-flex flex-column align-items-center rounded">
         <h3>Sign In</h3>
         {{ csrf()|raw }}
