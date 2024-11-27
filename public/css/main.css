@@ -84,8 +84,8 @@ a:active {
     font-size: 1.1rem;
 }
 .auth-form .keypad .key {
-    width: 50px;
-    height: 50px;
+    width: 70px;
+    height: 70px;
     font-size: 1.6rem;
     border: 1px solid #ddd;
 }
