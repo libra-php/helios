@@ -44,7 +44,7 @@ class TwoFactorAuthenticationController extends Controller
             ]
         ]);
         if ($valid) {
-            if (Auth::testTwoFactorCode($valid->code)) {
+            if (Auth::testTwoFactorCode(user(), $valid->code)) {
                 $route = moduleRoute("module.index", "users");
                 redirect($route, [
                     "target" => "#two-factor-authentication",

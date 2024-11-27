@@ -1,9 +1,11 @@
 {% extends "layouts/base.html" %}
 
+{% block title %}{{ parent() }} - Forgot Password{% endblock %}
+
 {% block content %}
 <section id="forgot-password" class="auth-cont h-100 d-flex flex-column align-items-center justify-content-center">
     <form hx-post="{{ route('forgot-password.index') }}" hx-target=".auth-cont" hx-select=".auth-cont" hx-swap="outerHTML" class="auth-form p-4 d-flex flex-column align-items-center rounded">
-        <h2>Forgot Password</h2>
+        <h3>Forgot Password</h3>
         {{ csrf()|raw }}
         <p class="lead">Enter the email address associated with your account below. We'll send you a link to reset your password so you can quickly regain access.</p>
         <div class="form-floating mb-3 w-100">

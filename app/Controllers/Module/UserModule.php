@@ -97,6 +97,7 @@ class UserModule extends ModuleController
     protected function new(array $data): ?int
     {
         $data['password'] = Auth::hashPassword($data['password']);
+        $data['two_fa_secret'] = Auth::generateTwoFactorCode();
         unset($data['password_match']);
         return parent::new($data);
     }

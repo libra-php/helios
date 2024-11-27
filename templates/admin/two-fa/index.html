@@ -1,14 +1,22 @@
 {% extends "layouts/base.html" %}
 
+{% block title %}{{ parent() }} - Two-factor Authentication{% endblock %}
+
 {% block content %}
 <section id="two-factor-authentication" class="auth-cont h-100 d-flex flex-column align-items-center justify-content-center">
     <form hx-post="{{ route('2fa.index') }}" hx-target=".auth-cont" hx-select=".auth-cont" hx-swap="outerHTML" class="auth-form p-4 d-flex flex-column align-items-center rounded">
-        <h2>Two-factor Authentication</h2>
+        <h3>Two-factor Authentication</h3>
         {{ csrf()|raw }}
-        <p class="lead">Please enter your 2FA code to verify your identity and proceed.</p>
+        <p class="lead">
+            {% if show_qr %}
+                Scan the QR code with your Google Authenticator app to link it to your account, then immediately enter the 6-digit code displayed in the app to complete the two-factor authentication setup.
+            {% else %}
+                Please enter your 2FA code to verify your identity and proceed.
+            {% endif %}
+        </p>
         {% include "components/flash.html" %}
         {% if show_qr %}
-        <div class="w-100 mb-3">
+        <div class="d-flex justify-content-center w-100 mb-3">
             <img src="data:image/png;base64, {{qr_src}}" />
         </div>
         {% endif %}

@@ -53,7 +53,7 @@ class Auth
 
         $writer = new Writer(
             new ImageRenderer(
-                new RendererStyle(300),
+                new RendererStyle(200),
                 new ImagickImageBackEnd()
             )
         );
@@ -61,27 +61,20 @@ class Auth
         return base64_encode($writer->writeString($g2faUrl));
     }
 
-    public static function testTwoFactorCode(int $code): bool
+    public static function testTwoFactorCode(User $user, int $code): bool
     {
-        $user = user();
-        if (!$user) return false;
-
         $google2fa = new Google2FA();
         $result = $google2fa->verifyKey($user->two_fa_secret, $code);
         $max_failed_login = config("security.max_failed_login");
-        $lockout_time = config("security.lockout_time");
 
         if (!$result) {
-            // Failed login attempt
-            $user->failed_login++;
-            $user->save();
+            // Failed 2FA code
+            self::failedAttempt($user);
 
             if ($user->failed_login >= $max_failed_login) {
                 if (is_null($user->locked_until)) {
-                    // Lock the user
-                    $lockout_future = time() + $lockout_time;
-                    $user->locked_until = date("Y-m-d H:i:s", $lockout_future);
-                    $user->save();
+                    // Bad!
+                    self::lockUser($user);
                 }
                 // Kill the session
                 self::signOut();
@@ -95,10 +88,9 @@ class Auth
             }
             return false;
         } else {
-            // Confirm the two fa code
-            session()->set("two_factor_confirmed", true);
-            $user->two_fa_confirmed = 1;
-            $user->save();
+            // Confirm the 2FA auth and unlock user
+            self::confirm2FA($user);
+            self::unlockUser($user);
         }
 
         return $result ? true : false;
@@ -115,50 +107,39 @@ class Auth
             // If we don't find a user, bail
             return false;
         } else {
+            // Check the password
             $result = self::testPassword($request->password, $user->password);
             $max_failed_login = config("security.max_failed_login");
-            $lockout_time = config("security.lockout_time");
             $current_date = date("Y-m-d H:i:s");
 
             // Check if the user is locked
             if (!is_null($user->locked_until)) {
                 // Is it time to unlock?
                 if ($current_date > $user->locked_until) {
-                    // Unlock the user
-                    $user->failed_login = 0;
-                    $user->locked_until = null;
-                    $user->save();
+                    self::unlockUser($user);
                 }
             }
 
             if (!$result) {
-                // Failed login attempt
-                $user->failed_login++;
-                $user->save();
+                // Bad username/email + password
+                self::failedAttempt($user);
 
                 // Check login attempts
                 if ($user->failed_login >= $max_failed_login) {
                     if (is_null($user->locked_until)) {
-                        // Lock the user
-                        $lockout_future = time() + $lockout_time;
-                        $user->locked_until = date("Y-m-d H:i:s", $lockout_future);
-                        $user->save();
+                        // Awww, too bad
+                        self::lockUser($user);
                     }
                 }
             } elseif (is_null($user->locked_until) && $result) {
-                // Set user login_at
-                $user->login_at = date("Y-m-d H:i:s");
-                $user->save();
-                // Set either the cookie or session
-                if ($request->remember_me) {
-                    $future_time = time() + 86400 * 30;
-                    setcookie("user_uuid", $user->uuid, $future_time, "/");
-                } else {
-                    session()->set("user_uuid", $user->uuid);
-                }
+                // Authentication successful + unlock user
+                $remember_me = $request->remember_me ? true : false;
+                self::logUser($user, $remember_me);
+                self::unlockUser($user);
             }
 
             // Set warning message if account is locked
+            // regardless of result
             if ($user->locked_until) {
                 Flash::add("warning", "This account is temporarily locked. Please try again later.");
                 return false;
@@ -166,6 +147,52 @@ class Auth
 
             return $result ? true : false;
         }
+    }
+
+    public static function confirm2FA(User $user): void
+    {
+        // Confirm the two fa code
+        session()->set("two_factor_confirmed", true);
+        $user->two_fa_confirmed = 1;
+        $user->save();
+    }
+
+    public static function logUser(User $user, bool $remember_me): void
+    {
+        // Set user login_at
+        $user->login_at = date("Y-m-d H:i:s");
+        $user->save();
+        // Set either the cookie or session
+        if ($remember_me) {
+            $future_time = time() + 86400 * 30;
+            setcookie("user_uuid", $user->uuid, $future_time, "/");
+        } else {
+            session()->set("user_uuid", $user->uuid);
+        }
+    }
+
+    public static function failedAttempt(User $user): void
+    {
+        // Failed login attempt
+        $user->failed_login++;
+        $user->save();
+    }
+
+    public static function lockUser(User $user): void
+    {
+        // Lock the user
+        $lockout_time = config("security.lockout_time");
+        $lockout_future = time() + $lockout_time;
+        $user->locked_until = date("Y-m-d H:i:s", $lockout_future);
+        $user->save();
+    }
+
+    public static function unlockUser(User $user): void
+    {
+        // Unlock the user
+        $user->failed_login = 0;
+        $user->locked_until = null;
+        $user->save();
     }
 
     public static function signOut(): void
