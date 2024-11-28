@@ -9,6 +9,7 @@ use App\Http\Kernel as HttpKernel;
 use App\Models\User;
 use Helios\Admin\Auth;
 use Helios\Application;
+use Helios\Email\EmailSMTP;
 use Helios\Web\Controller;
 use Helios\Session\Session;
 use Lunar\Connection\MySQL;
@@ -253,4 +254,32 @@ function template(string $path, array $data = []): string
 function trigger(string $hook_name)
 {
     header("Hx-Trigger: $hook_name");
+}
+
+/**
+ * Get client ip address
+ */
+function getClientIp() 
+{
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        // IP from shared internet
+        return $_SERVER['HTTP_CLIENT_IP'];
+    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        // IP from a proxy
+        $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+        return trim($ips[0]); // Take the first IP, which is the client IP
+    } else {
+        // IP directly from REMOTE_ADDR
+        return $_SERVER['REMOTE_ADDR'];
+    }
+}
+
+/**
+ * Get emailer
+ */
+function email(): EmailSMTP
+{
+    $mailer = new EmailSMTP; 
+    $mailer->init();
+    return $mailer;
 }

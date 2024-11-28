@@ -2,6 +2,7 @@
 
 namespace App\Controllers\Auth;
 
+use Helios\Admin\Auth;
 use Helios\Web\Controller;
 use StellarRouter\{Get, Post};
 
@@ -21,6 +22,7 @@ class ForgotPasswordController extends Controller
         ]);
 
         if ($valid) {
+            Auth::requestPasswordReset($valid);
         }
 
         return $this->index();

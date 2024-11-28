@@ -2,6 +2,7 @@
 
 namespace Helios\Admin;
 
+use App\Models\PasswordReset;
 use App\Models\User;
 use Helios\View\Flash;
 use PragmaRX\Google2FA\Google2FA;
@@ -9,6 +10,7 @@ use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
+use Carbon\Carbon;
 
 class Auth
 {
@@ -36,7 +38,12 @@ class Auth
         return password_hash($password, PASSWORD_ARGON2I);
     }
 
-    public static function generateTwoFactorCode(): string
+    public static function generatePasswordToken(): string
+    {
+        return bin2hex(random_bytes(32));
+    }
+
+    public static function generateTwoFactorSecret(): string
     {
         $google2fa = new Google2FA();
         return $google2fa->generateSecretKey();
@@ -44,6 +51,7 @@ class Auth
 
     public static function generateTwoFactorQR(User $user): string
     {
+        // Generate a 2FA QR 
         $google2fa = new Google2FA();
         $g2faUrl = $google2fa->getQRCodeUrl(
             config("app.name"),
@@ -141,11 +149,88 @@ class Auth
             // Set warning message if account is locked
             // regardless of result
             if ($user->locked_until) {
-                Flash::add("warning", "This account is temporarily locked. Please try again later.");
+                $now = Carbon::now();
+                $expires_at = Carbon::parse($user->locked_until);
+                $minutes = ceil($now->diffInMinutes($expires_at));
+                Flash::add("warning", "This account is temporarily locked. Please try again in $minutes minute(s).");
                 return false;
             }
 
             return $result ? true : false;
+        }
+    }
+
+    public static function requestPasswordReset(object $request): void
+    {
+        // Look for user by email
+        $user = User::where("email", $request->email)->get(1);
+
+        // Locked users cannot request password reset
+        if ($user && !$user->locked_until) {
+            // Check if there is a password reset in progress
+            $password_reset = PasswordReset::where("user_id", $user->id)
+                ->where("expires_at", ">", date("Y-m-d H:i:s"))
+                ->orderBy("id", "DESC")
+                ->get(1);
+            // If not, or the prev attempt did not send,
+            // then send it!
+            if (!$password_reset || !$password_reset->email_at) {
+                self::passwordReset($user);
+            } else {
+                // There is already a valid password reset link, 
+                // avoid sending any new mail
+                $now = Carbon::now();
+                $expires_at = Carbon::parse($password_reset->expires_at);
+                $minutes = ceil($now->diffInMinutes($expires_at));
+                Flash::add("success", "Please check your email inbox for instructions on how to reset your password. This link is valid for $minutes minute(s).");
+                return;
+            }
+        }
+        Flash::add("success", "If the email exists, a password reset link has been sent.");
+    }
+
+    public static function changePassword(User $user, string $password)
+    {
+        $user->password = self::hashPassword($password);
+        $user->two_fa_secret = self::generateTwoFactorSecret();
+        $user->two_fa_confirmed = 0;
+        $user->save();
+    }
+
+    public static function passwordReset(User $user): void
+    {
+        $reset_token_time = config("security.reset_token_time");
+        $expires_at = time() + $reset_token_time;
+        $ip = getClientIp();
+        // Create a password reset for the user
+        $password_reset = PasswordReset::create([
+            "user_id" => $user->id,
+            "token" => self::generatePasswordToken(),
+            "ip" => ip2long($ip),
+            "expires_at" => date("Y-m-d H:i:s", $expires_at),
+        ]);
+        if ($password_reset) {
+            // Send the email
+            $project_name = config("app.name");
+            $project_url = config("app.url");
+            $route = findRoute("password-reset.index", $password_reset->token);
+            $subject = $project_name . ": Password Reset Request";
+            $body = template("admin/forgot-password/email/password-reset.html", [
+                "to" => $user->name,
+                "ip" => $ip,
+                "password_reset_url" => $project_url . $route,
+                "from" => $project_name,
+            ]);
+            $sent = email()->send(
+                subject: $subject,
+                body: $body,
+                to_addresses: [$user->email]
+            );
+            if ($sent) {
+                // Record that it was sent successfully
+                $password_reset->email_at = date("Y-m-d H:i:s");
+                $password_reset->save();
+            }
         }
     }
 
@@ -161,6 +246,7 @@ class Auth
     {
         // Set user login_at
         $user->login_at = date("Y-m-d H:i:s");
+        $user->login_ip = ip2long(getClientIp());
         $user->save();
         // Set either the cookie or session
         if ($remember_me) {

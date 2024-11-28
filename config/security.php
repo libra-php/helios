@@ -5,7 +5,8 @@ return [
     "two_factor_enabled" => env("TWO_FACTOR_ENABLED"),
     "register_enabled" => env("REGISTER_ENABLED"),
     "max_failed_login" => 5,
-    "lockout_time" => 60*5, // five minutes
+    "lockout_time" => 60*10,
+    "reset_token_time" => 60*10,
     "whitelist" => [
     ],
     "blacklist" => [

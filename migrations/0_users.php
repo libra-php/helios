@@ -17,6 +17,7 @@ return new class implements IMigration
             $table->varchar("email");
             $table->binary("password", 96);
             $table->timestamp("login_at")->nullable();
+            $table->unsignedInteger("login_ip")->nullable();
             $table->unsignedTinyInteger("failed_login")->default(0);
             $table->timestamp("locked_until")->nullable();
             $table->unsignedTinyInteger("two_fa_confirmed")->default(0);
@@ -43,7 +44,7 @@ return new class implements IMigration
                 "administrator",
                 "admin",
                 Auth::hashPassword(config("security.default_admin_pass")),
-                Auth::generateTwoFactorCode(),
+                Auth::generateTwoFactorSecret(),
             ]
         );
     }

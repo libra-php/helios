@@ -214,6 +214,22 @@ class Model implements IModel
     }
 
     /**
+     * Expose the sql query and params
+     */
+    public function sql(int $limit = 1): array
+    {
+        $qb = $this->qb
+            ->select($this->columns)
+            ->from($this->table)
+            ->where($this->where)
+            ->orWhere($this->orWhere)
+            ->orderBy($this->orderBy)
+            ->limit($limit)
+            ->params($this->params);
+        return ["sql" => $qb->getQuery(), "params" => $qb->getQueryParams()];
+    }
+
+    /**
      * Fetch the model result set
      */
     public function get(int $limit = 0): null|array|Model
