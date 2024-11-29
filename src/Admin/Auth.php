@@ -69,7 +69,7 @@ class Auth
         return base64_encode($writer->writeString($g2faUrl));
     }
 
-    public static function testTwoFactorCode(User $user, int $code): bool
+    public static function testTwoFactorCode(User $user, string $code): bool
     {
         $google2fa = new Google2FA();
         $result = $google2fa->verifyKey($user->two_fa_secret, $code);
@@ -189,6 +189,13 @@ class Auth
         Flash::add("success", "If the email exists, a password reset link has been sent.");
     }
 
+    public static function registerUser(object $request): User
+    {
+        unset($request->password_match);
+        $request->two_fa_secret = self::generateTwoFactorSecret();
+        return User::create((array) $request);
+    }
+
     public static function changePassword(User $user, string $password)
     {
         $user->password = self::hashPassword($password);
@@ -202,36 +209,42 @@ class Auth
         $reset_token_time = config("security.reset_token_time");
         $expires_at = time() + $reset_token_time;
         $ip = getClientIp();
+        $token = self::generatePasswordToken();
         // Create a password reset for the user
         $password_reset = PasswordReset::create([
             "user_id" => $user->id,
-            "token" => self::generatePasswordToken(),
+            "token" => $token,
             "ip" => ip2long($ip),
             "expires_at" => date("Y-m-d H:i:s", $expires_at),
         ]);
         if ($password_reset) {
             // Send the email
-            $project_name = config("app.name");
-            $project_url = config("app.url");
-            $route = findRoute("password-reset.index", $password_reset->token);
-            $subject = $project_name . ": Password Reset Request";
-            $body = template("admin/forgot-password/email/password-reset.html", [
-                "to" => $user->name,
-                "ip" => $ip,
-                "password_reset_url" => $project_url . $route,
-                "from" => $project_name,
-            ]);
-            $sent = email()->send(
-                subject: $subject,
-                body: $body,
-                to_addresses: [$user->email]
-            );
+            $sent = self::emailPasswordReset($user, $token);
             if ($sent) {
                 // Record that it was sent successfully
                 $password_reset->email_at = date("Y-m-d H:i:s");
                 $password_reset->save();
             }
         }
+    }
+
+    public static function emailPasswordReset(User $user, string $token)
+    {
+        $project_name = config("app.name");
+        $project_url = config("app.url");
+        $route = findRoute("password-reset.index", $token);
+        $subject = $project_name . ": Password Reset Request";
+        $body = template("admin/forgot-password/email/password-reset.html", [
+            "to" => $user->name,
+            "ip" => getClientIp(),
+            "password_reset_url" => $project_url . $route,
+            "from" => $project_name,
+        ]);
+        return email()->send(
+            subject: $subject,
+            body: $body,
+            to_addresses: [$user->email]
+        );
     }
 
     public static function confirm2FA(User $user): void
@@ -242,7 +255,7 @@ class Auth
         $user->save();
     }
 
-    public static function logUser(User $user, bool $remember_me): void
+    public static function logUser(User $user, bool $remember_me = false): void
     {
         // Set user login_at
         $user->login_at = date("Y-m-d H:i:s");
@@ -289,6 +302,4 @@ class Auth
         session()->delete("user_uuid");
         session()->destroy();
     }
-
-    public static function register(): void {}
 }

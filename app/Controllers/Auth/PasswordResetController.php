@@ -44,7 +44,7 @@ class PasswordResetController extends Controller
             if ($valid) {
                 $user = User::findOrFail($password_reset->user_id);
                 Auth::changePassword($user, $valid->password);
-                Auth::logUser($user, false);
+                Auth::logUser($user);
                 $two_factor_enabled = config("security.two_factor_enabled");
                 if ($two_factor_enabled) {
                     $route = findRoute("2fa.index");

@@ -2,6 +2,8 @@
 
 namespace App\Controllers\Auth;
 
+use Helios\Admin\Auth;
+use Helios\View\Flash;
 use Helios\Web\Controller;
 use StellarRouter\{Get, Post};
 
@@ -36,7 +38,28 @@ class RegisterController extends Controller
             }],
         ]);
         if ($valid) {
-            die("WIP");
+            $user = Auth::registerUser($valid);
+            if ($user) {
+                Auth::logUser($user);
+                $two_factor_enabled = config("security.two_factor_enabled");
+                if ($two_factor_enabled) {
+                    $route = findRoute("2fa.index");
+                    redirect($route, [
+                        "target" => "#register",
+                        "select" => "#two-factor-authentication",
+                        "swap" => "outerHTML",
+                    ]);
+                } else {
+                    $route = moduleRoute("module.index", "users");
+                    redirect($route, [
+                        "target" => "#register",
+                        "select" => "#admin",
+                        "swap" => "outerHTML",
+                    ]);
+                }
+            } else {
+                Flash::add("warning", "Failed to create new account");
+            }
         }
         return $this->index();
     }
