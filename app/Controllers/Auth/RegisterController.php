@@ -12,7 +12,8 @@ class RegisterController extends Controller
     public function __construct()
     {
         if (!config("security.register_enabled")) {
-            $route = moduleRoute("module.index", "users");
+            error_log("Registration is disabled. IP: " . getClientIp());
+            $route = findRoute("sign-in.index");
             redirect($route);
         }
     }
