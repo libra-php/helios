@@ -193,6 +193,7 @@ class Auth
     {
         unset($request->password_match);
         $request->two_fa_secret = self::generateTwoFactorSecret();
+        $request->password = self::hashPassword($request->password);
         return User::create((array) $request);
     }
 
