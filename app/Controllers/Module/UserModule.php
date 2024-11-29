@@ -83,9 +83,13 @@ class UserModule extends ModuleController
         } else {
             $this->validation_rules = [
                 "name" => ["required"],
-                "email" => ["required", "email", "unique|users"],
-                "username" => ["required", "unique|users"],
-                "password" => ["required", "min_length|8", "regex|^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"],
+                "email" => ["required", "email", "unique:=users"],
+                "username" => ["required", "unique:=users", "regex:=^[a-zA-Z0-9]+$"],
+                "password" => [
+                    "required", 
+                    "min_length:=8", 
+                    "regex:=^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                ],
                 "password_match" => ["required", function ($value) {
                     $this->addErrorMessage("password_match", "Passwords must match");
                     return request()->get("password") === $value;

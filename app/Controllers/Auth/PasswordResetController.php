@@ -35,7 +35,11 @@ class PasswordResetController extends Controller
             ->get(1);
         if ($password_reset) {
             $valid = $this->validateRequest([
-                "password" => ["required", "min_length|8", "regex|^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"],
+                "password" => [
+                    "required", 
+                    "min_length:=8", 
+                    "regex:=^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                ],
                 "password_match" => ["required", function ($value) {
                     $this->addErrorMessage("password_match", "Passwords must match");
                     return request()->get("password") === $value;

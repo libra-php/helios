@@ -109,11 +109,6 @@ class Controller
                 $value = request()->files->get($key);
             }
 
-            // Ruleset can be provided as | delimited
-            if (is_string($ruleset)) {
-                $ruleset = explode("|", $ruleset);
-            }
-
             $is_required = in_array("required", $ruleset);
             // Empty rulesets are valid OR 
             // It is not required in the request and value is null
@@ -125,7 +120,7 @@ class Controller
             // Check each rule
             foreach ($ruleset as $rule) {
                 if (is_string($rule) && $rule) {
-                    $_rule = explode('|', $rule);
+                    $_rule = explode(':=', $rule);
                     $rule = $_rule[0];
                     // The rule might have an argument
                     $rule_arg = $_rule[1] ?? null;
