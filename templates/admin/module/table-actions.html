@@ -1,0 +1,14 @@
+<section id="table-actions" class="p-2 d-flex">
+    {% if permissions.hasCreate() %}
+        <button class="btn btn-sm btn-primary" 
+            type="button" 
+            hx-get="{{ module.route }}/create" 
+            hx-select="#module" 
+            hx-target="#module" 
+            hx-swap="outerHTML">Create</button>
+    {% endif %}
+    {% if actions.export_csv %}
+        <a class="btn btn-sm btn-primary ms-1 text-white" 
+            href="{{ module.route }}/export-csv">Export CSV</a>
+    {% endif %}
+</section>
