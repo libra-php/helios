@@ -20,12 +20,16 @@ class UserSessionsModule extends ModuleController
                 FROM users 
                 WHERE users.id = user_sessions.user_id) as user",
             "Module" => "module",
-            "URL" => "url",
             "IP" => "INET_NTOA(ip) as ip",
+            "URL" => "url",
             "Created" => "created_at",
         ];
         $this->table_format = [
             "created_at" => "ago",
+        ];
+        $this->searchable = [
+            "module",
+            "url",
         ];
         $this->order_by = ["id DESC"];
     }

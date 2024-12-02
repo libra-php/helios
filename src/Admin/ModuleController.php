@@ -4,8 +4,7 @@ namespace Helios\Admin;
 
 use App\Models\UserSession;
 use Helios\Database\QueryBuilder;
-use Helios\View\Flash;
-use Helios\View\{FormControls, TableFormat};
+use Helios\View\{Flash, FormControls, TableFormat};
 use Helios\Web\Controller;
 use PDO;
 use StellarRouter\{Get, Post, Delete};
@@ -267,14 +266,16 @@ class ModuleController extends Controller
      */
     public function init(?int $id): void {}
 
+    /**
+     * Record active user session
+     */
     protected function recordUserSession(): void
     {
         $actual_link = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        $query_string = $_SERVER['QUERY_STRING'];
         UserSession::create([
             "user_id" => user()->id,
             "module" => $this->module,
-            "url" => $actual_link.$query_string,
+            "url" => $actual_link,
             "ip" => ip2long(getClientIp()),
         ]);
     }
@@ -329,6 +330,8 @@ class ModuleController extends Controller
      */
     protected function handleSearch(string $search_term): void
     {
+        $search_term = trim($search_term);
+        $search_term = filter_var($search_term, FILTER_SANITIZE_ENCODED);
         if ($search_term !== '') {
             $this->setSession("search_term", $search_term);
         } else {
