@@ -1,6 +1,6 @@
 <section id="table-actions" class="p-2 d-flex justify-content-start">
     {% if permissions.hasCreate() %}
-        <a class="btn btn-sm btn-success me-1"
+        <a class="btn btn-sm btn-success text-decoration-none me-1"
             hx-get="{{ module.route }}/create"
             hx-select="#module"
             hx-target="#module"
