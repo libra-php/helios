@@ -2,18 +2,7 @@
 
 {% block content %}
 <section id="admin" class="d-flex h-100 w-100">
-    <section id="sidebar" class="h-100 d-none d-sm-block" hx-boost="true" hx-swap="outerHTML" hx-target="#module" hx-select="#module">
-        <ul class="mt-2">
-            <li class="fw-bold">Administration</li>
-            <ul class="mt-1 ps-2">
-                <a href="/admin/users"><li>Users</li></a>
-            </ul>
-            <li class="fw-bold">Account</li>
-            <ul class="mt-1 ps-2">
-                <a hx-boost="false" href="/sign-out"><li>Sign Out</li></a>
-            </ul>
-        </ul>
-    </section>
+    {% include "admin/module/sidebar.html" %}
     <section id="module" class="d-flex flex-column flex-grow-1 p-2">
         {% block top %}
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" hx-boost="true" hx-swap="outerHTML" hx-target="#module" hx-select="#module">

@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Helios\Model\Model;
 
-class PasswordReset extends Model
+class UserSession extends Model
 {
     public function __construct(?string $id = null)
     {
-        parent::__construct('password_resets', $id);
+        parent::__construct('user_sessions', $id);
     }
 
     public function user(): User

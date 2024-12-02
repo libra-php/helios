@@ -9,7 +9,7 @@ use StellarRouter\Group;
 
 /** @package App\Controllers\Module */
 #[Group(prefix: "/admin/users", middleware: ["module" => "users"])]
-class UserModule extends ModuleController
+class UsersModule extends ModuleController
 {
     public function init(?int $id): void
     {

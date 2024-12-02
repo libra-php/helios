@@ -1,4 +1,4 @@
-{% if pagination.total_pages > 1 %}
+{% if table.data and pagination.total_pages > 1 %}
 <nav id="pagination" class="mt-2" aria-label="page controls" hx-boost="true" hx-select="#module" hx-target="#module" hx-swap="outerHTML">
     <ul class="pagination pagination-sm m-0">
         {% if pagination.page > 2 %}

@@ -2,6 +2,7 @@
 
 namespace Helios\Admin;
 
+use App\Models\UserSession;
 use Helios\Database\QueryBuilder;
 use Helios\View\Flash;
 use Helios\View\{FormControls, TableFormat};
@@ -26,7 +27,7 @@ class ModuleController extends Controller
     protected array $having = [];
     protected array $order_by = [];
     protected array $params = [];
-    protected int $per_page = 25;
+    protected int $per_page = 20;
     protected int $page = 1;
 
     // Table stuff 
@@ -54,6 +55,7 @@ class ModuleController extends Controller
         $this->module = route()->getMiddleware()["module"];
         $id = route()->getParameters()[$this->primary_key] ?? null;
         $this->init($id);
+        $this->recordUserSession();
     }
 
     /**
@@ -265,6 +267,18 @@ class ModuleController extends Controller
      */
     public function init(?int $id): void {}
 
+    protected function recordUserSession(): void
+    {
+        $actual_link = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        $query_string = $_SERVER['QUERY_STRING'];
+        UserSession::create([
+            "user_id" => user()->id,
+            "module" => $this->module,
+            "url" => $actual_link.$query_string,
+            "ip" => ip2long(getClientIp()),
+        ]);
+    }
+
     /**
      * Set the module state
      */
@@ -459,7 +473,7 @@ class ModuleController extends Controller
             "page" => $this->page,
             "total_results" => $total_results,
             "total_pages" => ceil($total_results / $this->per_page),
-            "link_range" => 3,
+            "link_range" => 2,
         ];
     }
 
@@ -538,6 +552,7 @@ class ModuleController extends Controller
      */
     protected function getTableData(): array
     {
+        if (!$this->table_columns) return [];
         // Calculate the page offset
         $offset = $this->per_page * ($this->page - 1);
         // Always include primary key

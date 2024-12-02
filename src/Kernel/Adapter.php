@@ -128,6 +128,7 @@ class Adapter extends CLI
         $this->info(" Migrations:");
         sleep(1);
         $migrations = $this->migrations->mapMigrations();
+        uasort($migrations, fn($a, $b) => $a["name"] <=> $b["name"]);
         foreach ($migrations as $migration) {
             $msg = sprintf(
                 "%s ... %s\n",
