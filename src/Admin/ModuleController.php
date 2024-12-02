@@ -31,6 +31,7 @@ class ModuleController extends Controller
 
     // Table stuff 
     protected array $table_columns = [];
+    protected bool $export_csv = true;
 
     // Filters
     protected array $filter_links = [];
@@ -70,10 +71,41 @@ class ModuleController extends Controller
         return $this->render("/admin/module/index.html", [
             "module" => $this->getModuleData(),
             "table" => $this->getTableData(),
+            "actions" => $this->getTableActions(),
             "pagination" => $this->getPaginationData(),
             "permissions" => $this->getPermissions(),
             "filters" => $this->getFilterData(),
         ]);
+    }
+
+    /**
+     * Export table in csv format
+     */
+    #[Get("/export-csv", "module.export-csv", ["auth"])]
+    public function exportCSV(): void
+    {
+        $this->setState();
+        $filename = $this->module . "_csv_export.csv";
+        header("Content-Type: text/csv");
+        header("Content-Disposition: attachment; filename=\"$filename\"");
+        $fp = fopen("php://output", "wb");
+        $titles = array_keys($this->table_columns);
+        fputcsv($fp, $titles);
+        $this->per_page = 1000;
+        $this->page = 1;
+        $total_results = $this->getTotalResultsCount();
+        $total_pages = ceil($total_results / $this->per_page);
+        while ($this->page <= $total_pages) {
+            $result = $this->getTableData();
+            foreach ($result['data'] as $item) {
+                $row = array_map(fn($one) => $one['raw'], $item);
+                $values = array_values($row);
+                fputcsv($fp, $values);
+            }
+            $this->page++;
+        }
+        fclose($fp);
+        exit();
     }
 
     /**
@@ -404,6 +436,16 @@ class ModuleController extends Controller
             }
         };
         return $functions;
+    }
+
+    /**
+     * Return the table actions
+     */
+    protected function getTableActions(): array
+    {
+        return [
+            "export_csv" => $this->export_csv,
+        ];
     }
 
     /**

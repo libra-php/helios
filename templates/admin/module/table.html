@@ -36,7 +36,7 @@
                     {% endif %}
                     {% if permissions.hasDelete(id) %}
                     <button type="button" 
-                        class="btn btn-danger btn-sm ms-1" 
+                        class="btn btn-danger btn-sm" 
                         hx-delete="{{ module.route }}/{{ id }}" 
                         hx-swap="outerHTML" 
                         hx-confirm="Are you sure you want to permanently delete this record?"
