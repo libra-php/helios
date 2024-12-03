@@ -74,7 +74,7 @@ class UsersModule extends ModuleController
                     }
                     return !$user;
                 }],
-                "password" => ["min_length|8", "regex|^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"],
+                "password" => ["min_length:=8", "regex:=^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"],
                 "password_match" => [function ($value) {
                     $this->addErrorMessage("password_match", "Passwords must match");
                     return request()->get("password") === $value;
