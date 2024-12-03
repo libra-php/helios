@@ -470,6 +470,7 @@ class ModuleController extends Controller
      */
     protected function getPaginationData(): array
     {
+        if (!$this->table_columns) return [];
         // This data is used for pagination at the bottom of the table
         $total_results = $this->getTotalResultsCount();
         return [
