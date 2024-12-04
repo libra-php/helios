@@ -27,7 +27,8 @@ class RegisterController extends Controller
     #[Post("/register", "register.post")]
     public function post(): string
     {
-        $this->addErrorMessage("regex", "Must contain: 1 uppercase, 1 number, and 1 symbol");
+        $this->addErrorMessage("password.regex", "Must contain: 1 uppercase, 1 number, and 1 symbol");
+        $this->addErrorMessage("username.regex", "Invalid username");
         $valid = $this->validateRequest([
             "name" => ["required"],
             "email" => ["required", "email", "unique:=users"],

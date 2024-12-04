@@ -27,7 +27,7 @@ class ModuleController extends Controller
     protected array $having = [];
     protected array $order_by = [];
     protected array $params = [];
-    protected int $per_page = 20;
+    protected int $per_page = 25;
     protected int $page = 1;
 
     // Table stuff 

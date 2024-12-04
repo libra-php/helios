@@ -135,11 +135,14 @@ class Controller
                     $validated[$key] = $value;
                 } else {
                     $valid = false;
-                    if (is_string($rule) && isset($this->error_messages[$rule])) {
-                        // Check for pre-defined error message
+                    if (is_string($rule) && isset($this->error_messages[$key.'.'.$rule])) {
+                        // Check for pre-defined error message (key.rule)
+                        $this->addRequestError($key, sprintf($this->error_messages[$key.'.'.$rule], $rule_arg));
+                    } else if (is_string($rule) && isset($this->error_messages[$rule])) {
+                        // Check for pre-defined error message (rule only)
                         $this->addRequestError($key, sprintf($this->error_messages[$rule], $rule_arg));
                     } else if (isset($this->error_messages[$key])) {
-                        // Look for other error_message entry by key
+                        // Look for other error message entry (key only)
                         $this->addRequestError($key, sprintf($this->error_messages[$key], $rule_arg));
                     } else {
                         $this->addRequestError('_', "A validation error has occurred");
@@ -212,7 +215,7 @@ class Controller
      * @param string $key in request
      * @param string $message explains validation failure
      */
-    public function addRequestError(string $key, string $message)
+    public function addRequestError(string $key, string $message): void
     {
         if (trim($message) != '') $this->request_errors[$key][] = $message;
     }
@@ -222,7 +225,7 @@ class Controller
      * @param string $key in request
      * @param string $message explains validation failure
      */
-    public function addErrorMessage(string $key, string $message)
+    public function addErrorMessage(string $key, string $message): void
     {
         if (trim($message) != '') $this->error_messages[$key] = $message;
     }
