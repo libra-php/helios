@@ -2,6 +2,7 @@
 
 namespace Helios\Admin;
 
+use App\Models\Audit;
 use App\Models\UserSession;
 use Helios\Database\QueryBuilder;
 use Helios\View\{Flash, FormControls, TableFormat};
@@ -86,7 +87,8 @@ class ModuleController extends Controller
     public function exportCSV(): void
     {
         $this->setState();
-        $filename = $this->module . "_csv_export.csv";
+        $time = time();
+        $filename = "{$this->module}_{$time}_export.csv";
         header("Content-Type: text/csv");
         header("Content-Disposition: attachment; filename=\"$filename\"");
         $fp = fopen("php://output", "wb");
@@ -589,9 +591,12 @@ class ModuleController extends Controller
                 ];
             },array_keys($this->table_columns), array_keys($result), array_values($result));
         }
+        $headers = array_filter(array_keys($this->table_columns), fn($column) => $column != 'skip');
         return [
             "data" => $data,
-            "headers" => array_keys($this->table_columns)
+            "headers" => $headers,
+            // +1 to colspan to account for the actions cell
+            "colspan" => count($headers)+1,
         ];
     }
 
@@ -622,6 +627,12 @@ class ModuleController extends Controller
         // The primary key is required for the update
         $params[] = $id;
         $qb = new QueryBuilder;
+        $row = $qb->select()
+            ->from($this->table)
+            ->where(["{$this->primary_key} = ?"])
+            ->params([$id])
+            ->execute()
+            ->fetch();
         // Update query
         $result = $qb
             ->update($data)
@@ -629,6 +640,24 @@ class ModuleController extends Controller
             ->where(["{$this->primary_key} = ?"])
             ->params($params)
             ->execute();
+        if ($result) {
+            // Audit the result
+            if ($row) {
+                foreach ($data as $column => $value) {
+                    if ($row->$column != $value) {
+                        Audit::create([
+                            "user_id" => user()->id,
+                            "table_name" => $this->table,
+                            "table_id" => $id,
+                            "field" => $column,
+                            "old_value" => $row->$column,
+                            "new_value" => $value,
+                            "tag" => "UPDATE",
+                        ]);
+                    }
+                }
+            }
+        }
         return $result ? true : false;
     }
 
@@ -646,8 +675,30 @@ class ModuleController extends Controller
             ->into($this->table)
             ->params($params)
             ->execute();
+        if ($result) {
+            $id = db()->lastInsertId();
+            $row = $qb->select()
+                ->from($this->table)
+                ->where(["{$this->primary_key} = ?"])
+                ->params([$id])
+                ->execute()
+                ->fetch(PDO::FETCH_ASSOC);
+            // Audit the result
+            if ($row) {
+                foreach ($row as $column => $value) {
+                    Audit::create([
+                        "user_id" => user()->id,
+                        "table_name" => $this->table,
+                        "table_id" => $id,
+                        "field" => $column,
+                        "new_value" => $value,
+                        "tag" => "CREATE",
+                    ]);
+                }
+            }
+        }
         // The id will be returned if successful
-        return $result ? db()->lastInsertId() : null;
+        return $result ? $id : null;
     }
 
     /**
@@ -663,6 +714,17 @@ class ModuleController extends Controller
             ->where(["{$this->primary_key} = ?"])
             ->params([$id])
             ->execute();
+        if ($result) {
+            Audit::create([
+                "user_id" => user()->id,
+                "table_name" => $this->table,
+                "table_id" => $id,
+                "field" => $this->primary_key,
+                "old_value" => $id,
+                "new_value" => null,
+                "tag" => "DELETE",
+            ]);
+        }
         return $result ? true : false;
     }
 }
