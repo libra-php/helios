@@ -1,55 +1,55 @@
-{% if table.data %}
-<table id="table" class="table table-sm caption-top">
-    {% if flash %}
-        <caption>
-            {% include "components/flash.html" %}
-        </caption>
-    {% endif %}
-    <thead class="sticky-top bg-white">
-    {% for header in table.headers %}
-        {% if header != 'skip' %}
-            <th nowrap>{{ header }}</th>
+{% if table.data and table.headers %}
+    <table id="table" class="table table-sm caption-top">
+        {% if flash %}
+            <caption>
+                {% include "components/flash.html" %}
+            </caption>
         {% endif %}
-    {% endfor %}
-    <th></th>
-    </thead>
-    <tbody>
-    {% for i,datum in table.data %}
-        <tr valign="middle">
-            {% set id = "" %}
-            {% for column,cell in datum %}
-                {% if cell.label != 'skip' %}
-                    {% set id = cell.id %}
-                    <td nowrap>{{ cell.formatted|raw }}</td>
-                {% endif %}
-            {% endfor %}
-            <td class="actions d-flex justify-content-end" nowrap>
-                &nbsp;
-                <form>
-                    {{ csrf()|raw }}
-                    {% if permissions.hasEdit(id) %}
-                    <button type="button" 
-                        class="btn btn-primary btn-sm" 
-                        hx-get="{{ module.route }}/edit/{{ id }}" 
-                        hx-swap="outerHTML" 
-                        hx-target="#module" 
-                        hx-select="#module">Edit</button>
+        <thead class="sticky-top bg-white">
+        {% for header in table.headers %}
+            {% if header != 'skip' %}
+                <th nowrap>{{ header }}</th>
+            {% endif %}
+        {% endfor %}
+        <th></th>
+        </thead>
+        <tbody>
+        {% for i,datum in table.data %}
+            <tr valign="middle">
+                {% set id = "" %}
+                {% for column,cell in datum %}
+                    {% if cell.label != 'skip' %}
+                        {% set id = cell.id %}
+                        <td nowrap>{{ cell.formatted|raw }}</td>
                     {% endif %}
-                    {% if permissions.hasDelete(id) %}
-                    <button type="button" 
-                        class="btn btn-danger btn-sm" 
-                        hx-delete="{{ module.route }}/{{ id }}" 
-                        hx-swap="outerHTML" 
-                        hx-confirm="Are you sure you want to permanently delete this record?"
-                        hx-target="#module" 
-                        hx-select="#module">Delete</button>
-                    {% endif %}
-                </form>
-            </td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<p class="lead">There are no results.</p>
+                {% endfor %}
+                <td class="actions d-flex justify-content-end" nowrap>
+                    &nbsp;
+                    <form>
+                        {{ csrf()|raw }}
+                        {% if permissions.hasEdit(id) %}
+                        <button type="button" 
+                            class="btn btn-primary btn-sm" 
+                            hx-get="{{ module.route }}/edit/{{ id }}" 
+                            hx-swap="outerHTML" 
+                            hx-target="#module" 
+                            hx-select="#module">Edit</button>
+                        {% endif %}
+                        {% if permissions.hasDelete(id) %}
+                        <button type="button" 
+                            class="btn btn-danger btn-sm" 
+                            hx-delete="{{ module.route }}/{{ id }}" 
+                            hx-swap="outerHTML" 
+                            hx-confirm="Are you sure you want to permanently delete this record?"
+                            hx-target="#module" 
+                            hx-select="#module">Delete</button>
+                        {% endif %}
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% elseif not table.data and table.headers %}
+    <p class="lead">There are no results.</p>
 {% endif %}
