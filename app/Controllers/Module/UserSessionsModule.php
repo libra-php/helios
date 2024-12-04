@@ -27,6 +27,10 @@ class UserSessionsModule extends ModuleController
         $this->table_format = [
             "created_at" => "ago",
         ];
+        $this->filter_links = [
+            "Me" => "user_id = " . user()->id,
+            "All" => "1=1",
+        ];
         $this->searchable = [
             "module",
             "url",

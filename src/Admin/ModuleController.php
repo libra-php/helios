@@ -55,7 +55,6 @@ class ModuleController extends Controller
         $this->module = route()->getMiddleware()["module"];
         $id = route()->getParameters()[$this->primary_key] ?? null;
         $this->init($id);
-        $this->recordUserSession();
     }
 
     /**
@@ -64,6 +63,7 @@ class ModuleController extends Controller
     #[Get("/", "module.index", ["auth"])]
     public function index(): string
     {
+        $this->recordUserSession();
         $path = "/admin/{$this->module}";
         header("HX-Push-Url: $path");
 
@@ -167,6 +167,7 @@ class ModuleController extends Controller
     #[Get("/edit/{id}", "module.edit", ["auth"])]
     public function edit(int $id): string
     {
+        $this->recordUserSession();
         if (!$this->hasEditPermission($id)) {
             redirect("/permission-denied");
         }
@@ -186,6 +187,7 @@ class ModuleController extends Controller
     #[Get("/create", "module.create", ["auth"])]
     public function create(): string
     {
+        $this->recordUserSession();
         if (!$this->hasCreatePermission()) {
             redirect("/permission-denied");
         }
