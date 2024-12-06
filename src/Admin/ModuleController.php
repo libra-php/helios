@@ -42,6 +42,7 @@ class ModuleController extends Controller
 
     // Form stuff
     protected array $form_columns = [];
+    protected array $dropdown_queries = [];
     protected array $validation_rules = [];
 
     // Permissions
@@ -485,6 +486,42 @@ class ModuleController extends Controller
         ];
     }
 
+    protected function getAlias(string $column): string
+    {
+        $arr = explode(" as ", strtolower($column));
+        return end($arr);
+    }
+
+
+    protected function formMap(string $label, string $column, ?string $value)
+    {
+        $column = $this->getAlias($column);
+        $value = request()->request->get($column) ?? $value;
+        $type = $this->form_controls[$column] ?? null;
+        if (is_null($type)) return [];
+        $opts = [
+            "class" => "form-control" . (key_exists($column, $this->request_errors) ? ' is-invalid' : ''),
+            "id" => "control-$column",
+            "name" => $column,
+            "title" => $label,
+            "value" => $value,
+        ];
+        if ($type === 'select' && isset($this->dropdown_queries[$column])) {
+            if (is_array($this->dropdown_queries[$column])) {
+                // Array of dropdown options
+                $opts['options'] = $this->dropdown_queries[$column];
+            } else {
+                // Must be query
+                $opts['options'] = db()->fetchAll($this->dropdown_queries[$column]);
+            }
+        }
+        return [
+            "label" => $label,
+            "column" => $column,
+            "control" => $this->control($type, $opts),
+        ];
+    }
+
     /**
      * Return the edit form data
      */
@@ -502,59 +539,19 @@ class ModuleController extends Controller
             ->execute()
             ->fetch(PDO::FETCH_ASSOC);
         // Prepare the edit form data
-        $data = array_map(function ($label, $column, $value) {
-            $value = request()->request->get($column) ?? $value;
-            $type = $this->form_controls[$column] ?? null;
-            if (is_null($type)) return [];
-            $opts = [
-                "class" => "form-control" . (key_exists($column, $this->request_errors) ? ' is-invalid' : ''),
-                "id" => "control-$column",
-                "name" => $column,
-                "title" => $label,
-                "value" => $value,
-            ];
-            return [
-                "label" => $label,
-                "column" => $column,
-                "control" => $this->control($type, $opts),
-            ];
-        }, array_keys($this->form_columns), array_keys($result), array_values($result));
+        $data = array_map([$this, "formMap"], array_keys($this->form_columns), array_keys($result), array_values($result));
         return [
             "data" => $data,
             "action" => "/admin/{$this->module}/$id",
         ];
     }
-
-    protected function getAlias(string $column): string
-    {
-        $arr = explode(" as ", strtolower($column));
-        return end($arr);
-    }
-
     /**
      * Return the create form data
      */
     protected function getCreateFormData(): array
     {
         // Prepare the create form data structure
-        $data = array_map(function ($label, $column) {
-            $column = $this->getAlias($column);
-            $value = request()->request->get($column) ?? null;
-            $type = $this->form_controls[$column] ?? null;
-            if (is_null($type)) return [];
-            $opts = [
-                "class" => "form-control" . (key_exists($column, $this->request_errors) ? ' is-invalid' : ''),
-                "id" => "control-$column",
-                "name" => $column,
-                "title" => $label,
-                "value" => $value,
-            ];
-            return [
-                "label" => $label,
-                "column" => $column,
-                "control" => $this->control($type, $opts),
-            ];
-        }, array_keys($this->form_columns), array_values($this->form_columns));
+        $data = array_map([$this, "formMap"], array_keys($this->form_columns), array_values($this->form_columns), array_fill(0, count($this->form_columns), null));
         return [
             "data" => $data,
             "action" => "/admin/{$this->module}",
@@ -597,14 +594,14 @@ class ModuleController extends Controller
                     "formatted" => $value ? $this->format($format, $column, $value) : '',
                     "id" => $result[$this->primary_key],
                 ];
-            },array_keys($this->table_columns), array_keys($result), array_values($result));
+            }, array_keys($this->table_columns), array_keys($result), array_values($result));
         }
         $headers = array_filter(array_keys($this->table_columns), fn($column) => $column != 'skip');
         return [
             "data" => $data,
             "headers" => $headers,
             // +1 to colspan to account for the actions cell
-            "colspan" => count($headers)+1,
+            "colspan" => count($headers) + 1,
         ];
     }
 

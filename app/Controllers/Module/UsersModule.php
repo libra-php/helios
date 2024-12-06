@@ -44,11 +44,13 @@ class UsersModule extends ModuleController
             "Name" => "name",
             "Email" => "email",
             "Username" => "username",
+            "Role" => "user_role_id",
             "Password" => "password",
             "Repeat Password" => "'' as password_match",
         ];
         $this->form_controls = [
             "name" => "input",
+            "user_role_id" => "select",
             "password" => function ($opts) {
                 $opts['value'] = '';
                 return $this->password($opts);
@@ -58,6 +60,11 @@ class UsersModule extends ModuleController
                 return $this->password($opts);
             },
         ];
+        $this->dropdown_queries = [
+            "user_role_id" => "SELECT id as value, name as label 
+            FROM user_roles 
+            ORDER BY name",
+        ];
         $this->form_controls["email"] = $id == 1 ? "readonly" : "input";
         $this->form_controls["username"] = $id == 1 ? "readonly" : "input";
 
@@ -66,6 +73,7 @@ class UsersModule extends ModuleController
         $this->addErrorMessage("password_match", "Passwords must match");
 
         if ($id) {
+            // Edit
             $this->validation_rules = [
                 "name" => ["required"],
                 "email" => ["required", ($id != 1 ? 'email' : ''), function ($value) use ($id) {
@@ -84,16 +92,19 @@ class UsersModule extends ModuleController
                     }
                     return !$user;
                 }],
+                "user_role_id" => ["required"],
                 "password" => ["min_length:=8", "regex:=^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"],
                 "password_match" => [function ($value) {
                     return request()->get("password") === $value;
                 }],
             ];
         } else {
+            // Create
             $this->validation_rules = [
                 "name" => ["required"],
                 "email" => ["required", "email", "unique:=users"],
                 "username" => ["required", "unique:=users", "regex:=^[a-zA-Z0-9]+$"],
+                "user_role_id" => ["required"],
                 "password" => [
                     "required",
                     "min_length:=8",
