@@ -6,9 +6,10 @@ use Helios\Database\{Blueprint, Schema, IMigration};
 
 return new class implements IMigration
 {
+    private $table = "audit";
     public function up(): string
     {
-        return Schema::create("audit", function (Blueprint $table) {
+        return Schema::create($this->table, function (Blueprint $table) {
             $table->bigIncrements("id");
             $table->unsignedBigInteger("user_id")->nullable();
             $table->varchar("table_name");
@@ -25,6 +26,6 @@ return new class implements IMigration
 
     public function down(): string
     {
-        return Schema::drop("audit");
+        return Schema::drop($this->table);
     }
 };

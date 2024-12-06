@@ -509,11 +509,14 @@ class ModuleController extends Controller
             $opts = [
                 "class" => "form-control" . (key_exists($column, $this->request_errors) ? ' is-invalid' : ''),
                 "id" => "control-$column",
+                "name" => $column,
+                "title" => $label,
+                "value" => $value,
             ];
             return [
                 "label" => $label,
                 "column" => $column,
-                "control" => $this->control($type, $label, $column, $value, $opts),
+                "control" => $this->control($type, $opts),
             ];
         }, array_keys($this->form_columns), array_keys($result), array_values($result));
         return [
@@ -542,11 +545,14 @@ class ModuleController extends Controller
             $opts = [
                 "class" => "form-control" . (key_exists($column, $this->request_errors) ? ' is-invalid' : ''),
                 "id" => "control-$column",
+                "name" => $column,
+                "title" => $label,
+                "value" => $value,
             ];
             return [
                 "label" => $label,
                 "column" => $column,
-                "control" => $this->control($type, $label, $column, $value, $opts),
+                "control" => $this->control($type, $opts),
             ];
         }, array_keys($this->form_columns), array_values($this->form_columns));
         return [

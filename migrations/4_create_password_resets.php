@@ -6,9 +6,10 @@ use Helios\Database\{Blueprint, Schema, IMigration};
 
 return new class implements IMigration
 {
+    private $table = "password_resets";
     public function up(): string
     {
-        return Schema::create("password_resets", function (Blueprint $table) {
+        return Schema::create($this->table, function (Blueprint $table) {
             $table->bigIncrements("id");
             $table->unsignedBigInteger("user_id");
             $table->char("token", 64);
@@ -23,6 +24,6 @@ return new class implements IMigration
 
     public function down(): string
     {
-        return Schema::drop("password_resets");
+        return Schema::drop($this->table);
     }
 };

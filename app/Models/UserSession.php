@@ -11,6 +11,11 @@ class UserSession extends Model
         parent::__construct('user_sessions', $id);
     }
 
+    public function role(): UserRole
+    {
+        return UserRole::findOrFail($this->user_role_id);
+    }
+
     public function user(): User
     {
         return User::findOrFail($this->user_id);

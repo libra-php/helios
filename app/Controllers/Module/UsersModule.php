@@ -49,8 +49,14 @@ class UsersModule extends ModuleController
         ];
         $this->form_controls = [
             "name" => "input",
-            "password" => fn($label, $column, $value, $opts) => $this->password($label, $column, '', $opts),
-            "password_match" => fn($label, $column, $value, $opts) => $this->password($label, $column, '', $opts),
+            "password" => function ($opts) {
+                $opts['value'] = '';
+                return $this->password($opts);
+            },
+            "password_match" => function ($opts) {
+                $opts['value'] = '';
+                return $this->password($opts);
+            },
         ];
         $this->form_controls["email"] = $id == 1 ? "readonly" : "input";
         $this->form_controls["username"] = $id == 1 ? "readonly" : "input";
@@ -89,8 +95,8 @@ class UsersModule extends ModuleController
                 "email" => ["required", "email", "unique:=users"],
                 "username" => ["required", "unique:=users", "regex:=^[a-zA-Z0-9]+$"],
                 "password" => [
-                    "required", 
-                    "min_length:=8", 
+                    "required",
+                    "min_length:=8",
                     "regex:=^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
                 ],
                 "password_match" => ["required", function ($value) {

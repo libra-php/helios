@@ -7,10 +7,12 @@ use Helios\Database\{Blueprint, Schema, IMigration};
 
 return new class implements IMigration
 {
+    private $table = "users";
     public function up(): string
     {
-        return Schema::create("users", function (Blueprint $table) {
+        return Schema::create($this->table, function (Blueprint $table) {
             $table->bigIncrements("id");
+            $table->unsignedBigInteger("user_role_id")->default(3);
             $table->uuid("uuid")->default("(UUID())");
             $table->varchar("username");
             $table->varchar("name");
@@ -26,18 +28,20 @@ return new class implements IMigration
             $table->unique("username");
             $table->unique("email");
             $table->primaryKey("id");
+            $table->foreignKey("user_role_id")->references("user_roles", "id");
         });
     }
 
     public function afterUp(): string
     {
-        return Schema::insert("users",
+        return Schema::insert($this->table,
             [
                 "name",
                 "email",
                 "username",
                 "password",
                 "two_fa_secret",
+                "user_role_id",
             ],
             [
                 "Administrator",
@@ -45,12 +49,13 @@ return new class implements IMigration
                 "admin",
                 Auth::hashPassword(config("security.default_admin_pass")),
                 Auth::generateTwoFactorSecret(),
+                1
             ]
         );
     }
 
     public function down(): string
     {
-        return Schema::drop("users");
+        return Schema::drop($this->table);
     }
 };
