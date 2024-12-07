@@ -486,13 +486,18 @@ class ModuleController extends Controller
         ];
     }
 
+    /**
+     * Get a column by alias
+     */
     protected function getAlias(string $column): string
     {
         $arr = explode(" as ", strtolower($column));
         return end($arr);
     }
 
-
+    /**
+     * Mapping function for edit/create form
+     */
     protected function formMap(string $label, string $column, ?string $value)
     {
         $column = $this->getAlias($column);
@@ -545,6 +550,7 @@ class ModuleController extends Controller
             "action" => "/admin/{$this->module}/$id",
         ];
     }
+
     /**
      * Return the create form data
      */
