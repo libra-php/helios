@@ -17,7 +17,7 @@ class PasswordResetController extends Controller
             ->where("expires_at", ">", date("Y-m-d H:i:s"))
             ->orderBy("id", "DESC")
             ->get(1);
-        if (!$password_reset) {
+        if (!$password_reset || $password_reset->complete) {
             redirect("/permission-denied");
         }
 
@@ -49,6 +49,11 @@ class PasswordResetController extends Controller
                 $user = User::findOrFail($password_reset->user_id);
                 Auth::changePassword($user, $valid->password);
                 Auth::logUser($user);
+
+                // Change complete
+                $password_reset->complete = 1;
+                $password_reset->save();
+
                 $two_factor_enabled = config("security.two_factor_enabled");
                 if ($two_factor_enabled) {
                     $route = findRoute("2fa.index");

@@ -15,6 +15,7 @@ return new class implements IMigration
             $table->unsignedBigInteger("email_job_id")->nullable();
             $table->char("token", 64);
             $table->unsignedInteger("ip");
+            $table->unsignedTinyInteger("complete")->default(0);
             $table->timestamp("expires_at");
             $table->timestamp("created_at")->default("CURRENT_TIMESTAMP");
             $table->primaryKey("id");
