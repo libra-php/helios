@@ -6,19 +6,22 @@ use Helios\Database\{Blueprint, Schema, IMigration};
 
 return new class implements IMigration
 {
-    private $table = "password_resets";
+    private $table = "email_jobs";
     public function up(): string
     {
         return Schema::create($this->table, function (Blueprint $table) {
             $table->bigIncrements("id");
-            $table->unsignedBigInteger("user_id");
-            $table->char("token", 64);
-            $table->unsignedInteger("ip");
-            $table->timestamp("expires_at");
-            $table->timestamp("email_at")->nullable();
+            $table->varchar("tag");
+            $table->varchar("subject");
+            $table->text("body");
+            $table->varchar("to_address");
+            $table->varchar("cc_address")->nullable();
+            $table->varchar("bcc_address")->nullable();
+            $table->timestamp("send_at");
             $table->timestamp("created_at")->default("CURRENT_TIMESTAMP");
+            $table->unsignedTinyInteger("sent")->default(0);
+            $table->unsignedTinyInteger("retries")->default(0);
             $table->primaryKey("id");
-            $table->foreignKey("user_id")->references("users", "id")->onDelete("CASCADE");
         });
     }
 
@@ -27,3 +30,4 @@ return new class implements IMigration
         return Schema::drop($this->table);
     }
 };
+

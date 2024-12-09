@@ -24,6 +24,8 @@ $scheduler->php($jobs . "/heartbeat.php")
 // Rotate logs
 $scheduler->php($jobs . "/rotate_logs.php")->monday();
 
+// Send password reset emails
+$scheduler->php($jobs . "/password_reset.php")->everyMinute();
 
 // Let the scheduler execute jobs which are due.
 $scheduler->run();

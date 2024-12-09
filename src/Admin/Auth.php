@@ -2,6 +2,7 @@
 
 namespace Helios\Admin;
 
+use App\Models\EmailJob;
 use App\Models\PasswordReset;
 use App\Models\User;
 use Helios\View\Flash;
@@ -174,7 +175,7 @@ class Auth
                 ->get(1);
             // If not, or the prev attempt did not send,
             // then send it!
-            if (!$password_reset || !$password_reset->email_at) {
+            if (!$password_reset || !$password_reset->email_send_id) {
                 self::passwordReset($user);
             } else {
                 // There is already a valid password reset link, 
@@ -219,11 +220,10 @@ class Auth
             "expires_at" => date("Y-m-d H:i:s", $expires_at),
         ]);
         if ($password_reset) {
-            // Send the email
-            $sent = self::emailPasswordReset($user, $token);
-            if ($sent) {
+            $email_job = self::emailPasswordReset($user, $token);
+            if ($email_job) {
                 // Record that it was sent successfully
-                $password_reset->email_at = date("Y-m-d H:i:s");
+                $password_reset->email_job_id = $email_job->id;
                 $password_reset->save();
             }
         }
@@ -241,11 +241,13 @@ class Auth
             "password_reset_url" => $project_url . $route,
             "from" => $project_name,
         ]);
-        return email()->send(
-            subject: $subject,
-            body: $body,
-            to_addresses: [$user->email]
-        );
+        return EmailJob::create([
+            "tag" => "password_reset",
+            "subject" => $subject,
+            "body" => $body,
+            "to_address" => $user->email,
+            "send_at" => date("Y-m-d H:i:s"),
+        ]);
     }
 
     public static function confirm2FA(User $user): void

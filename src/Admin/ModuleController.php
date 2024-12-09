@@ -2,8 +2,7 @@
 
 namespace Helios\Admin;
 
-use App\Models\Audit;
-use App\Models\UserSession;
+use App\Models\{Audit, UserSession};
 use Helios\Database\QueryBuilder;
 use Helios\View\{Flash, FormControls, TableFormat};
 use Helios\Web\Controller;

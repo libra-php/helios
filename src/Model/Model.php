@@ -27,8 +27,9 @@ class Model implements IModel
         ">=",
         "<",
         "<=",
+        "is",
         "not",
-        "like"
+        "like",
     ];
 
     public function __construct(private string $table, private ?string $id = null)
@@ -232,7 +233,7 @@ class Model implements IModel
     /**
      * Fetch the model result set
      */
-    public function get(int $limit = 0): null|array|Model
+    public function get(int $limit = 0, bool $lazy = true): null|array|Model
     {
         $results = $this->qb
             ->select($this->columns)
@@ -245,7 +246,7 @@ class Model implements IModel
             ->execute()
             ->fetchAll();
         $key = $this->primaryKey;
-        if ($results && count($results) === 1) {
+        if ($results && $lazy && count($results) === 1) {
             $result = $results[0];
             return self::find($result->$key);
         }
