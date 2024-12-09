@@ -175,7 +175,7 @@ class Auth
                 ->get(1);
             // If not, or the prev attempt did not send,
             // then send it!
-            if (!$password_reset || !$password_reset->email_send_id) {
+            if (!$password_reset || !$password_reset->email_job_id) {
                 self::passwordReset($user);
             } else {
                 // There is already a valid password reset link, 
