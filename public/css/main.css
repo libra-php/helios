@@ -165,3 +165,11 @@ a:active {
 .bg-gray {
     background-color: #f3f4f8;
 }
+.diff-remove {
+    background-color: #FF2400;
+    color: white;
+}
+.diff-add {
+    background-color: #008000;
+    color: white;
+}
