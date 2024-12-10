@@ -29,6 +29,15 @@ class AuditModule extends ModuleController
             "created_at" => "ago",
             "diff" => "diff",
         ];
+        $this->searchable = [
+            "(SELECT username FROM users WHERE id = user_id)",
+            "table_name",
+            "table_id",
+            "field",
+            "tag",
+            "old_value",
+            "new_value",
+        ];
         $this->filter_links = [
             "All" => "1=1",
             "Me" => "user_id=" . user()->id,
@@ -36,6 +45,7 @@ class AuditModule extends ModuleController
             "Update" => "tag='UPDATE'",
             "Delete" => "tag='DELETE'",
         ];
+        $this->default_sort = "DESC";
     }
 
     function diff(string $column, string $value): string
@@ -48,7 +58,7 @@ class AuditModule extends ModuleController
         ]);
     }
 
-    function getDiff($old, $new)
+    function getDiff(array $old, array $new): array
     {
         $matrix = array();
         $maxlen = 0;
