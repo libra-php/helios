@@ -42,7 +42,7 @@ function dump(...$data)
 {
     $debug = debug_backtrace()[1];
     $pre_style =
-        "overflow-x: auto; font-size: 0.6rem; border-radius: 10px; padding: 10px; background: #133; color: azure; border: 3px dotted azure;";
+        "max-height: 200px; overflow: auto; font-size: 0.6rem; border-radius: 10px; padding: 10px; background: #133; color: azure; border: 3px dotted azure;";
     $scrollbar_style =
         "scrollbar-width: thin; scrollbar-color: #5EFFA1 #113333;";
 

@@ -616,7 +616,7 @@ class ModuleController extends Controller
         $offset = $this->per_page * ($this->page - 1);
         // Always include primary key
         if (!in_array($this->primary_key, $this->table_columns)) {
-            $this->table_columns['_skip'] = $this->primary_key;
+            $this->table_columns[] = $this->primary_key;
         }
         // Fetch the table data
         $qb = new QueryBuilder;
@@ -636,7 +636,7 @@ class ModuleController extends Controller
             $result = array_map(function ($label, $column, $value) use ($result) {
                 $format = $this->table_format[$column] ?? null;
                 return [
-                    "label" => $label,
+                    "label" => is_string($label) ? $label : null,
                     "column" => $column,
                     "raw" => $value,
                     "formatted" => $value ? $this->format($format, $column, $value) : '',
@@ -654,14 +654,14 @@ class ModuleController extends Controller
     }
 
     /**
-     * Filter out any table columns that are skipped
+     * Filter table columns
      * (ie, part of the dataset but not rendered in the table)
      */
     protected function filterTableColumns(): array
     {
         $headers = [];
         foreach ($this->table_columns as $label => $column) {
-            if ($label !== '_skip') {
+            if (is_string($label)) {
                 $headers[$label] = $column;
             }
         }

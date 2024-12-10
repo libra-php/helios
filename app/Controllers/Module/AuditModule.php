@@ -24,6 +24,8 @@ class AuditModule extends ModuleController
             "New Value" => "new_value",
             "Tag" => "tag",
             "Created" => "created_at",
+            "'testing' as test",
+            "1 as test2",
         ];
         $this->table_format = [
             "created_at" => "ago",

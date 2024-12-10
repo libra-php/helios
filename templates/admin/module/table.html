@@ -16,7 +16,7 @@
         <tr valign="middle">
             {% set id = "" %}
             {% for column,cell in datum %}
-                {% if cell.label != '_skip' %}
+                {% if cell.label %}
                     {% set id = cell.id %}
                     <td nowrap>{{ cell.formatted|raw }}</td>
                 {% endif %}
