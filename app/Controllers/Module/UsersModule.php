@@ -20,6 +20,7 @@ class UsersModule extends ModuleController
             "ID" => "id",
             "UUID" => "uuid",
             "Username" => "username",
+            "Role" => "(SELECT name FROM user_roles WHERE id = user_role_id) as role",
             "Email" => "email",
             "Name" => "name",
             "Created" => "created_at",
