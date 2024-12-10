@@ -28,6 +28,8 @@ class ModuleController extends Controller
     protected array $params = [];
     protected int $per_page = 25;
     protected int $page = 1;
+    protected string $default_order = "";
+    protected string $default_sort = "ASC";
 
     // Table stuff 
     protected array $table_columns = [];
@@ -54,6 +56,7 @@ class ModuleController extends Controller
         // The module is defined by the calling class
         $this->module = route()->getMiddleware()["module"];
         $id = route()->getParameters()[$this->primary_key] ?? null;
+        $this->default_order = $this->primary_key;
         $this->init($id);
     }
 
@@ -139,7 +142,7 @@ class ModuleController extends Controller
     /**
      * Table search
      */
-    #[Post("/search")]
+    #[Get("/search", "module.search", ["auth"])]
     public function search(): string
     {
         $valid = $this->validateRequest([
@@ -147,6 +150,21 @@ class ModuleController extends Controller
         ]);
         if ($valid) {
             $this->handleSearch($valid->search_term);
+        }
+        return $this->index();
+    }
+
+    /**
+     * Table sort by column
+     */
+    #[Get("/sort", "module.sort", ["auth"])]
+    public function sort(): string
+    {
+        $valid = $this->validateRequest([
+            "index" => ["required"],
+        ]);
+        if ($valid) {
+            $this->handleSort($valid->index);
         }
         return $this->index();
     }
@@ -297,6 +315,11 @@ class ModuleController extends Controller
             $this->addWhere($clause, ...array_fill(0, count($this->searchable), "%$this->search_term%"));
         }
 
+        // Sort
+        $order = $this->getSession("order") ?? $this->default_order;
+        $sort = $this->getSession("sort") ?? $this->default_sort;
+        $this->order_by = ["$order $sort"];
+
         // Filter link
         if (!$skip_filter_links) {
             if (!empty($this->filter_links)) {
@@ -340,6 +363,26 @@ class ModuleController extends Controller
             $this->setSession("search_term", $search_term);
         } else {
             $this->deleteSession("search_term");
+        }
+    }
+
+    /**
+     * Handle sort request
+     * Sets the sort / order for a table view
+     */
+    protected function handleSort(string $index): void
+    {
+        $headers = array_values($this->filterTableColumns());
+        if (isset($headers[$index])) {
+            $column = $this->getAlias($headers[$index]);
+            $session_order = $this->getSession("order");
+            $session_sort = $this->getSession("sort");
+            $this->setSession("order", $column);
+            if ($column === $session_order) {
+                $this->setSession("sort", $session_sort === "ASC" ? "DESC" : "ASC");
+            } else {
+                $this->setSession("sort", "ASC");
+            }
         }
     }
 
@@ -573,7 +616,7 @@ class ModuleController extends Controller
         $offset = $this->per_page * ($this->page - 1);
         // Always include primary key
         if (!in_array($this->primary_key, $this->table_columns)) {
-            $this->table_columns['skip'] = $this->primary_key;
+            $this->table_columns['_skip'] = $this->primary_key;
         }
         // Fetch the table data
         $qb = new QueryBuilder;
@@ -601,13 +644,28 @@ class ModuleController extends Controller
                 ];
             }, array_keys($this->table_columns), array_keys($result), array_values($result));
         }
-        $headers = array_filter(array_keys($this->table_columns), fn($column) => $column != 'skip');
+        $headers = $this->filterTableColumns();
         return [
             "data" => $data,
             "headers" => $headers,
             // +1 to colspan to account for the actions cell
             "colspan" => count($headers) + 1,
         ];
+    }
+
+    /**
+     * Filter out any table columns that are skipped
+     * (ie, part of the dataset but not rendered in the table)
+     */
+    protected function filterTableColumns(): array
+    {
+        $headers = [];
+        foreach ($this->table_columns as $label => $column) {
+            if ($label !== '_skip') {
+                $headers[$label] = $column;
+            }
+        }
+        return $headers;
     }
 
     /**

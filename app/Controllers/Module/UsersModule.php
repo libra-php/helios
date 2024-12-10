@@ -73,6 +73,8 @@ class UsersModule extends ModuleController
         $this->addErrorMessage("username.regex", "Invalid username");
         $this->addErrorMessage("password_match", "Passwords must match");
 
+        $password_pattern = "^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$";
+
         if ($id) {
             // Edit
             $this->validation_rules = [
@@ -94,7 +96,7 @@ class UsersModule extends ModuleController
                     return !$user;
                 }],
                 "user_role_id" => ["required"],
-                "password" => ["min_length:=8", "regex:=^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"],
+                "password" => ["min_length:=8", "regex:=$password_pattern"],
                 "password_match" => [function ($value) {
                     return request()->get("password") === $value;
                 }],
@@ -109,7 +111,7 @@ class UsersModule extends ModuleController
                 "password" => [
                     "required",
                     "min_length:=8",
-                    "regex:=^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                    "regex:=$password_pattern"
                 ],
                 "password_match" => ["required", function ($value) {
                     return request()->get("password") === $value;

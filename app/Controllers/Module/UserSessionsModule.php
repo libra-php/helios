@@ -35,6 +35,6 @@ class UserSessionsModule extends ModuleController
             "module",
             "url",
         ];
-        $this->order_by = ["id DESC"];
+        $this->default_sort = "DESC";
     }
 }

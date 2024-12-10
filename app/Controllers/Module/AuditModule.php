@@ -35,6 +35,5 @@ class AuditModule extends ModuleController
             "Update" => "tag='UPDATE'",
             "Delete" => "tag='DELETE'",
         ];
-        $this->order_by = ["id DESC"];
     }
 }

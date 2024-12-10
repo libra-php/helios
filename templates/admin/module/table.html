@@ -5,8 +5,8 @@
         </caption>
     {% endif %}
     <thead class="sticky-top bg-white">
-    {% for header in table.headers %}
-        <th nowrap>{{ header }}</th>
+    {% for header,column in table.headers %}
+    <th nowrap><a hx-boost="true" href="{{ module.route }}/sort?index={{loop.index0}}">{{ header }}</a></th>
     {% endfor %}
     <th></th>
     </thead>
@@ -16,7 +16,7 @@
         <tr valign="middle">
             {% set id = "" %}
             {% for column,cell in datum %}
-                {% if cell.label != 'skip' %}
+                {% if cell.label != '_skip' %}
                     {% set id = cell.id %}
                     <td nowrap>{{ cell.formatted|raw }}</td>
                 {% endif %}
