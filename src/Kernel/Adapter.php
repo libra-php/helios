@@ -27,6 +27,10 @@ class Adapter extends CLI
             "Generate secure application key"
         );
         $options->registerCommand(
+            "migrate:create",
+            "Generate a new migration file"
+        );
+        $options->registerCommand(
             "migrate:list",
             "See migration list and statuses"
         );
@@ -52,6 +56,7 @@ class Adapter extends CLI
             "migrate:fresh" => $this->migrateFresh(),
             "migrate:up" => $this->runMigration($options->getArgs(), "up"),
             "migrate:down" => $this->runMigration($options->getArgs(), "down"),
+            "migrate:create" => $this->createMigration($options->getArgs()[0]),
             default => "",
         };
         $this->command($options->getCmd());
@@ -119,6 +124,39 @@ class Adapter extends CLI
         } else {
             $this->error(" Unknown migration direction?!");
         }
+        $this->notice(" Complete!");
+        exit();
+    }
+
+    private function createMigration(string $table_name): void
+    {
+        $migration_path = config("paths.migrations");
+        $migrations = $this->migrations->getMigrationFiles($migration_path);
+        $migration_file = $migration_path . count($migrations) . "_create_$table_name.php";
+        $class = <<<CLASS
+<?php
+namespace Nebula\Migrations;
+
+use Helios\Database\{Blueprint, Schema, IMigration};
+
+return new class implements IMigration
+{
+    private \$table = "{table_name}";
+    public function up(): string
+    {
+        return Schema::create(\$this->table, function (Blueprint \$table) {
+            \$table->bigIncrements("id");
+        });
+    }
+
+    public function down(): string
+    {
+        return Schema::drop(\$this->table);
+    }
+};
+CLASS;
+        $class = str_replace("{table_name}", $table_name, $class);
+        file_put_contents($migration_file, $class);
         $this->notice(" Complete!");
         exit();
     }
