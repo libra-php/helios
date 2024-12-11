@@ -438,13 +438,14 @@ class ModuleController extends Controller
      */
     protected function getFilterData(): array
     {
+        $order = $this->getAlias($this->getSession("order") ?? $this->default_order);
         // Data used by table filters
         return [
             "filter_links" => array_keys($this->filter_links),
             "filter_link_index" => $this->filter_link_index,
             "search_term" => $this->search_term,
             "searchable" => $this->searchable,
-            "order" => $this->getSession("order") ?? $this->default_order,
+            "order" => $order,
             "sort" => $this->getSession("sort") ?? $this->default_sort,
         ];
     }
@@ -650,7 +651,10 @@ class ModuleController extends Controller
                 ];
             }, array_keys($this->table_columns), array_keys($result), array_values($result));
         }
-        $headers = $this->filterTableColumns();
+        $headers = [];
+        foreach ($this->filterTableColumns() as $label => $column) {
+            $headers[$label] = $this->getAlias($column);
+        }
         return [
             "data" => $data,
             "headers" => $headers,
