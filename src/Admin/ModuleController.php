@@ -367,9 +367,9 @@ class ModuleController extends Controller
      */
     protected function handleSort(string $index): void
     {
-        $headers = array_values($this->filterTableColumns());
-        if (isset($headers[$index])) {
-            $column = $this->getAlias($headers[$index]);
+        $headers = array_map(fn($column) => $this->getAlias($column), array_values($this->filterTableColumns()));
+        $column = $headers[$index];
+        if ($column) {
             $session_order = $this->getSession("order");
             $session_sort = $this->getSession("sort");
             $this->setSession("order", $column);
@@ -444,6 +444,8 @@ class ModuleController extends Controller
             "filter_link_index" => $this->filter_link_index,
             "search_term" => $this->search_term,
             "searchable" => $this->searchable,
+            "order" => $this->getSession("order") ?? $this->default_order,
+            "sort" => $this->getSession("sort") ?? $this->default_sort,
         ];
     }
 
@@ -530,6 +532,15 @@ class ModuleController extends Controller
     {
         $arr = explode(" as ", strtolower($column));
         return end($arr);
+    }
+
+    /**
+     * Strip a column of alias
+     */
+    protected function stripAlias(string $column): string
+    {
+        $arr = explode(" as ", strtolower($column));
+        return $arr[0] ?? null;
     }
 
     /**

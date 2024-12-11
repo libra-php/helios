@@ -88,6 +88,22 @@ a:active {
     border: 1px solid #ddd;
 }
 
+/**
+ * Table
+ */
+.th-link {
+    opacity: 0.7;
+}
+.th-link.active {
+    opacity: 1.0;
+}
+.th-link.active.asc::after {
+    content: " ▴"
+}
+.th-link.active.desc::after {
+    content: " ▾"
+}
+
 
 /**
  * Sidebar
