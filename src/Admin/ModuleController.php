@@ -157,15 +157,10 @@ class ModuleController extends Controller
     /**
      * Table sort by column
      */
-    #[Get("/sort", "module.sort", ["auth"])]
-    public function sort(): string
+    #[Get("/sort/{index}", "module.sort", ["auth"])]
+    public function sort(int $index): string
     {
-        $valid = $this->validateRequest([
-            "index" => ["required"],
-        ]);
-        if ($valid) {
-            $this->handleSort($valid->index);
-        }
+        $this->handleSort($index);
         return $this->index();
     }
 

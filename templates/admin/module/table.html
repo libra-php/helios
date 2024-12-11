@@ -6,7 +6,7 @@
     {% endif %}
     <thead class="sticky-top bg-white">
     {% for header,column in table.headers %}
-    <th nowrap><a hx-boost="true" href="{{ module.route }}/sort?index={{loop.index0}}">{{ header }}</a></th>
+    <th nowrap><a hx-boost="true" href="{{ module.route }}/sort/{{loop.index0}}">{{ header }}</a></th>
     {% endfor %}
     <th></th>
     </thead>
