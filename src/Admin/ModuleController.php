@@ -27,6 +27,15 @@ class ModuleController extends Controller
     protected array $order_by = [];
     protected array $params = [];
     protected int $per_page = 25;
+    protected array $per_page_options = [
+        10,
+        25,
+        50,
+        100,
+        250,
+        500,
+        1000,
+    ];
     protected int $page = 1;
     protected string $default_order = "";
     protected string $default_sort = "ASC";
@@ -84,7 +93,7 @@ class ModuleController extends Controller
     }
 
     /**
-     * Export table in csv format
+     * Export table in csv format endpoint
      */
     #[Get("/export-csv", "module.export-csv", ["auth"])]
     public function exportCSV(): void
@@ -140,7 +149,7 @@ class ModuleController extends Controller
     }
 
     /**
-     * Table search
+     * Table search endpoint
      */
     #[Get("/search", "module.search", ["auth"])]
     public function search(): string
@@ -171,6 +180,21 @@ class ModuleController extends Controller
     public function page(int $page): string
     {
         $this->handlePage($page);
+        return $this->index();
+    }
+
+    /**
+     * Per page endpoint
+     */
+    #[Get("/per-page")]
+    public function per_page(): string
+    {
+        $valid = $this->validateRequest([
+            "per_page" => ["required"],
+        ]);
+        if ($valid) {
+            $this->handlePerPage($valid->per_page);
+        }
         return $this->index();
     }
 
@@ -315,6 +339,12 @@ class ModuleController extends Controller
         $sort = $this->getSession("sort") ?? $this->default_sort;
         $this->order_by = ["$order $sort"];
 
+        // Per page
+        $this->per_page = $this->getSession("per_page") ?? $this->per_page;
+
+        // Current page
+        $this->page = $this->getSession("page") ?? $this->page;
+
         // Filter link
         if (!$skip_filter_links) {
             if (!empty($this->filter_links)) {
@@ -323,9 +353,6 @@ class ModuleController extends Controller
                 $this->addWhere($filters[$this->filter_link_index]);
             }
         }
-
-        // Current page
-        $this->page = $this->getSession("page") ?? $this->page;
     }
 
     /**
@@ -386,11 +413,16 @@ class ModuleController extends Controller
      */
     protected function handlePage(int $page): void
     {
-        $pagination = $this->getPaginationData();
-        // Check out of bounds
         if ($page < 0) $page = 1;
-        if ($page > $pagination['total_pages']) $page = $pagination['total_pages'];
         $this->setSession("page", $page);
+    }
+
+    /**
+     * Handle per page request
+     */
+    protected function handlePerPage(int $pages): void
+    {
+        $this->setSession("per_page", $pages);
     }
 
     /**
@@ -520,6 +552,8 @@ class ModuleController extends Controller
         $total_results = $this->getTotalResultsCount();
         return [
             "page" => $this->page,
+            "per_page" => $this->per_page,
+            "per_page_options" => $this->per_page_options,
             "total_results" => $total_results,
             "total_pages" => ceil($total_results / $this->per_page),
             "link_range" => 2,
