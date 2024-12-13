@@ -16,8 +16,8 @@ class ModuleController extends Controller
 
     // The module
     private string $module;
-    protected string $module_title = '';
-    protected string $module_parent = '';
+    public string $module_title = '';
+    public string $module_parent = '';
 
     // The sql stuff
     protected string $primary_key = 'id';
@@ -89,6 +89,7 @@ class ModuleController extends Controller
             "pagination" => $this->getPaginationData(),
             "permissions" => $this->getPermissions(),
             "filters" => $this->getFilterData(),
+            "links" => $this->getLinks(),
         ]);
     }
 
@@ -215,6 +216,7 @@ class ModuleController extends Controller
             "id" => $id,
             "module" => $this->getModuleData(),
             "form" => $this->getEditFormData($id),
+            "links" => $this->getLinks(),
         ]);
     }
 
@@ -234,6 +236,7 @@ class ModuleController extends Controller
         return $this->render("/admin/module/create.html", [
             "module" => $this->getModuleData(),
             "form" => $this->getCreateFormData(),
+            "links" => $this->getLinks(),
         ]);
     }
 
@@ -480,6 +483,33 @@ class ModuleController extends Controller
             "order" => $order,
             "sort" => $this->getSession("sort") ?? $this->default_sort,
         ];
+    }
+
+    /**
+     * Return links for nav
+     */
+    protected function getLinks(): array
+    {
+        $links = [];
+        $routes = app()->router()->getRoutes();
+        foreach ($routes as $route) {
+            $name = $route->getName();
+            if ($name === 'module.index') {
+                $middleware = $route->getMiddleware();
+                $class = $route->getHandlerClass();
+                if (key_exists('module', $middleware)) {
+                    $route = $middleware['module'];
+                    $module = new $class;
+                    $parent = $module->module_parent;
+                    $title = $module->module_title;
+                    $links[$parent][] = [
+                        "url" => "/admin/$route",
+                        "label" => $title,
+                    ];
+                }
+            }
+        }
+        return $links;
     }
 
     /**
