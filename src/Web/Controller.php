@@ -78,6 +78,7 @@ class Controller
         $data["request_errors"] = $this->request_errors;
         $data["nonce"] = session()->get("nonce");
         $data["flash"] = Flash::get();
+        $data["app"] = config("app.name");
         return $twig->render($path, $data);
     }
 
