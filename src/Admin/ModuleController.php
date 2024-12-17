@@ -505,10 +505,16 @@ class ModuleController extends Controller
                     $links[$parent][] = [
                         "url" => "/admin/$route",
                         "label" => $title,
+                        "boost" => "true",
                     ];
                 }
             }
         }
+        $links["Account"][] = [
+            "url" => "/sign-out",
+            "label" => "Sign Out",
+            "boost" => "false",
+        ];
         // Sort each group
         foreach ($links as &$group) {
             uasort($group, fn($a, $b) => $a['label'] <=> $b['label']);
