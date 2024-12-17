@@ -15,7 +15,7 @@ class UsersModule extends ModuleController
     {
         $this->table = "users";
         $this->module_title = "Users";
-        $this->module_parent = "Administration";
+        $this->link_parent = "Administration";
         $this->table_columns = [
             "ID" => "id",
             "UUID" => "uuid",

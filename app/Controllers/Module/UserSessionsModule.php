@@ -13,7 +13,7 @@ class UserSessionsModule extends ModuleController
     {
         $this->table = "user_sessions";
         $this->module_title = "User Sessions";
-        $this->module_parent = "Administration";
+        $this->link_parent = "Administration";
         $this->table_columns = [
             "ID" => "id",
             "User" => "(SELECT users.username 

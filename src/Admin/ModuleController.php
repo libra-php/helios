@@ -17,7 +17,7 @@ class ModuleController extends Controller
     // The module
     private string $module;
     public string $module_title = '';
-    public string $module_parent = '';
+    public string $link_parent = '';
 
     // The sql stuff
     protected string $primary_key = 'id';
@@ -462,7 +462,7 @@ class ModuleController extends Controller
         return [
             "module" => $this->module,
             "title" => $this->module_title,
-            "parent" => $this->module_parent,
+            "parent" => $this->link_parent,
             "route" => rtrim(moduleRoute("module.index", $this->module), DIRECTORY_SEPARATOR),
             "primary_key" => $this->primary_key,
         ];
@@ -500,7 +500,7 @@ class ModuleController extends Controller
                 if (key_exists('module', $middleware)) {
                     $route = $middleware['module'];
                     $module = new $class;
-                    $parent = $module->module_parent;
+                    $parent = $module->link_parent;
                     $title = $module->module_title;
                     $links[$parent][] = [
                         "url" => "/admin/$route",
@@ -510,6 +510,7 @@ class ModuleController extends Controller
                 }
             }
         }
+        // Add sign out link
         $links["Account"][] = [
             "url" => "/sign-out",
             "label" => "Sign Out",

@@ -13,7 +13,7 @@ class UserRolesModule extends ModuleController
     {
         $this->table = "user_roles";
         $this->module_title = "User Roles";
-        $this->module_parent = "Administration";
+        $this->link_parent = "Administration";
 
         $this->table_columns = [
             "ID" => "id",
