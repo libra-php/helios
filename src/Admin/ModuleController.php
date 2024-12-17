@@ -90,6 +90,7 @@ class ModuleController extends Controller
             "permissions" => $this->getPermissions(),
             "filters" => $this->getFilterData(),
             "links" => $this->getLinks(),
+            "gravatar" => user()->gravatar(),
         ]);
     }
 
@@ -217,6 +218,7 @@ class ModuleController extends Controller
             "module" => $this->getModuleData(),
             "form" => $this->getEditFormData($id),
             "links" => $this->getLinks(),
+            "gravatar" => user()->gravatar(),
         ]);
     }
 
@@ -237,6 +239,7 @@ class ModuleController extends Controller
             "module" => $this->getModuleData(),
             "form" => $this->getCreateFormData(),
             "links" => $this->getLinks(),
+            "gravatar" => user()->gravatar(),
         ]);
     }
 

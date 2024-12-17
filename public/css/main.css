@@ -138,6 +138,11 @@ a:active {
 .navbar .dropdown-menu {
     z-index: 1021;
 }
+.navbar .gravatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
 
 
 /**
