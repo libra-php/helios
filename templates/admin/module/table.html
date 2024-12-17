@@ -1,57 +1,59 @@
-<table id="table" class="table table-sm caption-top">
-    {% if flash %}
-        <caption>
-            {% include "components/flash.html" %}
-        </caption>
-    {% endif %}
-    <thead class="sticky-top bg-white">
-    {% for header,column in table.headers %}
-    <th nowrap><a class="th-link {% if column == filters.order %}active {% if filters.sort == 'ASC' %}asc{% else %}desc{% endif %}{% endif %}" hx-boost="true" href="{{ module.route }}/sort/{{loop.index0}}">{{ header }}</a></th>
-    {% endfor %}
-    <th></th>
-    </thead>
-    <tbody>
-    {% if table.data %}
-    {% for i,datum in table.data %}
-        <tr valign="middle">
-            {% set id = "" %}
-            {% for column,cell in datum %}
-                {% if cell.label %}
-                    {% set id = cell.id %}
-                    <td nowrap>{{ cell.formatted|raw }}</td>
-                {% endif %}
-            {% endfor %}
-            <td class="actions d-flex justify-content-end" nowrap>
-                &nbsp;
-                <form>
-                    {{ csrf()|raw }}
-                    {% if permissions.hasEdit(id) %}
-                    <button type="button" 
-                        class="btn btn-primary btn-sm" 
-                        hx-get="{{ module.route }}/edit/{{ id }}" 
-                        hx-swap="outerHTML" 
-                        hx-target="#module" 
-                        hx-select="#module">Edit</button>
+{% if table.headers %}
+    <table id="table" class="table table-sm caption-top">
+        {% if flash %}
+            <caption>
+                {% include "components/flash.html" %}
+            </caption>
+        {% endif %}
+        <thead class="sticky-top bg-white">
+        {% for header,column in table.headers %}
+        <th nowrap><a class="th-link {% if column == filters.order %}active {% if filters.sort == 'ASC' %}asc{% else %}desc{% endif %}{% endif %}" hx-boost="true" href="{{ module.route }}/sort/{{loop.index0}}">{{ header }}</a></th>
+        {% endfor %}
+        <th></th>
+        </thead>
+        <tbody>
+        {% if table.data %}
+        {% for i,datum in table.data %}
+            <tr valign="middle">
+                {% set id = "" %}
+                {% for column,cell in datum %}
+                    {% if cell.label %}
+                        {% set id = cell.id %}
+                        <td nowrap>{{ cell.formatted|raw }}</td>
                     {% endif %}
-                    {% if permissions.hasDelete(id) %}
-                    <button type="button" 
-                        class="btn btn-danger btn-sm" 
-                        hx-delete="{{ module.route }}/{{ id }}" 
-                        hx-swap="outerHTML" 
-                        hx-confirm="Are you sure you want to permanently delete this record?"
-                        hx-target="#module" 
-                        hx-select="#module">Delete</button>
-                    {% endif %}
-                </form>
-            </td>
-        </tr>
-    {% endfor %}
-    {% elseif not table.data and table.headers %}
-        <tr>
-            <td valign="middle" colspan="{{ table.colspan }}">
-                <span class="text-danger"><strong><em>There are no results</em></strong></span>
-            </td>
-        </tr>
-    {% endif %}
-    </tbody>
-</table>
+                {% endfor %}
+                <td class="actions d-flex justify-content-end" nowrap>
+                    &nbsp;
+                    <form>
+                        {{ csrf()|raw }}
+                        {% if permissions.hasEdit(id) %}
+                        <button type="button" 
+                            class="btn btn-primary btn-sm" 
+                            hx-get="{{ module.route }}/edit/{{ id }}" 
+                            hx-swap="outerHTML" 
+                            hx-target="#module" 
+                            hx-select="#module">Edit</button>
+                        {% endif %}
+                        {% if permissions.hasDelete(id) %}
+                        <button type="button" 
+                            class="btn btn-danger btn-sm" 
+                            hx-delete="{{ module.route }}/{{ id }}" 
+                            hx-swap="outerHTML" 
+                            hx-confirm="Are you sure you want to permanently delete this record?"
+                            hx-target="#module" 
+                            hx-select="#module">Delete</button>
+                        {% endif %}
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        {% elseif not table.data and table.headers %}
+            <tr>
+                <td valign="middle" colspan="{{ table.colspan }}">
+                    <span class="text-danger"><strong><em>There are no results</em></strong></span>
+                </td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+{% endif %}

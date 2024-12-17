@@ -1,10 +1,10 @@
-<nav class="navbar navbar-expand-lg d-block d-sm-none d-flex" hx-boost="true" hx-swap="outerHTML" hx-target="#module" hx-select="#module">
+<nav class="navbar navbar-expand-lg d-block d-sm-none d-flex p-0" hx-boost="true" hx-swap="outerHTML" hx-target="#module" hx-select="#module">
     <span class="navbar-brand fw-bold" href="#">{{ app }}</span>
     <div class="dropdown">
         <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
         Menu
         </button>
-        <ul class="dropdown-menu dropdown-menu-end p-2">
+        <ul class="dropdown-menu dropdown-menu-end p-2 glass">
             {% for group,data in links %}
                 <li class="fw-bold">{{ group }}</li>
                 <ul class="mt-1 ps-2">

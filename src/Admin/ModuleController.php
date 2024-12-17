@@ -509,6 +509,10 @@ class ModuleController extends Controller
                 }
             }
         }
+        // Sort each group
+        foreach ($links as &$group) {
+            uasort($group, fn($a, $b) => $a['label'] <=> $b['label']);
+        }
         return $links;
     }
 

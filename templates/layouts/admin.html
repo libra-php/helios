@@ -3,7 +3,7 @@
 {% block content %}
 <section id="admin" class="d-flex flex-grow-1 h-100 w-100">
     {% include "admin/module/sidebar.html" %}
-    <section id="module" class="d-flex flex-column flex-grow-1 p-2">
+    <section id="module" class="d-flex flex-column flex-grow-1 p-2 container">
         {% block top %}
         {% include "admin/module/navbar.html" %}
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" hx-boost="true" hx-swap="outerHTML" hx-target="#module" hx-select="#module">

@@ -66,6 +66,10 @@ a:active {
     border: 3px solid #ffffff;
 }
 
+#admin {
+    background-color: #fff;
+}
+
 
 /**
  * Auth forms
@@ -109,8 +113,9 @@ a:active {
  * Sidebar
  */
 #sidebar {
-    width: 200px;
-    min-width: 200px;
+    background-color: #f3f4f8;
+    width: 150px;
+    min-width: 150px;
 }
 #sidebar ul {
     list-style: none; 
@@ -122,6 +127,16 @@ a:active {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/**
+ * Navbar
+ */
+.navbar {
+    margin-bottom: 4px;
+}
+.navbar .dropdown-menu {
+    z-index: 1021;
 }
 
 
