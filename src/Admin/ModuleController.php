@@ -406,10 +406,26 @@ class ModuleController extends Controller
             $session_order = $this->getSession("order");
             $session_sort = $this->getSession("sort");
             $this->setSession("order", $column);
-            if ($column === $session_order) {
-                $this->setSession("sort", $session_sort === "ASC" ? "DESC" : "ASC");
+            if ($session_order && $session_sort) {
+                if ($session_order === $column) {
+                    // This is the current order column, flip the sort
+                    $this->setSession("sort", $session_sort === "ASC" ? "DESC" : "ASC");
+                } else {
+                    // Different column, so start ASC
+                    $this->setSession("sort", "ASC");
+                }
             } else {
-                $this->setSession("sort", "ASC");
+                // The session hasn't been set yet
+                // If it is the primary key (default order) flip the sort
+                // Otherwise we will always start a new session as default sort
+                if ($column === $this->primary_key && $this->default_sort === 'ASC') {
+                    $sort = "DESC";
+                } else if ($column === $this->primary_key && $this->default_sort === 'DESC') {
+                    $sort = "ASC";
+                } else {
+                    $sort = $this->default_sort;
+                }
+                $this->setSession("sort", $sort);
             }
         }
     }
