@@ -56,7 +56,7 @@ class Adapter extends CLI
             "migrate:fresh" => $this->migrateFresh(),
             "migrate:up" => $this->runMigration($options->getArgs(), "up"),
             "migrate:down" => $this->runMigration($options->getArgs(), "down"),
-            "migrate:create" => $this->createMigration($options->getArgs()[0]),
+            "migrate:create" => $this->createMigration($options->getArgs()[0] ?? ''),
             default => "",
         };
         $this->command($options->getCmd());
@@ -128,8 +128,12 @@ class Adapter extends CLI
         exit();
     }
 
-    private function createMigration(string $table_name): void
+    private function createMigration(?string $table_name): void
     {
+        if (!$table_name) {
+            $this->warning("You must provide a table name");
+            exit;
+        }
         $migration_path = config("paths.migrations");
         $migrations = $this->migrations->getMigrationFiles($migration_path);
         $migration_file = $migration_path . count($migrations) . "_create_$table_name.php";
@@ -146,6 +150,7 @@ return new class implements IMigration
     {
         return Schema::create(\$this->table, function (Blueprint \$table) {
             \$table->bigIncrements("id");
+            \$table->primaryKey("id");
         });
     }
 

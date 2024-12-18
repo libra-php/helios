@@ -83,4 +83,18 @@ trait FormControls
     {
         return template("admin/module/controls/select.html", $opts);
     }
+
+    protected function file(array $opts): string
+    {
+        $opts["type"] = "file";
+        $input = $this->input($opts);
+        return template("admin/module/controls/file.html", [
+            "input" => $input,
+        ]);
+    }
+
+    protected function image(array $opts): string
+    {
+        return template("admin/module/controls/image.html", $opts);
+    }
 }
