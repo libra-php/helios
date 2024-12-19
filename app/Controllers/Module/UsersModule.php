@@ -42,6 +42,7 @@ class UsersModule extends ModuleController
         ];
 
         $this->form_columns = [
+            "Avatar" => "avatar",
             "Name" => "name",
             "Email" => "email",
             "Username" => "username",
@@ -50,6 +51,7 @@ class UsersModule extends ModuleController
             "Repeat Password" => "'' as password_match",
         ];
         $this->form_controls = [
+            "avatar" => "image",
             "name" => "input",
             "user_role_id" => "select",
             "password" => function ($opts) {

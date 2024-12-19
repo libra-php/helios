@@ -23,7 +23,9 @@ trait FormControls
 
     protected function input(array $opts): string
     {
-        $opts["type"] = "input";
+        if (!isset($opts['type'])) {
+            $opts["type"] = "input";
+        }
         return template("admin/module/controls/input.html", $opts);
     }
 
@@ -88,13 +90,13 @@ trait FormControls
     {
         $opts["type"] = "file";
         $input = $this->input($opts);
-        return template("admin/module/controls/file.html", [
-            "input" => $input,
-        ]);
+        $opts["input"] = $input;
+        return template("admin/module/controls/file.html", $opts);
     }
 
     protected function image(array $opts): string
     {
+        $opts["input"] = $this->file($opts);
         return template("admin/module/controls/image.html", $opts);
     }
 }
