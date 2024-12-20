@@ -153,12 +153,15 @@ a:active {
 /**
  * Navbar
  */
+.navbar {
+    margin-bottom: 4px;
+}
 .navbar .dropdown-menu {
     z-index: 1021;
 }
 .navbar .avatar {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
 }
 
