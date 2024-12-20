@@ -4,14 +4,14 @@
  */
 html,
 body {
-    font-family: "Ubuntu", serif;
-    font-weight: 400;
-    font-style: normal;
     height: 100%;
     width: 100%;
 }
 
 body {
+    font-family: "Ubuntu", serif;
+    font-weight: 400;
+    font-style: normal;
     font-size: 100%;
 }
 
@@ -153,9 +153,6 @@ a:active {
 /**
  * Navbar
  */
-.navbar {
-    margin-bottom: 4px;
-}
 .navbar .dropdown-menu {
     z-index: 1021;
 }
@@ -230,3 +227,10 @@ a:active {
     background-color: #008000;
     color: white;
 }
+
+@media (max-width: 575.98px) {
+    #admin {
+        max-height: calc(100% - 48px);
+    }
+}
+

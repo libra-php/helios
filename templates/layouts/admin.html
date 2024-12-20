@@ -1,20 +1,22 @@
 {% extends "layouts/base.html" %}
 
 {% block content %}
-<section id="admin" class="d-flex flex-grow-1 h-100 w-100">
-    {% include "admin/module/sidebar.html" %}
-    <section id="module" class="d-flex flex-column flex-grow-1 p-2 container">
-        {% block top %}
+<section id="admin" class="d-flex flex-column h-100">
         {% include "admin/module/navbar.html" %}
-        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" hx-boost="true" hx-swap="outerHTML" hx-target="#module" hx-select="#module">
-            <ol class="breadcrumb">
-                {% block breadcrumb %}{% endblock %}
-            </ol>
-        </nav>
-        {% block header %}<h1 class="fw-bold">{{ module.title }}</h1>{% endblock %}
-        {% endblock %}
-        {% block module %}{% endblock %}
-        {% block bottom %}{% endblock %}
-    </section>
+        <main class="d-flex h-100">
+            {% include "admin/module/sidebar.html" %}
+            <section id="module" class="d-flex flex-column p-2 container h-100">
+                {% block top %}
+                <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" hx-boost="true" hx-swap="outerHTML" hx-target="#module" hx-select="#module">
+                    <ol class="breadcrumb">
+                        {% block breadcrumb %}{% endblock %}
+                    </ol>
+                </nav>
+                {% block header %}<h1 class="fw-bold">{{ module.title }}</h1>{% endblock %}
+                {% endblock %}
+                {% block module %}{% endblock %}
+                {% block bottom %}{% endblock %}
+            </section>
+        </main>
 </section>
 {% endblock %}
