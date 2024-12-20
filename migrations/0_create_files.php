@@ -13,6 +13,8 @@ return new class implements IMigration
             $table->uuid("uuid");
             $table->varchar("name");
             $table->text("path");
+            $table->unsignedBigInteger("bytes");
+            $table->varchar("mime");
             $table->timestamp("created_at")->default("CURRENT_TIMESTAMP");
             $table->primaryKey("id");
         });

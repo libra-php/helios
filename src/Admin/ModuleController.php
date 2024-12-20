@@ -2,17 +2,19 @@
 
 namespace Helios\Admin;
 
-use App\Models\{Audit, UserSession};
+use App\Models\{Audit, UserSession, File};
 use Helios\Database\QueryBuilder;
 use Helios\View\{Flash, FormControls, TableFormat};
 use Helios\Web\Controller;
 use PDO;
+use Ramsey\Uuid\Uuid;
 use StellarRouter\{Get, Post, Delete};
 
 /** @package Helios\Admin */
 class ModuleController extends Controller
 {
-    use FormControls, TableFormat;
+    use FormControls;
+    use TableFormat;
 
     // The module
     private string $module;
@@ -40,7 +42,7 @@ class ModuleController extends Controller
     protected string $default_order = "";
     protected string $default_sort = "ASC";
 
-    // Table stuff 
+    // Table stuff
     protected array $table_columns = [];
     protected bool $export_csv = true;
 
@@ -90,7 +92,7 @@ class ModuleController extends Controller
             "permissions" => $this->getPermissions(),
             "filters" => $this->getFilterData(),
             "links" => $this->getLinks(),
-            "gravatar" => user()->gravatar(),
+            "avatar" => user()->avatar(),
         ]);
     }
 
@@ -115,7 +117,7 @@ class ModuleController extends Controller
         while ($this->page <= $total_pages) {
             $result = $this->getTableData();
             foreach ($result['data'] as $item) {
-                $row = array_map(fn($one) => $one['raw'], $item);
+                $row = array_map(fn ($one) => $one['raw'], $item);
                 $values = array_values($row);
                 fputcsv($fp, $values);
             }
@@ -213,12 +215,24 @@ class ModuleController extends Controller
         $path = "/admin/{$this->module}/edit/$id";
         header("HX-Push-Url: $path");
 
+        $valid = $this->validateRequest([
+            "delete_file" => [],
+        ]);
+
+        // Detect file delete
+        if ($valid->delete_file) {
+            $file = File::find($valid->delete_file);
+            if ($file) {
+                $file->delete();
+            }
+        }
+
         return $this->render("/admin/module/edit.html", [
             "id" => $id,
             "module" => $this->getModuleData(),
             "form" => $this->getEditFormData($id),
             "links" => $this->getLinks(),
-            "gravatar" => user()->gravatar(),
+            "avatar" => user()->avatar(),
         ]);
     }
 
@@ -239,7 +253,7 @@ class ModuleController extends Controller
             "module" => $this->getModuleData(),
             "form" => $this->getCreateFormData(),
             "links" => $this->getLinks(),
-            "gravatar" => user()->gravatar(),
+            "avatar" => user()->avatar(),
         ]);
     }
 
@@ -311,7 +325,9 @@ class ModuleController extends Controller
     /**
      * This method can be used to configure the module properties
      */
-    public function init(?int $id): void {}
+    public function init(?int $id): void
+    {
+    }
 
     /**
      * Record active user session
@@ -335,7 +351,7 @@ class ModuleController extends Controller
         // Search
         if (!empty($this->searchable)) {
             $this->search_term = $this->getSession("search_term") ?? $this->search_term;
-            $map = array_map(fn($column) => "$column LIKE ?", $this->searchable);
+            $map = array_map(fn ($column) => "$column LIKE ?", $this->searchable);
             $clause = "((" . implode(") OR (", $map) . "))";
             $this->addWhere($clause, ...array_fill(0, count($this->searchable), "%$this->search_term%"));
         }
@@ -373,6 +389,42 @@ class ModuleController extends Controller
     }
 
     /**
+     * Handle file upload
+     */
+    protected function handleFileUpload(string $name): File|bool
+    {
+        $file = request()->files->get($name);
+        if ($file && $file->isValid()) {
+            $upload_dir = config("paths.uploads");
+            $original_name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $extension = $file->getClientOriginalExtension();
+            $safe_name = $original_name . '-' . uniqid() . '.' . $extension;
+            $upload_file_path = $upload_dir . $safe_name;
+
+            // Create upload directory if it doesn't exist
+            if (!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0755, true);
+            }
+
+            $bytes = $file->getSize();
+            $mime = $file->getMimeType();
+
+            $file->move($upload_dir, $safe_name);
+
+            $file = File::create([
+                "uuid" => Uuid::uuid4(),
+                "name" => $safe_name,
+                "path" => $upload_file_path,
+                "bytes" => $bytes,
+                "mime" => $mime,
+            ]);
+
+            return $file;
+        }
+        return false;
+    }
+
+    /**
      * Handle filter link request
      */
     protected function handleFilterLink(int $index): void
@@ -400,7 +452,7 @@ class ModuleController extends Controller
      */
     protected function handleSort(string $index): void
     {
-        $headers = array_map(fn($column) => $this->getAlias($column), array_values($this->filterTableColumns()));
+        $headers = array_map(fn ($column) => $this->getAlias($column), array_values($this->filterTableColumns()));
         $column = $headers[$index];
         if ($column) {
             $session_order = $this->getSession("order");
@@ -420,7 +472,7 @@ class ModuleController extends Controller
                 // Otherwise we will always start a new session as default sort
                 if ($column === $this->primary_key && $this->default_sort === 'ASC') {
                     $sort = "DESC";
-                } else if ($column === $this->primary_key && $this->default_sort === 'DESC') {
+                } elseif ($column === $this->primary_key && $this->default_sort === 'DESC') {
                     $sort = "ASC";
                 } else {
                     $sort = $this->default_sort;
@@ -435,7 +487,9 @@ class ModuleController extends Controller
      */
     protected function handlePage(int $page): void
     {
-        if ($page < 0) $page = 1;
+        if ($page < 0) {
+            $page = 1;
+        }
         $this->setSession("page", $page);
     }
 
@@ -518,7 +572,7 @@ class ModuleController extends Controller
                 $class = $route->getHandlerClass();
                 if (key_exists('module', $middleware)) {
                     $route = $middleware['module'];
-                    $module = new $class;
+                    $module = new $class();
                     $parent = $module->link_parent;
                     $title = $module->module_title;
                     $links[$parent][] = [
@@ -537,7 +591,7 @@ class ModuleController extends Controller
         ];
         // Sort each group
         foreach ($links as &$group) {
-            uasort($group, fn($a, $b) => $a['label'] <=> $b['label']);
+            uasort($group, fn ($a, $b) => $a['label'] <=> $b['label']);
         }
         return $links;
     }
@@ -572,8 +626,10 @@ class ModuleController extends Controller
     protected function getPermissions(): object
     {
         // Giving twig access to some methods
-        $functions = new class($this) {
-            public function __construct(private ModuleController $module) {}
+        $functions = new class ($this) {
+            public function __construct(private ModuleController $module)
+            {
+            }
             public function hasCreate(): bool
             {
                 return $this->module->hasCreatePermission();
@@ -607,7 +663,9 @@ class ModuleController extends Controller
      */
     protected function getPaginationData(): array
     {
-        if (!$this->table_columns) return [];
+        if (!$this->table_columns) {
+            return [];
+        }
         // This data is used for pagination at the bottom of the table
         $total_results = $this->getTotalResultsCount();
         return [
@@ -646,7 +704,9 @@ class ModuleController extends Controller
         $column = $this->getAlias($column);
         $value = request()->request->get($column) ?? $value;
         $type = $this->form_controls[$column] ?? null;
-        if (is_null($type)) return [];
+        if (is_null($type)) {
+            return [];
+        }
         $opts = [
             "class" => "form-control" . (key_exists($column, $this->request_errors) ? ' is-invalid' : ''),
             "id" => "control-$column",
@@ -678,7 +738,7 @@ class ModuleController extends Controller
         // Add the primary key to the where clause
         $this->addWhere("{$this->primary_key} = ?", $id);
         // The fetch the form data
-        $qb = new QueryBuilder;
+        $qb = new QueryBuilder();
         $result = $qb
             ->select(array_values($this->form_columns))
             ->from($this->table)
@@ -712,7 +772,9 @@ class ModuleController extends Controller
      */
     protected function getTableData(): array
     {
-        if (!$this->table_columns) return [];
+        if (!$this->table_columns) {
+            return [];
+        }
         // Calculate the page offset
         $offset = $this->per_page * ($this->page - 1);
         // Always include primary key
@@ -720,7 +782,7 @@ class ModuleController extends Controller
             $this->table_columns[] = $this->primary_key;
         }
         // Fetch the table data
-        $qb = new QueryBuilder;
+        $qb = new QueryBuilder();
         $data = $qb
             ->select(array_values($this->table_columns))
             ->from($this->table)
@@ -778,7 +840,7 @@ class ModuleController extends Controller
     protected function getTotalResultsCount(): int
     {
         // Return the total table result count
-        $qb = new QueryBuilder;
+        $qb = new QueryBuilder();
         return $qb
             ->select(array_values($this->table_columns))
             ->from($this->table)
@@ -794,11 +856,22 @@ class ModuleController extends Controller
      */
     protected function save(int $id, array $data): bool
     {
+        // Handle file uploads
+        foreach ($this->form_controls as $column => $control) {
+            if (is_string($control) && in_array($control, ['image', 'file'])) {
+                $file = $this->handleFileUpload($column);
+                if ($file) {
+                    $data[$column] = $file->id;
+                } else {
+                    unset($data[$column]);
+                }
+            }
+        }
         // The update values
         $params = array_values($data);
         // The primary key is required for the update
         $params[] = $id;
-        $qb = new QueryBuilder;
+        $qb = new QueryBuilder();
         $row = $qb->select()
             ->from($this->table)
             ->where(["{$this->primary_key} = ?"])
@@ -838,10 +911,21 @@ class ModuleController extends Controller
      */
     protected function new(array $data): ?int
     {
+        // Handle file uploads
+        foreach ($this->form_controls as $column => $control) {
+            if (is_string($control) && in_array($control, ['image', 'file'])) {
+                $file = $this->handleFileUpload($column);
+                if ($file) {
+                    $data[$column] = $file->id;
+                } else {
+                    unset($data[$column]);
+                }
+            }
+        }
         // The insert values
         $params = array_values($data);
         // Insert query
-        $qb = new QueryBuilder;
+        $qb = new QueryBuilder();
         $result = $qb
             ->insert($data)
             ->into($this->table)
@@ -879,7 +963,7 @@ class ModuleController extends Controller
     protected function delete(int $id): bool
     {
         // Delete query
-        $qb = new QueryBuilder;
+        $qb = new QueryBuilder();
         $result = $qb
             ->delete()
             ->from($this->table)

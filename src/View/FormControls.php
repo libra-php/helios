@@ -2,6 +2,8 @@
 
 namespace Helios\View;
 
+use App\Models\File;
+
 
 trait FormControls
 {
@@ -86,17 +88,34 @@ trait FormControls
         return template("admin/module/controls/select.html", $opts);
     }
 
-    protected function file(array $opts): string
+    protected function upload(array $opts): string
     {
         $opts["type"] = "file";
         $input = $this->input($opts);
         $opts["input"] = $input;
-        return template("admin/module/controls/file.html", $opts);
+        if ($opts["value"]) {
+            $file = File::find($opts["value"]);
+            $opts["file_id"] = $file->id;
+            $opts["bytes"] = $file->bytes;
+            $opts["mime"] = $file->mime;
+            $opts["path"] = "/uploads/{$file->name}";
+            $opts["name"] = $file->name;
+        }
+        return template("admin/module/controls/upload.html", $opts);
     }
 
     protected function image(array $opts): string
     {
-        $opts["input"] = $this->file($opts);
+        $opts["type"] = "file";
+        $input = $this->input($opts);
+        $opts["input"] = $input;
+        if ($opts["value"]) {
+            $file = File::find($opts["value"]);
+            $opts["file_id"] = $file->id;
+            $opts["bytes"] = $file->bytes;
+            $opts["mime"] = $file->mime;
+            $opts["path"] = "/uploads/{$file->name}";
+        }
         return template("admin/module/controls/image.html", $opts);
     }
 }

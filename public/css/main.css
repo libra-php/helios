@@ -70,6 +70,10 @@ a:active {
     background-color: #fff;
 }
 
+.breadcrumb {
+    font-size: 0.8rem;
+}
+
 
 /**
  * Auth forms
@@ -90,6 +94,15 @@ a:active {
     height: 70px;
     font-size: 1.6rem;
     border: 1px solid #ddd;
+}
+
+/**
+ * Forms
+ */
+.img-thumbnail {
+    width: 100%;
+    max-width: 80px;
+    max-height: 80px;
 }
 
 /**
@@ -138,7 +151,7 @@ a:active {
 .navbar .dropdown-menu {
     z-index: 1021;
 }
-.navbar .gravatar {
+.navbar .avatar {
     width: 24px;
     height: 24px;
     border-radius: 50%;

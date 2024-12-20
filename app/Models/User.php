@@ -11,6 +11,17 @@ class User extends Model
         parent::__construct('users', $id);
     }
 
+    public function avatar()
+    {
+        if ($this->avatar) {
+            $file = File::find($this->avatar);
+            if ($file) {
+                return "/uploads/{$file->name}";
+            }
+        }
+        return $this->gravatar();
+    }
+
     public function gravatar()
     {
         $hash = md5(strtolower(trim($this->email)));
