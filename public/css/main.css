@@ -227,10 +227,3 @@ a:active {
     background-color: #008000;
     color: white;
 }
-
-@media (max-width: 575.98px) {
-    #admin {
-        max-height: calc(100% - 48px);
-    }
-}
-
