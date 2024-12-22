@@ -30,7 +30,6 @@ class ModuleController extends Controller
     protected array $params = [];
     protected int $per_page = 25;
     protected array $per_page_options = [
-        10,
         25,
         50,
         100,
@@ -137,7 +136,8 @@ class ModuleController extends Controller
         $this->setState(true);
         $filters = array_values($this->filter_links);
         $this->addWhere($filters[$index]);
-        return $this->getTotalResultsCount();
+        $count = $this->getTotalResultsFilterLink();
+        return $count === 1001 ? '1000+' : $count;
     }
 
     /**
@@ -197,6 +197,7 @@ class ModuleController extends Controller
             "per_page" => ["required"],
         ]);
         if ($valid) {
+            $this->handlePage(1);
             $this->handlePerPage($valid->per_page);
         }
         return $this->index();
@@ -668,12 +669,13 @@ class ModuleController extends Controller
         }
         // This data is used for pagination at the bottom of the table
         $total_results = $this->getTotalResultsCount();
+        $total_pages = ceil($total_results / $this->per_page);
         return [
             "page" => $this->page,
             "per_page" => $this->per_page,
-            "per_page_options" => $this->per_page_options,
+            "per_page_options" => array_filter($this->per_page_options, fn($value) => $value <= $total_results * 2),
             "total_results" => $total_results,
-            "total_pages" => ceil($total_results / $this->per_page),
+            "total_pages" => $total_pages,
             "link_range" => 2,
         ];
     }
@@ -846,6 +848,24 @@ class ModuleController extends Controller
             ->from($this->table)
             ->where($this->where)
             ->having($this->having)
+            ->params($this->params)
+            ->execute()
+            ->rowCount() ?? 0;
+    }
+
+    /**
+     * Get total results for a filter link count
+     */
+    protected function getTotalResultsFilterLink(): int
+    {
+        // With limit
+        $qb = new QueryBuilder();
+        return $qb
+            ->select(array_values($this->table_columns))
+            ->from($this->table)
+            ->where($this->where)
+            ->having($this->having)
+            ->limit(1001)
             ->params($this->params)
             ->execute()
             ->rowCount() ?? 0;

@@ -1,33 +1,29 @@
-{% if table.data %}
+{% if table.data and pagination.total_pages > 1 %}
 <section id="pagination-page" class="d-flex align-items-center mt-2">
-    <nav id="pagination" aria-label="page controls" hx-boost="true" hx-select="#module" hx-target="#module" hx-swap="outerHTML">
+    <nav id="pagination" aria-label="page controls" hx-boost="true" hx-get="{{ module.route }}" hx-select="#module" hx-target="#module" hx-swap="outerHTML" hx-trigger="load-pagination from:body">
         <ul class="pagination pagination-sm m-0">
             {% if pagination.page > 2 %}
             <li class="page-item"><a class="page-link" href="{{ module.route }}/page/1">First</a></li>
-            {% endif %}
-            {% if pagination.page - 1 > 0 %}
-                <li class="page-item"><a class="page-link" href="{{ module.route }}/page/{{ pagination.page - 1 }}">&laquo;</a></li>
             {% endif %}
             {% for i in range(pagination.page - pagination.link_range,pagination.page + pagination.link_range) %}
             {% if i > 0 and i <= pagination.total_pages %}
                 <li class="page-item"><a class="page-link {% if i == pagination.page %}active{% endif %}" href="{{ module.route }}/page/{{ i }}">{{ i }}</a></li>
             {% endif %}
             {% endfor %}
-            {% if pagination.page + 1 <= pagination.total_pages %}
-                <li class="page-item"><a class="page-link" href="{{ module.route }}/page/{{ pagination.page + 1 }}">&raquo;</a></li>
-            {% endif %}
             {% if pagination.page < pagination.total_pages - 1 %}
             <li class="page-item"><a class="page-link" href="{{ module.route }}/page/{{ pagination.total_pages }}">Last</a></li>
             {% endif %}
         </ul>
     </nav>
-    <nav class="ms-auto" id="per_page">
-        <select class="form-select form-select-sm" id="per-page-options" name="per_page" hx-get="{{ module.route }}/per-page" hx-trigger="change" hx-select="#module" hx-target="#module" hx-swap="outerHTML">
+    {% if pagination.per_page_options %}
+    <nav class="ms-auto" id="per-page">
+        <select class="form-select form-select-sm" id="per-page-options" name="per_page" hx-get="{{ module.route }}/per-page" hx-trigger="change" hx-select="#pagination-page" hx-target="#pagination-page" hx-swap="outerHTML">
             <option disabled>Per page</option>
             {% for value in pagination.per_page_options %}
                 <option value="{{ value }}" {% if value == pagination.per_page %}selected{% endif %}>{{ value }}</option>
             {% endfor %}
         </select>
     </nav>
+    {% endif %}
 </section>
 {% endif %}

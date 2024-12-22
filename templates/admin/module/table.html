@@ -1,5 +1,5 @@
 {% if table.headers %}
-    <table id="table" class="table table-sm caption-top">
+<table id="table" class="table table-sm caption-top" hx-get="{{ module.route }}" hx-swap="outerHTML" hx-select="#module" hx-target="#module" hx-trigger="load-table from:body">
         {% if flash %}
             <caption>
                 {% include "components/flash.html" %}
@@ -7,7 +7,7 @@
         {% endif %}
         <thead class="sticky-top bg-white">
         {% for header,column in table.headers %}
-        <th nowrap><a class="th-link {% if column == filters.order %}active {% if filters.sort == 'ASC' %}asc{% else %}desc{% endif %}{% endif %}" hx-boost="true" href="{{ module.route }}/sort/{{loop.index0}}">{{ header }}</a></th>
+        <th nowrap><a class="th-link {% if column == filters.order %}active {% if filters.sort == 'ASC' %}asc{% else %}desc{% endif %}{% endif %}" hx-boost="true" hx-swap="outerHTML" hx-target="#table" hx-select="#table" href="{{ module.route }}/sort/{{loop.index0}}">{{ header }}</a></th>
         {% endfor %}
         <th></th>
         </thead>

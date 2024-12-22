@@ -1,13 +1,12 @@
 {% if filters.filter_links %}
-<nav>
+<nav id="filter-links" 
+     hx-select="#module" 
+     hx-target="#module" 
+     hx-swap="outerHTML">
 {% for i,link in filters.filter_links %}
 <button type="button" 
         class="btn btn-sm {% if filters.filter_link_index == loop.index0 %}fw-bold text-dark{% else %}text-secondary{% endif %}"
-    hx-get="{{ module.route }}/filter-link/{{ i }}"
-    hx-target="#module"
-    hx-select="#module"
-    hx-swap="outerHTML"
-    >
+        hx-get="{{ module.route }}/filter-link/{{ i }}">
     {{ link }}
     [<span hx-get="{{ module.route }}/filter-link-count/{{ loop.index0 }}" 
         hx-trigger="load"
