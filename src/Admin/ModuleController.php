@@ -890,6 +890,10 @@ class ModuleController extends Controller
                 if ($data[$column] === '') {
                     $data[$column] = null;
                 }
+            } else if (is_string($control) && in_array($control, ['switch', 'checkbox'])) {
+                if ($data[$column] === 'on') {
+                    $data[$column] = 1;
+                }
             }
         }
         // The update values
@@ -949,6 +953,10 @@ class ModuleController extends Controller
                 // Handle empty string for datetime controls
                 if ($data[$column] === '') {
                     $data[$column] = null;
+                }
+            } else if (is_string($control) && in_array($control, ['switch', 'checkbox'])) {
+                if ($data[$column] === 'on') {
+                    $data[$column] = 1;
                 }
             }
         }

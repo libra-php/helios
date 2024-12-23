@@ -102,7 +102,7 @@ class UsersModule extends ModuleController
 
                 $user = User::where("email", $value)->get(1);
                 if ($user) {
-                    $this->addErrorMessage("email", "Email must be unique");
+                    $this->addErrorMessage("email", "Email is already in use");
                 }
                 return !$user;
             };
@@ -112,7 +112,7 @@ class UsersModule extends ModuleController
 
                 $user = User::where("username", $value)->get(1);
                 if ($user) {
-                    $this->addErrorMessage("username", "Username must be unique");
+                    $this->addErrorMessage("username", "Username is already in use");
                 }
                 return !$user;
             };
