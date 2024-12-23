@@ -77,48 +77,52 @@ class UsersModule extends ModuleController
 
         $password_pattern = "^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$";
 
+        $this->validation_rules = [
+            "name" => ["required"],
+            "email" => ["required"],
+            "username" => ["required", "regex:=^[a-zA-Z0-9]+$"],
+            "user_role_id" => ["required"],
+            "password" => [
+                "min_length:=8",
+                "regex:=$password_pattern"
+            ],
+            "password_match" => [function ($value) {
+                return request()->get("password") === $value;
+            }],
+        ];
+
         if ($id) {
             // Edit
-            $this->validation_rules = [
-                "name" => ["required"],
-                "email" => ["required", ($id != 1 ? 'email' : ''), function ($value) use ($id) {
-                    $user = User::find($id);
-                    if ($user && $user->email === $value) return true;
-                    if ($user) {
-                        $this->addErrorMessage("email", "Email must be unique");
-                    }
-                    return !$user;
-                }],
-                "username" => ["required", "regex:=^[a-zA-Z0-9]+$", function ($value) use ($id) {
-                    $user = User::find($id);
-                    if ($user && $user->username === $value) return true;
-                    if ($user) {
-                        $this->addErrorMessage("username", "Username must be unique");
-                    }
-                    return !$user;
-                }],
-                "user_role_id" => ["required"],
-                "password" => ["min_length:=8", "regex:=$password_pattern"],
-                "password_match" => [function ($value) {
-                    return request()->get("password") === $value;
-                }],
-            ];
+            if ($id != 1) {
+                $this->validation_rules["email"][] = "email";
+            }
+            $this->validation_rules["email"][] = function ($value) use ($id) {
+                $user = User::find($id);
+                if ($user && $user->email === $value) return true;
+
+                $user = User::where("email", $value)->get(1);
+                if ($user) {
+                    $this->addErrorMessage("email", "Email must be unique");
+                }
+                return !$user;
+            };
+            $this->validation_rules["username"][] = function ($value) use ($id) {
+                $user = User::find($id);
+                if ($user && $user->username === $value) return true;
+
+                $user = User::where("username", $value)->get(1);
+                if ($user) {
+                    $this->addErrorMessage("username", "Username must be unique");
+                }
+                return !$user;
+            };
         } else {
             // Create
-            $this->validation_rules = [
-                "name" => ["required"],
-                "email" => ["required", "email", "unique:=users"],
-                "username" => ["required", "unique:=users", "regex:=^[a-zA-Z0-9]+$"],
-                "user_role_id" => ["required"],
-                "password" => [
-                    "required",
-                    "min_length:=8",
-                    "regex:=$password_pattern"
-                ],
-                "password_match" => ["required", function ($value) {
-                    return request()->get("password") === $value;
-                }],
-            ];
+            $this->validation_rules["email"][] = "email";
+            $this->validation_rules["email"][] = "unique:=users";
+            $this->validation_rules["username"][] = "unique:=users";
+            $this->validation_rules["password"][] = "required";
+            $this->validation_rules["password_match"][] = "required";
         }
     }
 

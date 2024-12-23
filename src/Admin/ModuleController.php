@@ -885,6 +885,11 @@ class ModuleController extends Controller
                 } else {
                     unset($data[$column]);
                 }
+            } else if (is_string($control) && in_array($control, ['date', 'time', 'datetime'])) {
+                // Handle empty string for datetime controls
+                if ($data[$column] === '') {
+                    $data[$column] = null;
+                }
             }
         }
         // The update values
@@ -939,6 +944,11 @@ class ModuleController extends Controller
                     $data[$column] = $file->id;
                 } else {
                     unset($data[$column]);
+                }
+            } else if (is_string($control) && in_array($control, ['date', 'time', 'datetime'])) {
+                // Handle empty string for datetime controls
+                if ($data[$column] === '') {
+                    $data[$column] = null;
                 }
             }
         }

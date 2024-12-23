@@ -31,6 +31,54 @@ trait FormControls
         return template("admin/module/controls/input.html", $opts);
     }
 
+    protected function button(array $opts): string
+    {
+        $opts["type"] = "button";
+        return template("admin/module/controls/input.html", $opts);
+    }
+
+    protected function color(array $opts): string
+    {
+        $opts["type"] = "color";
+        return template("admin/module/controls/input.html", $opts);
+    }
+
+    protected function month(array $opts): string
+    {
+        $opts["type"] = "month";
+        return template("admin/module/controls/input.html", $opts);
+    }
+
+    protected function week(array $opts): string
+    {
+        $opts["type"] = "week";
+        return template("admin/module/controls/input.html", $opts);
+    }
+
+    protected function url(array $opts): string
+    {
+        $opts["type"] = "url";
+        return template("admin/module/controls/input.html", $opts);
+    }
+
+    protected function date(array $opts): string
+    {
+        $opts["type"] = "date";
+        return template("admin/module/controls/input.html", $opts);
+    }
+
+    protected function datetime(array $opts): string
+    {
+        $opts["type"] = "datetime-local";
+        return template("admin/module/controls/input.html", $opts);
+    }
+
+    protected function time(array $opts): string
+    {
+        $opts["type"] = "time";
+        return template("admin/module/controls/input.html", $opts);
+    }
+
     protected function number(array $opts): string
     {
         $opts["type"] = "number";
