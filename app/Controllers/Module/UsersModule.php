@@ -71,10 +71,6 @@ class UsersModule extends ModuleController
         $this->form_controls["email"] = $id == 1 ? "readonly" : "input";
         $this->form_controls["username"] = $id == 1 ? "readonly" : "input";
 
-        $this->addErrorMessage("password.regex", "Must contain: 1 uppercase, 1 number, and 1 symbol");
-        $this->addErrorMessage("username.regex", "Invalid username");
-        $this->addErrorMessage("password_match", "Passwords must match");
-
         $password_pattern = "^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$";
 
         $this->validation_rules = [
@@ -91,6 +87,13 @@ class UsersModule extends ModuleController
             }],
         ];
 
+        $this->addErrorMessage("password.regex", "Must contain: 1 uppercase, 1 number, and 1 symbol");
+        $this->addErrorMessage("username.regex", "Invalid username");
+        $this->addErrorMessage("password_match", "Passwords must match");
+        $this->addErrorMessage("email.unique", "Email is already in use");
+        $this->addErrorMessage("email", "Email is already in use");
+        $this->addErrorMessage("username", "Username is already in use");
+
         if ($id) {
             // Edit
             if ($id != 1) {
@@ -101,9 +104,6 @@ class UsersModule extends ModuleController
                 if ($user && $user->email === $value) return true;
 
                 $user = User::where("email", $value)->get(1);
-                if ($user) {
-                    $this->addErrorMessage("email", "Email is already in use");
-                }
                 return !$user;
             };
             $this->validation_rules["username"][] = function ($value) use ($id) {
@@ -111,9 +111,6 @@ class UsersModule extends ModuleController
                 if ($user && $user->username === $value) return true;
 
                 $user = User::where("username", $value)->get(1);
-                if ($user) {
-                    $this->addErrorMessage("username", "Username is already in use");
-                }
                 return !$user;
             };
         } else {
