@@ -17,7 +17,7 @@
     </nav>
     {% if pagination.per_page_options %}
     <nav class="ms-auto" id="per-page">
-        <select class="form-select form-select-sm" id="per-page-options" name="per_page" hx-get="{{ module.route }}/per-page" hx-trigger="change" hx-select="#pagination-page" hx-target="#pagination-page" hx-swap="outerHTML">
+        <select class="form-select form-select-sm" id="per-page-options" name="per_page" hx-get="{{ module.route }}/per-page" hx-trigger="change" hx-select="#module" hx-target="#module" hx-swap="outerHTML">
             <option disabled>Per page</option>
             {% for value in pagination.per_page_options %}
                 <option value="{{ value }}" {% if value == pagination.per_page %}selected{% endif %}>{{ value }}</option>

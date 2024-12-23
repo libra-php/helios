@@ -1,5 +1,5 @@
 {% if filters.searchable|length > 0 %}
-<form hx-get="{{ module.route }}/search" hx-target="#module" hx-select="#module" hx-swap="outerHTML" class="mt-2">
+<form class="mb-3" hx-get="{{ module.route }}/search" hx-target="#module" hx-select="#module" hx-swap="outerHTML" class="mt-2">
     <div class="input-group">
         <input type="input"
             id="search"
