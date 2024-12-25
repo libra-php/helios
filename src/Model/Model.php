@@ -68,11 +68,7 @@ class Model implements IModel
     public static function all(): array
     {
         $class = get_called_class();
-        if (self::_isStatic()) {
-            $model = new $class;
-        } else {
-            $model = container()->get($class);
-        }
+        $model = container()->get($class);
         $results = $model->qb
             ->select($model->columns)
             ->from($model->table)
@@ -88,11 +84,6 @@ class Model implements IModel
     public static function create(array $data): Model|bool|null
     {
         $class = get_called_class();
-        if (self::_isStatic()) {
-            $model = new $class;
-        } else {
-            $model = container()->get($class);
-        }
         $model = container()->get($class);
         $result = $model->qb
             ->insert($data)
@@ -119,11 +110,7 @@ class Model implements IModel
 
         foreach ($id as $model_id) {
             $class = get_called_class();
-            if (self::_isStatic()) {
-                $model = new $class;
-            } else {
-                $model = container()->get($class);
-            }
+            $model = container()->get($class);
             $key = $model->primaryKey;
             $result = $model->qb
                 ->delete()
@@ -164,11 +151,7 @@ class Model implements IModel
     public static function find(string $id): ?Model
     {
         $class = get_called_class();
-        if (self::_isStatic()) {
-            $model = new $class;
-        } else {
-            $model = container()->get($class);
-        }
+        $model = container()->get($class);
         try {
             $result = new $model($id);
             return $result;
@@ -183,11 +166,7 @@ class Model implements IModel
     public static function findOrFail(string $id): Model
     {
         $class = get_called_class();
-        if (self::_isStatic()) {
-            $model = new $class;
-        } else {
-            $model = container()->get($class);
-        }
+        $model = container()->get($class);
         return new $model($id);
     }
 
@@ -329,25 +308,13 @@ class Model implements IModel
         return $this;
     }
 
-    private static function _isStatic() {
-        $backtrace = debug_backtrace();
-
-        // The 0th call is to _isStatic(), so we need to check the next
-        // call down the stack.
-        return $backtrace[1]['type'] == '::';
-    }
-
     /**
      * Add to the model where clause (separated by AND)
      */
     public static function where(string $column, string $operator = '=', ?string $value = null): Model
     {
         $class = get_called_class();
-        if (self::_isStatic()) {
-            $model = new $class;
-        } else {
-            $model = container()->get($class);
-        }
+        $model = new $class;
 
         // Default operator is =
         if (!in_array(strtolower($operator), $model->validOperators)) {
@@ -365,18 +332,15 @@ class Model implements IModel
      */
     public function orWhere(string $column, string $operator = '=', ?string $value = null): Model
     {
-        $class = get_called_class();
-        $model = container()->get($class);
-
         // Default operator is =
-        if (!in_array(strtolower($operator), $model->validOperators)) {
+        if (!in_array(strtolower($operator), $this->validOperators)) {
             $value = $operator;
             $operator = '=';
         }
         // Add the where clause and params
-        $model->orWhere[] = "($column $operator ?)";
-        $model->params[] = $value;
-        return $model;
+        $this->orWhere[] = "($column $operator ?)";
+        $this->params[] = $value;
+        return $this;
     }
 
     /**
@@ -384,11 +348,8 @@ class Model implements IModel
      */
     public function orderBy(string $column, string $direction = "ASC"): Model
     {
-        $class = get_called_class();
-        $model = container()->get($class);
-
         $this->orderBy[] = "$column $direction";
-        return $model;
+        return $this;
     }
 
     public function __set($name, $value)
