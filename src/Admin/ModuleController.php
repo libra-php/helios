@@ -79,7 +79,7 @@ class ModuleController extends Controller
     public function index(): string
     {
         $this->recordUserSession();
-        $path = "/admin/{$this->module}";
+        $path = route()->getPrefix();
         header("HX-Push-Url: $path");
 
         // Sets the class properties from session
@@ -217,7 +217,7 @@ class ModuleController extends Controller
         if (!$this->hasEditPermission($id)) {
             redirect("/permission-denied");
         }
-        $path = "/admin/{$this->module}/edit/$id";
+        $path = route()->getPrefix() . "/edit/$id";
         header("HX-Push-Url: $path");
 
         $valid = $this->validateRequest([
@@ -253,7 +253,7 @@ class ModuleController extends Controller
         if (!$this->hasCreatePermission()) {
             redirect("/permission-denied");
         }
-        $path = "/admin/{$this->module}/create";
+        $path = route()->getPrefix() . "/create";
         header("HX-Push-Url: $path");
 
         $view = $this->render("/admin/module/create.html", [
@@ -577,6 +577,7 @@ class ModuleController extends Controller
         $routes = app()->router()->getRoutes();
         foreach ($routes as $route) {
             $name = $route->getName();
+            $path = $route->getPath();
             if ($name === 'module.index') {
                 $middleware = $route->getMiddleware();
                 $class = $route->getHandlerClass();
@@ -586,7 +587,7 @@ class ModuleController extends Controller
                     $parent = $module->link_parent;
                     $title = $module->module_title;
                     $links[$parent][] = [
-                        "url" => "/admin/$route",
+                        "url" => $path,
                         "label" => $title,
                         "boost" => "true",
                     ];
@@ -761,7 +762,7 @@ class ModuleController extends Controller
         $data = array_map([$this, "formMap"], array_keys($this->form_columns), array_keys($result), array_values($result));
         return [
             "data" => $data,
-            "action" => "/admin/{$this->module}/$id",
+            "action" => route()->getPrefix() . "/$id",
         ];
     }
 
@@ -778,7 +779,7 @@ class ModuleController extends Controller
         $data = array_map([$this, "formMap"], array_keys($this->form_columns), array_values($this->form_columns), $values);
         return [
             "data" => $data,
-            "action" => "/admin/{$this->module}",
+            "action" => route()->getPrefix(),
         ];
     }
 

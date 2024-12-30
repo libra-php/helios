@@ -6,7 +6,7 @@ use Helios\Admin\ModuleController;
 use StellarRouter\Group;
 
 /** @package App\Controllers\Module */
-#[Group(prefix: "/admin/user/sessions", middleware: ["module" => "user/sessions"])]
+#[Group(prefix: "/admin/user/sessions", middleware: ["module" => "user-sessions"])]
 class UserSessionsModule extends ModuleController
 {
     public function init(?int $id): void
