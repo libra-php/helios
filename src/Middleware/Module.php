@@ -18,8 +18,7 @@ class Module implements IMiddleware
         $user = user();
         $middleware = $request->get("route")?->getMiddleware();
 
-        // Manage roles
-        if (key_exists("module", $middleware) && key_exists("role", $middleware)) {
+        if ($middleware && key_exists("module", $middleware) && key_exists("role", $middleware)) {
             if (!in_array($user->role()->name, $middleware["role"])) {
                 redirect("/permission-denied");
             }
