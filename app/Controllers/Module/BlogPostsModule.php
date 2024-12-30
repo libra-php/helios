@@ -66,6 +66,10 @@ class BlogPostsModule extends ModuleController
                 FROM blog_categories 
                 ORDER BY name",
         ];
+        $this->default_values = [
+            "category_id" => 1,
+            "status_id" => 2,
+        ];
         $this->validation_rules = [
             "status_id" => ["required"],
             "cover_image" => [],

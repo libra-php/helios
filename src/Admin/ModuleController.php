@@ -56,6 +56,7 @@ class ModuleController extends Controller
     protected array $form_columns = [];
     protected array $dropdown_queries = [];
     protected array $validation_rules = [];
+    protected array $default_values = [];
 
     // Permissions
     protected bool $has_edit = true;
@@ -770,7 +771,11 @@ class ModuleController extends Controller
     protected function getCreateFormData(): array
     {
         // Prepare the create form data structure
-        $data = array_map([$this, "formMap"], array_keys($this->form_columns), array_values($this->form_columns), array_fill(0, count($this->form_columns), null));
+        $values = [];
+        foreach ($this->form_columns as $label => $column) {
+            $values[] = $this->default_values[$column] ?? null;
+        }
+        $data = array_map([$this, "formMap"], array_keys($this->form_columns), array_values($this->form_columns), $values);
         return [
             "data" => $data,
             "action" => "/admin/{$this->module}",
