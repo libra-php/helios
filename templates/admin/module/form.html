@@ -1,4 +1,4 @@
-<form class="p-2" method="post" hx-post="{{ form.action }}" hx-target="#module" hx-select="#module" hx-swap="outerHTML" enctype="multipart/form-data">
+<form class="p-2" method="post" hx-indicator="#bread-spinner" hx-post="{{ form.action }}" hx-target="#module" hx-select="#module" hx-swap="outerHTML" enctype="multipart/form-data">
     {% include "components/flash.html" %}
     {{ csrf()|raw }}
     {% for datum in form.data %}
@@ -10,8 +10,10 @@
         </div>
         {% endif %}
     {% endfor %}
-    <div class="mt-2" hx-boost="true">
-        <button class="btn btn-sm btn-success" type="submit">Save</button>
+    <div class="mt-2 d-flex" hx-boost="true">
+        <button class="btn btn-sm btn-success d-flex me-2" type="submit">
+            Save
+        </button>
         <button class="btn btn-sm btn-secondary ml-2" 
             type="button" 
             hx-get="{{ module.route}}" 

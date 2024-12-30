@@ -1,4 +1,4 @@
-<section id="table-actions">
+<section id="table-actions" hx-indicator="#bread-spinner">
     {% if permissions.hasCreate() %}
         <a class="btn btn-sm btn-success text-decoration-none"
             hx-get="{{ module.route }}/create"
