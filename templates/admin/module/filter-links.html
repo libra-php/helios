@@ -1,5 +1,6 @@
 {% if filters.filter_links %}
 <nav id="filter-links" 
+     hx-indicator="#bread-spinner"
      hx-select="#module" 
      hx-target="#module" 
      hx-swap="outerHTML">
