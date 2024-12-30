@@ -3,6 +3,7 @@
 namespace Helios\Admin;
 
 use App\Models\{Audit, UserSession, File};
+use Exception;
 use Helios\Database\QueryBuilder;
 use Helios\View\{Flash, FormControls, TableFormat};
 use Helios\Web\Controller;
@@ -83,7 +84,7 @@ class ModuleController extends Controller
         // Sets the class properties from session
         $this->setState();
 
-        return $this->render("/admin/module/index.html", [
+        $view = $this->render("/admin/module/index.html", [
             "module" => $this->getModuleData(),
             "table" => $this->getTableData(),
             "actions" => $this->getTableActions(),
@@ -93,6 +94,8 @@ class ModuleController extends Controller
             "links" => $this->getLinks(),
             "avatar" => user()->avatar(),
         ]);
+
+        return $view;
     }
 
     /**
@@ -228,13 +231,15 @@ class ModuleController extends Controller
             }
         }
 
-        return $this->render("/admin/module/edit.html", [
+        $view = $this->render("/admin/module/edit.html", [
             "id" => $id,
             "module" => $this->getModuleData(),
             "form" => $this->getEditFormData($id),
             "links" => $this->getLinks(),
             "avatar" => user()->avatar(),
         ]);
+
+        return $view;
     }
 
     /**
@@ -250,12 +255,14 @@ class ModuleController extends Controller
         $path = "/admin/{$this->module}/create";
         header("HX-Push-Url: $path");
 
-        return $this->render("/admin/module/create.html", [
+        $view = $this->render("/admin/module/create.html", [
             "module" => $this->getModuleData(),
             "form" => $this->getCreateFormData(),
             "links" => $this->getLinks(),
             "avatar" => user()->avatar(),
         ]);
+
+        return $view;
     }
 
     /**
@@ -328,6 +335,7 @@ class ModuleController extends Controller
      */
     public function init(?int $id): void
     {
+        // Configure module
     }
 
     /**
@@ -908,12 +916,19 @@ class ModuleController extends Controller
             ->execute()
             ->fetch();
         // Update query
-        $result = $qb
-            ->update($data)
-            ->table($this->table)
-            ->where(["{$this->primary_key} = ?"])
-            ->params($params)
-            ->execute();
+        try {
+            $result = $qb
+                ->update($data)
+                ->table($this->table)
+                ->where(["{$this->primary_key} = ?"])
+                ->params($params)
+                ->execute();
+        } catch (Exception $ex) {
+            if (config("app.debug")) {
+                Flash::add("danger", $ex->getMessage());
+            }
+            return null;
+        }
         if ($result) {
             // Audit the result
             if ($row) {
@@ -964,11 +979,18 @@ class ModuleController extends Controller
         $params = array_values($data);
         // Insert query
         $qb = new QueryBuilder();
-        $result = $qb
-            ->insert($data)
-            ->into($this->table)
-            ->params($params)
-            ->execute();
+        try {
+            $result = $qb
+                ->insert($data)
+                ->into($this->table)
+                ->params($params)
+                ->execute();
+        } catch (Exception $ex) {
+            if (config("app.debug")) {
+                Flash::add("danger", $ex->getMessage());
+            }
+            return null;
+        }
         if ($result) {
             $id = db()->lastInsertId();
             $row = $qb->select()
@@ -1002,12 +1024,19 @@ class ModuleController extends Controller
     {
         // Delete query
         $qb = new QueryBuilder();
-        $result = $qb
-            ->delete()
-            ->from($this->table)
-            ->where(["{$this->primary_key} = ?"])
-            ->params([$id])
-            ->execute();
+        try {
+            $result = $qb
+                ->delete()
+                ->from($this->table)
+                ->where(["{$this->primary_key} = ?"])
+                ->params([$id])
+                ->execute();
+        } catch (Exception $ex) {
+            if (config("app.debug")) {
+                Flash::add("danger", $ex->getMessage());
+            }
+            return null;
+        }
         if ($result) {
             Audit::create([
                 "user_id" => user()->id,

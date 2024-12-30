@@ -11,6 +11,11 @@ class User extends Model
         parent::__construct('users', $id);
     }
 
+    public function role()
+    {
+        return UserRole::find($this->user_role_id);
+    }
+
     public function avatar()
     {
         if ($this->avatar) {

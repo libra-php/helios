@@ -167,6 +167,10 @@ a:active {
     height: 22px;
     border-radius: 50%;
 }
+.navbar .scroll-menu {
+    max-height: 90vh;
+    overflow-y: auto;
+}
 
 
 /**

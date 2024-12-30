@@ -11,6 +11,7 @@ class Kernel extends Http
         \Helios\Middleware\EncryptCookies::class,
         \Helios\Middleware\HTMX::class,
         \Helios\Middleware\RouteAuth::class,
+        \Helios\Middleware\Module::class,
         \Helios\Middleware\CSRF::class,
         \Helios\Middleware\RequestUuid::class,
         \Helios\Middleware\RequestLimit::class,

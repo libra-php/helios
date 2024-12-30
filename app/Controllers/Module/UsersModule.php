@@ -142,4 +142,9 @@ class UsersModule extends ModuleController
         }
         return parent::save($id, $data);
     }
+
+    public function hasDeletePermission(int $id): bool
+    {
+        return $id != 1 && parent::hasDeletePermission($id);
+    }
 }

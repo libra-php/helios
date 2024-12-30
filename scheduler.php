@@ -12,8 +12,7 @@ $scheduler = new Scheduler();
 $jobs = config("paths.jobs");
 $logs = config("paths.logs");
 
-// Add scheduled tasks
-
+// Add scheduled tasks here :)
 
 // Heartbeat
 $heartbeat_filename = date("Y-m-d") . "_heartbeat.log";
@@ -26,6 +25,9 @@ $scheduler->php($jobs . "/rotate_logs.php")->monday();
 
 // Send password reset emails
 $scheduler->php($jobs . "/password_reset.php")->everyMinute();
+
+// Publish blog posts
+$scheduler->php($jobs . "/publish_blog.php")->everyMinute();
 
 // Let the scheduler execute jobs which are due.
 $scheduler->run();
