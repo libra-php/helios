@@ -629,12 +629,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/libra-php/stellar-router.git",
-                "reference": "7f2cb0c602ed0ef27b4eca0cf605ff5a06d87622"
+                "reference": "e4bd5f4c969bf9c0f7fdf89aa3542d639963edac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/libra-php/stellar-router/zipball/7f2cb0c602ed0ef27b4eca0cf605ff5a06d87622",
-                "reference": "7f2cb0c602ed0ef27b4eca0cf605ff5a06d87622",
+                "url": "https://api.github.com/repos/libra-php/stellar-router/zipball/e4bd5f4c969bf9c0f7fdf89aa3542d639963edac",
+                "reference": "e4bd5f4c969bf9c0f7fdf89aa3542d639963edac",
                 "shasum": ""
             },
             "require": {
@@ -665,7 +665,7 @@
                 "issues": "https://github.com/libra-php/stellar-router/issues",
                 "source": "https://github.com/libra-php/stellar-router/tree/main"
             },
-            "time": "2024-12-30T21:19:23+00:00"
+            "time": "2024-12-31T14:35:13+00:00"
         },
         {
             "name": "monolog/monolog",

@@ -39,11 +39,11 @@ class AuditModule extends ModuleController
             "new_value",
         ];
         $this->filter_links = [
-            "All" => "1=1",
             "Me" => "user_id=" . user()->id,
             "Create" => "tag='CREATE'",
             "Update" => "tag='UPDATE'",
             "Delete" => "tag='DELETE'",
+            "All" => "1=1",
         ];
         $this->default_sort = "DESC";
     }

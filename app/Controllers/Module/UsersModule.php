@@ -31,8 +31,8 @@ class UsersModule extends ModuleController
             "updated_at" => "ago",
         ];
         $this->filter_links = [
-            "All" => "1=1",
             "Me" => "id=" . user()->id,
+            "All" => "1=1",
         ];
         $this->searchable = [
             "uuid",
