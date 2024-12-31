@@ -19,12 +19,14 @@ return [
     "max_requests" => [
         'default' => 50,
         'api' => 100,
-        'register' => 20,
-        'login' => 20,
+        'forgot-pass' => 5,
+        'register' => 10,
+        'login' => 25,
     ],
     "decay_seconds" => [
         'default' => 60,
         'api' => 60,
+        'forgot-pass' => 100,
         'register' => 300,
         'login' => 300,
     ],

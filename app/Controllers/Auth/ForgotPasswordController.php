@@ -14,7 +14,7 @@ class ForgotPasswordController extends Controller
         return $this->render("admin/forgot-password/index.html");
     }
 
-    #[Post("/forgot-password", "forgot-password.post")]
+    #[Post("/forgot-password", "forgot-password.post", ['forgot-pass'])]
     public function post(): string
     {
         $valid = $this->validateRequest([

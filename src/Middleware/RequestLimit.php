@@ -22,6 +22,10 @@ class RequestLimit implements IMiddleware
                 $key = 'api';
             } else if (in_array('login', $middleware)) {
                 $key = 'login';
+            } else if (in_array('register', $middleware)) {
+                $key = 'register';
+            } else if (in_array('forgot-pass', $middleware)) {
+                $key = 'forgot-pass';
             }
         }
         $maxRequests = config("security.max_requests")[$key];
