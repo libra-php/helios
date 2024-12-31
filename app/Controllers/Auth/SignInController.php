@@ -16,7 +16,7 @@ class SignInController extends Controller
         ]);
     }
 
-    #[Post("/sign-in", "sign-in.post")]
+    #[Post("/sign-in", "sign-in.post", ['login'])]
     public function post(): string
     {
         $valid = $this->validateRequest([

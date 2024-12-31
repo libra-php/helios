@@ -24,7 +24,7 @@ class RegisterController extends Controller
         return $this->render("admin/register/index.html");
     }
 
-    #[Post("/register", "register.post")]
+    #[Post("/register", "register.post", ['register'])]
     public function post(): string
     {
         $this->addErrorMessage("password.regex", "Must contain: 1 uppercase, 1 number, and 1 symbol");

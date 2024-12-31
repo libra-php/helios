@@ -15,8 +15,15 @@ class RequestLimit implements IMiddleware
 
     public function handle(Request $request, Closure $next): Response
     {
-        $maxRequests = config("security.max_requests");
-        $decaySeconds = config("security.decay_seconds");
+        $middleware = $request->get("route")?->getMiddleware();
+        $key = 'default';
+        if (in_array('api', $middleware)) {
+            $key = 'api';
+        } else if (in_array('login', $middleware)) {
+            $key = 'login';
+        }
+        $maxRequests = config("security.max_requests")[$key];
+        $decaySeconds = config("security.decay_seconds")[$key];
         $clientIdentifier = $request->getClientIp();
         $cacheKey = 'request_limit_' . $clientIdentifier;
 
@@ -37,8 +44,7 @@ class RequestLimit implements IMiddleware
         $limit['count']++;
 
         if ($limit['count'] > $maxRequests) {
-            $middleware = $request->get("route")?->getMiddleware();
-            return in_array("api", $middleware) ?
+            return $key === 'api' ?
                 new JsonResponse(["message" => "Too many requests. Try again later."], Response::HTTP_TOO_MANY_REQUESTS) :
                 new Response("Too many requests. Try again later.", Response::HTTP_TOO_MANY_REQUESTS);
         }
