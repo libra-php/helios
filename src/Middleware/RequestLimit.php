@@ -17,10 +17,12 @@ class RequestLimit implements IMiddleware
     {
         $middleware = $request->get("route")?->getMiddleware();
         $key = 'default';
-        if (in_array('api', $middleware)) {
-            $key = 'api';
-        } else if (in_array('login', $middleware)) {
-            $key = 'login';
+        if ($middleware) {
+            if (in_array('api', $middleware)) {
+                $key = 'api';
+            } else if (in_array('login', $middleware)) {
+                $key = 'login';
+            }
         }
         $maxRequests = config("security.max_requests")[$key];
         $decaySeconds = config("security.decay_seconds")[$key];

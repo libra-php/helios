@@ -11,6 +11,9 @@
 
 {% block top %}
 {{ parent() }}
+{% if flash %}
+    {% include "components/flash.html" %}
+{% endif %}
 {% include "admin/module/table-actions.html" %}
 {% include "admin/module/search.html" %}
 {% include "admin/module/filter-links.html" %}

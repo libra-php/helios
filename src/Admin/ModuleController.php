@@ -72,12 +72,23 @@ class ModuleController extends Controller
         $this->init($id);
     }
 
+    protected function setup()
+    {
+        $user = user();
+
+        // Check for admin default password
+        if ($user->id == 1 && Auth::testPassword(config("security.default_admin_pass"), $user->password)) {
+            Flash::add("warning", "You are currently using the default admin password. For your security, please <a href='/admin/users/edit/1'><u>update your password</u></a> immediately to protect your account from unauthorized access.");
+        }
+    }
+
     /**
      * Table endpoint
      */
     #[Get("/", "module.index", ["auth"])]
     public function index(): string
     {
+        $this->setup();
         $this->recordUserSession();
         $path = route()->getPrefix();
         header("HX-Push-Url: $path");
@@ -213,6 +224,7 @@ class ModuleController extends Controller
     #[Get("/edit/{id}", "module.edit", ["auth"])]
     public function edit(int $id): string
     {
+        $this->setup();
         $this->recordUserSession();
         if (!$this->hasEditPermission($id)) {
             redirect("/permission-denied");
@@ -249,6 +261,7 @@ class ModuleController extends Controller
     #[Get("/create", "module.create", ["auth"])]
     public function create(): string
     {
+        $this->setup();
         $this->recordUserSession();
         if (!$this->hasCreatePermission()) {
             redirect("/permission-denied");

@@ -19,8 +19,8 @@ return [
     "max_requests" => [
         'default' => 50,
         'api' => 100,
-        'register' => 5,
-        'login' => 5,
+        'register' => 20,
+        'login' => 20,
     ],
     "decay_seconds" => [
         'default' => 60,
