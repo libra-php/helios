@@ -12,8 +12,8 @@ class UserSessionsModule extends ModuleController
     public function init(?int $id): void
     {
         $this->table = "user_sessions";
-        $this->module_title = "User Sessions";
-        $this->link_parent = "Administration";
+        $this->module_title = "Sessions";
+        $this->link_parent = "Users & Roles";
         $this->table_columns = [
             "ID" => "id",
             "User" => "(SELECT users.username 

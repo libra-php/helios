@@ -14,7 +14,7 @@ class AuditModule extends ModuleController
     {
         $this->table = "audit";
         $this->module_title = "Audit Log";
-        $this->link_parent = "Administration";
+        $this->link_parent = "System";
         $this->table_columns = [
             "ID" => "id",
             "User" => "(SELECT username FROM users WHERE id = user_id) as user",

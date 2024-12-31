@@ -12,8 +12,8 @@ class UserRolesModule extends ModuleController
     public function init(?int $id): void
     {
         $this->table = "user_roles";
-        $this->module_title = "User Roles";
-        $this->link_parent = "Administration";
+        $this->module_title = "Roles";
+        $this->link_parent = "Users & Roles";
 
         $this->table_columns = [
             "ID" => "id",
