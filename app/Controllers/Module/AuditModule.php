@@ -12,6 +12,7 @@ class AuditModule extends ModuleController
 {
     public function init(?int $id): void
     {
+        $this->roles = ["Super Admin"];
         $this->table = "audit";
         $this->module_title = "Audit Log";
         $this->link_parent = "System";

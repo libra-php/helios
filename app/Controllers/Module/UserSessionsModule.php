@@ -11,6 +11,7 @@ class UserSessionsModule extends ModuleController
 {
     public function init(?int $id): void
     {
+        $this->roles = ["Super Admin", "Admin"];
         $this->table = "user_sessions";
         $this->module_title = "Sessions";
         $this->link_parent = "Users & Roles";

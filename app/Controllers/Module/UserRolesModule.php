@@ -11,6 +11,7 @@ class UserRolesModule extends ModuleController
 {
     public function init(?int $id): void
     {
+        $this->roles = ["Super Admin"];
         $this->table = "user_roles";
         $this->module_title = "Roles";
         $this->link_parent = "Users & Roles";

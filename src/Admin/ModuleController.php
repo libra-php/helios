@@ -21,6 +21,7 @@ class ModuleController extends Controller
     private string $module;
     public string $module_title = '';
     public string $link_parent = '';
+    public array $roles = [];
 
     // The sql stuff
     protected string $primary_key = 'id';
@@ -82,12 +83,45 @@ class ModuleController extends Controller
         }
     }
 
+    protected function checkRole(): bool
+    {
+        if (!empty($this->roles)) {
+            $role = user()->role()->name;
+            return in_array($role, $this->roles);
+        }
+        return true;
+    }
+
+    /**
+     * Table endpoint
+     */
+    #[Get("/permission-denied", "module.permission-denied", ["auth"])]
+    public function permissionDenied(): string
+    {
+        $this->recordUserSession();
+        $path = route()->getPrefix() . "/permission-denied";
+        header("HX-Push-Url: $path");
+        Flash::add("warning", "Permission denied");
+
+        $view = $this->render("/admin/module/permission-denied.html", [
+            "module" => $this->getModuleData(),
+            "links" => $this->getLinks(),
+            "avatar" => user()->avatar(),
+        ]);
+
+        return $view;
+    }
+
     /**
      * Table endpoint
      */
     #[Get("/", "module.index", ["auth"])]
     public function index(): string
     {
+        if (!$this->checkRole()) {
+            return $this->permissionDenied();
+        }
+
         $this->setup();
         $this->recordUserSession();
         $path = route()->getPrefix();
@@ -116,6 +150,9 @@ class ModuleController extends Controller
     #[Get("/export-csv", "module.export-csv", ["auth"])]
     public function exportCSV(): void
     {
+        if (!$this->checkRole()) {
+            return;
+        }
         $this->setState();
         $time = time();
         $filename = "{$this->module}_{$time}_export.csv";
@@ -147,6 +184,9 @@ class ModuleController extends Controller
     #[Get("/filter-link-count/{index}", "module.filter-link-count", ["auth"])]
     public function filterLinkCount(int $index): string
     {
+        if (!$this->checkRole()) {
+            return $this->permissionDenied();
+        }
         // We call set state so that the other filters are considered
         $this->setState(true);
         $filters = array_values($this->filter_links);
@@ -161,6 +201,9 @@ class ModuleController extends Controller
     #[Get("/filter-link/{index}", "module.filter-link", ["auth"])]
     public function filterLink(int $index): string
     {
+        if (!$this->checkRole()) {
+            return $this->permissionDenied();
+        }
         // Reset to page 1 when the filter is activated
         $this->handlePage(1);
         $this->handleFilterLink($index);
@@ -173,6 +216,9 @@ class ModuleController extends Controller
     #[Get("/search", "module.search", ["auth"])]
     public function search(): string
     {
+        if (!$this->checkRole()) {
+            return $this->permissionDenied();
+        }
         $valid = $this->validateRequest([
             "search_term" => [],
         ]);
@@ -188,6 +234,9 @@ class ModuleController extends Controller
     #[Get("/sort/{index}", "module.sort", ["auth"])]
     public function sort(int $index): string
     {
+        if (!$this->checkRole()) {
+            return $this->permissionDenied();
+        }
         $this->handleSort($index);
         return $this->index();
     }
@@ -198,6 +247,9 @@ class ModuleController extends Controller
     #[Get("/page/{page}", "module.page", ["auth"])]
     public function page(int $page): string
     {
+        if (!$this->checkRole()) {
+            return $this->permissionDenied();
+        }
         $this->handlePage($page);
         return $this->index();
     }
@@ -208,6 +260,9 @@ class ModuleController extends Controller
     #[Get("/per-page")]
     public function per_page(): string
     {
+        if (!$this->checkRole()) {
+            return $this->permissionDenied();
+        }
         $valid = $this->validateRequest([
             "per_page" => ["required"],
         ]);
@@ -224,11 +279,11 @@ class ModuleController extends Controller
     #[Get("/edit/{id}", "module.edit", ["auth"])]
     public function edit(int $id): string
     {
+        if (!$this->checkRole() || !$this->hasEditPermission($id)) {
+            return $this->permissionDenied();
+        }
         $this->setup();
         $this->recordUserSession();
-        if (!$this->hasEditPermission($id)) {
-            redirect("/permission-denied");
-        }
         $path = route()->getPrefix() . "/edit/$id";
         header("HX-Push-Url: $path");
 
@@ -261,11 +316,11 @@ class ModuleController extends Controller
     #[Get("/create", "module.create", ["auth"])]
     public function create(): string
     {
+        if (!$this->checkRole() || !$this->hasCreatePermission()) {
+            return $this->permissionDenied();
+        }
         $this->setup();
         $this->recordUserSession();
-        if (!$this->hasCreatePermission()) {
-            redirect("/permission-denied");
-        }
         $path = route()->getPrefix() . "/create";
         header("HX-Push-Url: $path");
 
@@ -285,8 +340,8 @@ class ModuleController extends Controller
     #[Post("/{id}", "module.update", ["auth"])]
     public function update(int $id): string
     {
-        if (!$this->hasEditPermission($id)) {
-            redirect("/permission-denied");
+        if (!$this->checkRole() || !$this->hasEditPermission($id)) {
+            return $this->permissionDenied();
         }
         $valid = $this->validateRequest($this->validation_rules);
         if ($valid) {
@@ -308,8 +363,8 @@ class ModuleController extends Controller
     #[Post("/", "module.store", ["auth"])]
     public function store(): string
     {
-        if (!$this->hasCreatePermission()) {
-            redirect("/permission-denied");
+        if (!$this->checkRole() || !$this->hasCreatePermission()) {
+            return $this->permissionDenied();
         }
         $valid = $this->validateRequest($this->validation_rules);
         if ($valid) {
@@ -332,8 +387,8 @@ class ModuleController extends Controller
     #[Delete("/{id}", "module.destroy", ["auth"])]
     public function destroy(int $id): string
     {
-        if (!$this->hasDeletePermission($id)) {
-            redirect("/permission-denied");
+        if (!$this->checkRole() || !$this->hasDeletePermission($id)) {
+            return $this->permissionDenied();
         }
         $result = $this->delete($id);
         if ($result) {
@@ -599,11 +654,15 @@ class ModuleController extends Controller
                     $module = new $class();
                     $parent = $module->link_parent;
                     $title = $module->module_title;
-                    $links[$parent][] = [
-                        "url" => $path,
-                        "label" => $title,
-                        "boost" => "true",
-                    ];
+                    $roles = $module->roles;
+                    // Make sure the user role is allowed to see this link
+                    if (empty($roles) || in_array(user()->role()->name, $roles)) {
+                        $links[$parent][] = [
+                            "url" => $path,
+                            "label" => $title,
+                            "boost" => "true",
+                        ];
+                    }
                 }
             }
         }

@@ -12,6 +12,7 @@ class BlogPostsModule extends ModuleController
 {
     public function init(?int $id): void
     {
+        $this->roles = ["Super Admin", "Admin"];
         $this->table = "blog_posts";
         $this->module_title = "Posts";
         $this->link_parent = "Blog";

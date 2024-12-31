@@ -36,7 +36,7 @@ class SignInController extends Controller
                         "swap" => "outerHTML",
                     ]);
                 } else {
-                    $route = moduleRoute("module.index", "users");
+                    $route = moduleRoute("module.index", "profile");
                     redirect($route, [
                         "target" => "#sign-in",
                         "select" => "#admin",

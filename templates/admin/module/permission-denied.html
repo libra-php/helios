@@ -1,0 +1,17 @@
+{% extends "layouts/admin.html" %}
+
+{% block title %}{{ parent() }} [Admin] Permission Denied{{ module.title }}{% endblock %}
+
+{% block breadcrumb %}
+{% if module.parent %}
+    <li class="breadcrumb-item">{{ module.parent }}</li>
+{% endif %}
+<li class="breadcrumb-item active" aria-current="page"><a href="{{ module.route }}">{{ module.title }}</a></li>
+{% endblock %}
+
+{% block top %}
+{{ parent() }}
+{% if flash %}
+    {% include "components/flash.html" %}
+{% endif %}
+{% endblock %}
