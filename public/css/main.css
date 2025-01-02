@@ -244,6 +244,9 @@ a:active {
 .bg-gray {
     background-color: #f3f4f8;
 }
+.table-diff {
+    white-space: initial;
+}
 .diff-remove {
     background-color: #FF2400;
     color: white;

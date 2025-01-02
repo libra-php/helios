@@ -57,7 +57,7 @@ class BlogPostsModule extends ModuleController
             "title" => "input",
             "slug" => "input",
             "category_id" => "select",
-            "content" => "textarea",
+            "content" => "editor",
         ];
         $this->dropdown_queries = [
             "status_id" => "SELECT id as value, name as label 

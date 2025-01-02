@@ -131,6 +131,12 @@ trait FormControls
         return template("admin/module/controls/textarea.html", $opts);
     }
 
+    protected function editor(array $opts): string
+    {
+        $opts["class"] = "editor";
+        return template("admin/module/controls/editor.html", $opts);
+    }
+
     protected function select(array $opts): string
     {
         return template("admin/module/controls/select.html", $opts);

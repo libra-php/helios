@@ -17,7 +17,9 @@
                         <td nowrap>{{ cell.formatted|raw }}</td>
                     {% endif %}
                 {% endfor %}
-                <td class="actions d-flex justify-content-end" nowrap>
+                <td class="actions d-flex justify-content-end" 
+                    hx-indicator="#bread-spinner"
+                    nowrap>
                     &nbsp;
                     <form>
                         {{ csrf()|raw }}
