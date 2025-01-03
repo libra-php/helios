@@ -255,3 +255,15 @@ a:active {
     background-color: #008000;
     color: white;
 }
+
+/**
+ * Home
+ */
+#home .nav-avatar {
+    height: 24px;
+    width: 24px;
+    border-radius: 50%;
+}
+#home {
+    max-width: 800px;
+}
