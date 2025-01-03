@@ -259,6 +259,11 @@ a:active {
 /**
  * Home
  */
+#home .avatar-full {
+    height: 256px;
+    width: 256px;
+    border-radius: 50%;
+}
 #home .nav-avatar {
     height: 24px;
     width: 24px;
