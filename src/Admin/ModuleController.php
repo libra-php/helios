@@ -19,6 +19,7 @@ class ModuleController extends Controller
 
     // The module
     private string $module;
+    public bool $enabled = true;
     public string $module_title = '';
     public string $link_parent = '';
     public array $roles = [];
@@ -652,6 +653,7 @@ class ModuleController extends Controller
                 if (key_exists('module', $middleware)) {
                     $route = $middleware['module'];
                     $module = new $class();
+                    if (!$module->enabled) continue;
                     $parent = $module->link_parent;
                     $title = $module->module_title;
                     $roles = $module->roles;
@@ -672,6 +674,8 @@ class ModuleController extends Controller
             "label" => "Sign Out",
             "boost" => "false",
         ];
+        // Sort the menu headings
+        uksort($links, fn ($a, $b) => $a <=> $b);
         // Sort each group
         foreach ($links as &$group) {
             uasort($group, fn ($a, $b) => $a['label'] <=> $b['label']);
