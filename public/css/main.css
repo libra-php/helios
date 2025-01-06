@@ -288,7 +288,7 @@ a:active {
     font-size: 1.2rem;
     height: calc(100% - 66px);
     max-width: 800px;
-    color: #444;
+    color: #666;
 }
 
 #home .navbar-brand {
@@ -300,15 +300,12 @@ a:active {
     color: #444;
 }
 
-#home h1 {
-    color: #444;
-}
-
+#home h1,
 #home h2,
 #home h3,
 #home h4,
 #home h5 {
-    color: #666;
+    color: #444;
 }
 
 #home #view {

@@ -11,7 +11,7 @@
     {% endif %}
     <div class="pt-3">
         <h1>{{ post.title }}</h1>
-        <h3>{{ post.subtitle }}</h3>
+        <h4>{{ post.subtitle }}</h4>
         <span>
             <small class="text-muted">Author: {{ post.author }}</small><br />
             <small class="text-muted">
@@ -22,6 +22,7 @@
                 {% endif %}
             </small>
         </span>
+        <hr class="mt-4">
         <div id="blog-content" class="mt-4">
             {{ post.content|raw }}
         </div>
