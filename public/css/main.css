@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+
 /**
  * Main cont
  */
@@ -19,6 +20,7 @@ body {
     overflow: hidden;
     background-color: #fff;
 }
+
 .module-content {
     overflow: auto;
 }
@@ -26,7 +28,6 @@ body {
 body {
     background-color: #f3f4f8;
     color: #222;
-    overflow: hidden;
 }
 
 
@@ -94,9 +95,11 @@ a:active {
     border: 1px solid #ddd;
     overflow: auto;
 }
+
 .auth-form .lead {
     font-size: 1.1rem;
 }
+
 .auth-form .keypad .key {
     width: 70px;
     height: 70px;
@@ -119,15 +122,19 @@ a:active {
 .th-link {
     opacity: 0.7;
 }
+
 .th-link.active {
     opacity: 1.0;
 }
+
 .th-link.active.asc::after {
     content: " ▴"
 }
+
 .th-link.active.desc::after {
     content: " ▾"
 }
+
 #table-actions a {
     margin-bottom: 15px;
 }
@@ -141,10 +148,12 @@ a:active {
     width: 150px;
     min-width: 150px;
 }
+
 #sidebar ul {
-    list-style: none; 
+    list-style: none;
     padding: 0;
 }
+
 #sidebar ul li {
     padding-left: 20px;
     margin-top: 4px;
@@ -159,14 +168,17 @@ a:active {
 .navbar {
     margin-bottom: 4px;
 }
+
 .navbar .dropdown-menu {
     z-index: 1021;
 }
+
 .navbar .avatar {
     width: 22px;
     height: 22px;
     border-radius: 50%;
 }
+
 .navbar .scroll-menu {
     max-height: 90vh;
     overflow-y: auto;
@@ -179,41 +191,48 @@ a:active {
 .flash.alert {
     margin-bottom: 5px;
 }
+
 .flash.alert svg {
     width: 18px;
     height: 18px;
     margin-right: 8px;
 }
+
 .flash.alert-warning {
     border-left: 4px solid #ff9305;
     fill: #ff9305;
 }
+
 .flash.alert-danger {
     border-left: 4px solid #ff4747;
     fill: #ff0000;
 }
+
 .flash.alert-success {
     border-left: 4px solid #25a140;
     fill: #25a140;
 }
+
 .flash.alert-info {
     border-left: 4px solid #4772ff;
     fill: #4772ff;
 }
 
 
-.htmx-indicator{
+.htmx-indicator {
     display: none;
-    opacity:0;
+    opacity: 0;
     transition: opacity 500ms ease-in;
 }
-.htmx-request .htmx-indicator{
+
+.htmx-request .htmx-indicator {
     display: block;
-    opacity:1;
+    opacity: 1;
 }
-.htmx-request.htmx-indicator{
+
+.htmx-request.htmx-indicator {
     display: block;
-    opacity:1;
+    opacity: 1;
 }
 
 
@@ -226,31 +245,37 @@ a:active {
     -webkit-backdrop-filter: blur(10px);
 
     box-shadow:
-    /* Bottom and right depth effect */
-    inset -0.75px -0.5px rgba(255, 255, 255, 0.1),
-    /* Top and left depth effect */
-    inset +0.75px +0.5px rgba(255, 255, 255, 0.025),
-    /* Shadow effect */
-    3px 2px 10px rgba(0, 0, 0, 0.25);
+        /* Bottom and right depth effect */
+        inset -0.75px -0.5px rgba(255, 255, 255, 0.1),
+        /* Top and left depth effect */
+        inset +0.75px +0.5px rgba(255, 255, 255, 0.025),
+        /* Shadow effect */
+        3px 2px 10px rgba(0, 0, 0, 0.25);
 }
+
 .truncate {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .text-underline {
     text-decoration: underline;
 }
+
 .bg-gray {
     background-color: #f3f4f8;
 }
+
 .table-diff {
     white-space: initial;
 }
+
 .diff-remove {
     background-color: #FF2400;
     color: white;
 }
+
 .diff-add {
     background-color: #008000;
     color: white;
@@ -259,16 +284,67 @@ a:active {
 /**
  * Home
  */
-#home .avatar-full {
-    height: 256px;
-    width: 256px;
-    border-radius: 50%;
+#home {
+    font-size: 1.2rem;
+    height: calc(100% - 66px);
+    max-width: 800px;
+    color: #444;
 }
+
+#home .navbar-brand {
+    color: #444;;
+    font-size: 1.2rem;
+}
+
+#home .nav-menu {
+    color: #444;
+}
+
+#home h1 {
+    color: #444;
+}
+
+#home h2,
+#home h3,
+#home h4,
+#home h5 {
+    color: #666;
+}
+
+#home #view {
+    height: 100%;
+    padding: 5px;
+}
+
+#home .avatar-full {
+    height: 300px;
+    width: 300px;
+    border-radius: 18px;
+}
+
 #home .nav-avatar {
     height: 24px;
     width: 24px;
     border-radius: 50%;
+    margin-right: 13px;
 }
-#home {
-    max-width: 800px;
+
+#home .social-icon {
+    height: 28px;
+    width: 28px;
+}
+
+#home .post {
+    cursor: pointer;
+    font-size: 0.9rem;
+    border: 1px solid #ddd;
+}
+
+#home .post .cover {
+    width: 110px;
+    height: 110px;
+    margin-right: 15px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }

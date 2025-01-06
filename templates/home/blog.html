@@ -2,4 +2,28 @@
 
 {% block title %}{{ parent() }} - Blog{% endblock %}
 
-{% block view %}<p>WIP: blog</p>{% endblock %}
+{% block view %}
+<h1># Blog</h1>
+<p>Welcome to my blog—a place where technology, software development, and a dash of hockey fandom collide. Expect insights, ideas, and the occasional offbeat rant!</p>
+
+<div id="posts" class="mt-5">
+    <h3 class="mb-4">## Posts</h3>
+    {% if posts %}
+        {% for post in posts %}
+        <div class="post bg-white p-2 rounded mb-2" hx-get="/blog/{{ post.slug }}" title="View">
+            <div class="d-flex align-items-center">
+                <div class="cover" style="background-image: url('/uploads/{{ post.cover }}');"></div>
+                <div class="d-flex flex-column truncate">
+                    <h4 class="text-dark m-0 truncate" title="{{ post.title }}">{{ post.title }}</h4>
+                    <h5 class="text-secondary m-0 mb-1 truncate" title="{{ post.subtitle }}">{{ post.subtitle }}</h5>
+                    <p class="text-muted m-0">{{ post.category }}</p>
+                    <p class="text-muted m-0">Last updated {{ post.ago }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+    <p>No posts yet, but stay tuned—new content is coming soon!</p>
+    {% endif %}
+</div>
+{% endblock %}

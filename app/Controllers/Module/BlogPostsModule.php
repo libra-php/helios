@@ -39,6 +39,7 @@ class BlogPostsModule extends ModuleController
         ];
         $this->searchable = [
             "title",
+            "subtitle",
         ];
 
         $this->form_columns = [
@@ -46,6 +47,7 @@ class BlogPostsModule extends ModuleController
             "Category" => "category_id",
             "Publish At" => "publish_at",
             "Title" => "title",
+            "Subtitle" => "subtitle",
             "Slug" => "slug",
             "Cover Image" => "cover_image",
             "Content" => "content",
@@ -55,6 +57,7 @@ class BlogPostsModule extends ModuleController
             "status_id" => "select",
             "cover_image" => "image",
             "title" => "input",
+            "subtitle" => "input",
             "slug" => "input",
             "category_id" => "select",
             "content" => "editor",
@@ -75,6 +78,7 @@ class BlogPostsModule extends ModuleController
             "status_id" => ["required"],
             "cover_image" => [],
             "title" => ["required"],
+            "subtitle" => ["required"],
             "slug" => ["required", "regex:=^[a-z0-9]+(?:-[a-z0-9]+)*$"],
             "category_id" => ["required"],
             "content" => [],

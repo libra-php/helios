@@ -15,6 +15,7 @@ return new class implements IMigration
             $table->unsignedBigInteger("category_id")->nullable()->default(1);
             $table->unsignedBigInteger("status_id")->default(2);
             $table->varchar("title");
+            $table->varchar("subtitle");
             $table->varchar("slug");
             $table->text("content")->nullable();
             $table->unique("slug");
