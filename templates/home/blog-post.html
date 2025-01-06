@@ -3,5 +3,28 @@
 {% block title %}{{ parent() }} - Blog{% endblock %}
 
 {% block view %}
-<p>WIP</p>
+<div id="blog-post" class="">
+    {% if post.cover %}
+    <div id="blog-cover" style="background-image: url('{{ post.cover }}');">
+        &nbsp;
+    </div>
+    {% endif %}
+    <div class="pt-3">
+        <h1>{{ post.title }}</h1>
+        <h3>{{ post.subtitle }}</h3>
+        <span>
+            <small class="text-muted">Author: {{ post.author }}</small><br />
+            <small class="text-muted">
+                {% if post.updated_at %}
+                    Updated {{ post.ago }}
+                {% else %}
+                    Created {{ post.ago }}
+                {% endif %}
+            </small>
+        </span>
+        <div id="blog-content" class="mt-4">
+            {{ post.content|raw }}
+        </div>
+    </div>
+</div>
 {% endblock %}

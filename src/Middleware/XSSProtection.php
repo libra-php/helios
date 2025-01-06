@@ -26,12 +26,12 @@ class XSSProtection implements IMiddleware
     {
         // Sanitize GET parameters
         foreach ($request->query->all() as $key => $value) {
-            $request->query->set($key, $this->sanitize($value));
+            //$request->query->set($key, $this->sanitize($value));
         }
 
         // Sanitize POST parameters
         foreach ($request->request->all() as $key => $value) {
-            $request->request->set($key, $this->sanitize($value));
+            //$request->request->set($key, $this->sanitize($value));
         }
     }
 

@@ -1,24 +1,18 @@
 <div id="{{ id }}" class="ql-container ql-snow" style="height: 200px;">
-    <div class="ql-editor" data-placeholder="Compose something..."></div>
+    <div class="ql-editor" data-placeholder="Compose something...">{{ value|raw }}</div>
 </div>
-<input type="hidden" id="hidden-{{ id }}" name="{{ name }}" value="{{ value|raw }}" />
+<input type="hidden" id="hidden-{{ id }}" name="{{ name }}" value="{{ value }}" />
 <script>
     var quill = new Quill("#{{ id }}", {
         theme: "snow",
     });
-    var initialContent = document.querySelector('#hidden-{{ id }}').value;
-    if (initialContent) {
-        try {
-            quill.setContents(JSON.parse(initialContent));
-        } catch (e) {
-            console.error("Failed to parse initial content:", e);
-        }
-    }
     var el = document.querySelector('#{{ id }}');
     var form = el.closest("form");
     var hiddenInput = document.querySelector('#hidden-{{ id }}');
 
     form.addEventListener('submit', function() {
-        hiddenInput.value = JSON.stringify(quill.getContents()); // Save Delta
+        var content = quill.root.innerHTML;
+        console.log(content);
+        hiddenInput.value = content;
     });
 </script>

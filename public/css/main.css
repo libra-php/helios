@@ -325,8 +325,7 @@ a:active {
 #home .nav-avatar {
     height: 24px;
     width: 24px;
-    border-radius: 50%;
-    margin-right: 13px;
+    border-radius: 50%; margin-right: 13px;
 }
 
 #home .social-icon {
@@ -344,6 +343,18 @@ a:active {
     width: 110px;
     height: 110px;
     margin-right: 15px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+#home #blog-post * {
+    color: #333 !important;
+    background-color: inherit !important;
+}
+
+#home #blog-cover {
+    height: 300px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

@@ -4,7 +4,7 @@
 
 {% block view %}
 <h1># Blog</h1>
-<p>Welcome to my blog—a place where technology, software development, and a dash of hockey fandom collide. Expect insights, ideas, and the occasional offbeat rant!</p>
+<p>This blog is proof that I can code and type coherent sentences (most of the time). I write about interesting technology, software development, and the occasional hockey rant.</p>
 
 <div id="posts" class="mt-5">
     <h3 class="mb-4">## Posts</h3>
@@ -12,12 +12,12 @@
         {% for post in posts %}
         <div class="post bg-white p-2 rounded mb-2" hx-get="/blog/{{ post.slug }}" title="View">
             <div class="d-flex align-items-center">
-                <div class="cover" style="background-image: url('/uploads/{{ post.cover }}');"></div>
+                <div class="cover" style="background-image: url('{{ post.cover }}');"></div>
                 <div class="d-flex flex-column truncate">
                     <h4 class="text-dark m-0 truncate" title="{{ post.title }}">{{ post.title }}</h4>
-                    <h5 class="text-secondary m-0 mb-1 truncate" title="{{ post.subtitle }}">{{ post.subtitle }}</h5>
-                    <p class="text-muted m-0">{{ post.category }}</p>
-                    <p class="text-muted m-0">Last updated {{ post.ago }}</p>
+                    <p class="text-secondary mt-2 truncate" title="{{ post.subtitle }}">{{ post.subtitle }}</p>
+                    <p class="text-muted m-0"><small>{{ post.category }}</small></p>
+                    <p class="text-muted m-0"><small>Last updated {{ post.ago }}</small></p>
                 </div>
             </div>
         </div>

@@ -26,8 +26,9 @@ class BlogPost extends Model
         return BlogPostStatus::findOrFail($this->status_id);
     }
 
-    public function coverImage(): File
+    public function coverImage(): ?File
     {
-        return File::findOrFail($this->cover_image);
+        if (!$this->cover_image) return null;
+        return File::find($this->cover_image);
     }
 }
