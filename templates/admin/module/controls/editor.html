@@ -4,7 +4,15 @@
 <input type="hidden" id="hidden-{{ id }}" name="{{ name }}" value="{{ value }}" />
 <script>
     var quill = new Quill("#{{ id }}", {
-        theme: "snow",
+        theme: 'snow',
+        modules: {
+        toolbar: [
+          [{ header: [1, 2, false] }],
+          ['bold', 'italic', 'underline'],
+          ['code-block'], // Add code block button
+        ]
+      },
+      formats: ['header', 'bold', 'italic', 'underline', 'code-block']
     });
     var el = document.querySelector('#{{ id }}');
     var form = el.closest("form");
