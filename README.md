@@ -8,7 +8,7 @@ Helios is a lightweight, flexible PHP framework tailored for building modern web
 
 ## Project Status
 
-Helios is a **hobby project** developed for learning and experimentation purposes. While it provides a robust foundation for web application development, it is not designed or tested for **production environments** or **mission-critical** use cases. For production-grade applications, consider using established frameworks with proven security and performance track records.
+Helios is a **hobby project** developed for learning and experimentation purposes. While it provides a robust foundation for web application development, it is not designed or tested for **production environments** or **mission-critical** use cases. For production-grade applications, consider using established frameworks with proven security and performance track records. Otherwise, use at your own risk! For my personal website and blog, however, it appears to be more than sufficient.
 
 ## Features
 
