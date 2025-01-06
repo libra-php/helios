@@ -3,7 +3,7 @@
 {% block title %}{{ parent() }} - Blog{% endblock %}
 
 {% block view %}
-<h1># Blog</h1>
+<h1># Code. Hockey. Repeat.</h1>
 <p>This blog is proof that I can code and type coherent sentences (most of the time). I write about interesting technology, software development, and the occasional hockey rant.</p>
 
 <div id="posts" class="mt-5">
@@ -14,8 +14,8 @@
             <div class="d-flex align-items-center">
                 <div class="cover" style="background-image: url('{{ post.cover }}');"></div>
                 <div class="d-flex flex-column truncate">
-                    <h4 class="m-0 truncate" title="{{ post.title }}">{{ post.title }}</h4>
-                    <p class="mt-2 truncate" title="{{ post.subtitle }}">{{ post.subtitle }}</p>
+                    <h1 class="m-0 truncate" title="{{ post.title }}">{{ post.title }}</h1>
+                    <h4 class="mt-2 truncate" title="{{ post.subtitle }}">{{ post.subtitle }}</h4>
                     <p class="text-muted m-0"><small>{{ post.category }}</small></p>
                     <p class="text-muted m-0"><small>Last updated {{ post.ago }}</small></p>
                 </div>

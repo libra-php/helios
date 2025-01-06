@@ -14,13 +14,7 @@
         <h4>{{ post.subtitle }}</h4>
         <span>
             <small class="text-muted">Author: {{ post.author }}</small><br />
-            <small class="text-muted">
-                {% if post.updated_at %}
-                    Updated {{ post.ago }}
-                {% else %}
-                    Created {{ post.ago }}
-                {% endif %}
-            </small>
+            <small class="text-muted"> Last Updated  {{ post.ago }}</small>
         </span>
         <hr class="mt-4">
         <div id="blog-content" class="mt-4">
