@@ -10,6 +10,7 @@ class ProfileModule extends UsersModule
 {
     public function init(?int $id): void
     {
+        $id = user()->id;
         parent::init($id);
         $this->export_csv = false;
         $this->has_create = false;
@@ -20,5 +21,10 @@ class ProfileModule extends UsersModule
         $this->roles = [];
         $this->module_title = "Profile";
         $this->link_parent = "Account";
+    }
+
+    public function hasDeletePermission(int $id): bool
+    {
+        return true;
     }
 }
