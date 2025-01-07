@@ -134,7 +134,7 @@ class Blueprint
             $definition = $this->definitions[$index];
             $this->definitions[$index] = str_replace(
                 " NOT NULL",
-                "",
+                " NULL",
                 $definition
             );
         }
