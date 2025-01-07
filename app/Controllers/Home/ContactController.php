@@ -27,7 +27,10 @@ class ContactController extends Controller
             EmailJob::create([
                 "tag" => "home_contact",
                 "subject" => "Direct message",
-                "body" => nl2br($valid->message),
+                "body" => template("home/email/contact.html", [
+                    "email" => $valid->email,
+                    "message" => nl2br($valid->message),
+                ]),
                 "to_address" => "william.hleucka@gmail.com",
                 "send_at" => date("Y-m-d H:i:s"),
             ]);
