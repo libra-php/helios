@@ -12,6 +12,9 @@ class BlogService
         $posts = BlogPost::where("status_id", 3)
             ->orderBy("created_at", "DESC")
             ->get(lazy: false);
+
+        if (!$posts) return null;
+
         return array_map(fn($post) => [
             "author" => $post->user()->name,
             "cover" => $post->cover_image ? "/uploads/" . $post->coverImage()?->name : '/images/me-full.jpeg',

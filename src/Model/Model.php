@@ -81,7 +81,7 @@ class Model implements IModel
     /**
      * Create a new model
      */
-    public static function create(array $data): Model|bool|null
+    public static function create(array $data): static|Model|bool|null
     {
         $class = get_called_class();
         $model = container()->get($class);
@@ -139,7 +139,7 @@ class Model implements IModel
     /**
      * Refresh model attributes
      */
-    public function refresh(): Model
+    public function refresh(): Model|static
     {
         $this->loadAttributes($this->id);
         return $this;
@@ -148,7 +148,7 @@ class Model implements IModel
     /**
      * Return a single model by id
      */
-    public static function find(string $id): ?Model
+    public static function find(string $id): null|Model|static
     {
         $class = get_called_class();
         $model = container()->get($class);
@@ -163,7 +163,7 @@ class Model implements IModel
     /**
      * Return a single model by id or throws model not found
      */
-    public static function findOrFail(string $id): Model
+    public static function findOrFail(string $id): Model|static
     {
         $class = get_called_class();
         $model = container()->get($class);
@@ -233,7 +233,7 @@ class Model implements IModel
     /**
      * Fetch the model result set
      */
-    public function get(int $limit = 0, bool $lazy = true): null|array|Model
+    public function get(int $limit = 0, bool $lazy = true): null|array|static|Model
     {
         $results = $this->qb
             ->select($this->columns)
@@ -273,7 +273,7 @@ class Model implements IModel
     /**
      * Save the current model
      */
-    public function save(): Model
+    public function save(): Model|static
     {
         $key = $this->primaryKey;
         $params = [...array_values($this->attributes), $this->id];
@@ -292,7 +292,7 @@ class Model implements IModel
     /**
      * Update the current model with provided data
      */
-    public function update(array $data): Model
+    public function update(array $data): Model|static
     {
         $key = $this->primaryKey;
         $params = [...array_values($data), $this->id];
@@ -311,7 +311,7 @@ class Model implements IModel
     /**
      * Add to the model where clause (separated by AND)
      */
-    public static function where(string $column, string $operator = '=', ?string $value = null): Model
+    public static function where(string $column, string $operator = '=', ?string $value = null): Model|static
     {
         $class = get_called_class();
         $model = new $class;
