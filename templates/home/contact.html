@@ -16,12 +16,12 @@
     <form method="POST">
         {{ csrf()|raw }}
         <div class="form-floating mb-3">
-            <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com">
+            <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
             <label for="email">Email address</label>
             {% include 'errors/validation.html' with {'validate': 'email'} %}
         </div>
         <div class="form-floating">
-            <textarea class="form-control" style="height: 200px;" placeholder="Leave your message here" id="message" name="message" style="height: 100px"></textarea>
+            <textarea class="form-control" style="height: 200px;" placeholder="Leave your message here" id="message" name="message" style="height: 100px" required></textarea>
             <label for="message">Message</label>
             {% include 'errors/validation.html' with {'validate': 'message'} %}
         </div>

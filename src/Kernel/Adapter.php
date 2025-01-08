@@ -27,6 +27,14 @@ class Adapter extends CLI
             "Generate secure application key"
         );
         $options->registerCommand(
+            "cache:create",
+            "Create the template cache",
+        );
+        $options->registerCommand(
+            "cache:clear",
+            "Clear the template cache",
+        );
+        $options->registerCommand(
             "migrate:create",
             "Generate a new migration file"
         );
@@ -52,6 +60,8 @@ class Adapter extends CLI
         match ($options->getCmd()) {
             "serve" => $this->serve($options->getArgs()),
             "generate:key" => $this->generateKey(),
+            "cache:create" => $this->cacheCreate(),
+            "cache:clear" => $this->cacheClear(),
             "migrate:list" => $this->migrateList(),
             "migrate:fresh" => $this->migrateFresh(),
             "migrate:up" => $this->runMigration($options->getArgs(), "up"),
@@ -84,6 +94,43 @@ class Adapter extends CLI
         $key = `echo -n $unique | openssl dgst -binary -sha256 | openssl base64`;
         $this->success(" Application key: " . $key);
         $this->info(" Add this key to your .env file under APP_KEY");
+        exit();
+    }
+
+    private function cacheCreate(): void
+    {
+        $path = config("paths.template-cache");
+        // Check if the directory already exists
+        if (!is_dir($path)) {
+            // Create the directory with recursive option
+            if (!mkdir($path, 0775, true) && !is_dir($path)) {
+                $this->error(" Failed to create cache directory: {$path}");
+            }
+        }
+
+        // Change ownership to www-data
+        $user = 'www-data';
+        $group = 'www-data';
+
+        if (!chown($path, $user) || !chgrp($path, $group)) {
+            $this->error(" Failed to set ownership for cache directory: {$path}");
+        }
+
+        // Ensure permissions are correct
+        if (!chmod($path, 0775)) {
+            $this->error(" Failed to set permissions for cache directory: {$path}");
+        }
+        $this->success(" Cache directory created at: {$path}");
+        exit();
+    }
+
+    private function cacheClear(): void
+    {
+        $cache = config("paths.template-cache");
+
+        if (is_dir($cache)) {
+            exec("find $cache -mindepth 1 ! -name '.gitignore' -type d -exec rm -rf {} +");
+        }
         exit();
     }
 
