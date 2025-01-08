@@ -25,6 +25,13 @@
             <label for="message">Message</label>
             {% include 'errors/validation.html' with {'validate': 'message'} %}
         </div>
+        <div class="mt-2">
+            <p>Please enter the code below to help us confirm you're not a robot.</p>
+            <div class="d-flex justify-content-center">
+                <img src="/contact/captcha" /><input class="form-control" name="captcha" type="tel" name="captcha" value="" /><br />
+            </div>
+            {% include 'errors/validation.html' with {'validate': 'captcha'} %}
+        </div>
         <div class="mt-3">
             <button class="btn btn-primary text-white">
                 Send
