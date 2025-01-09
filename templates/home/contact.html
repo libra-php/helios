@@ -27,8 +27,9 @@
         </div>
         <div class="mt-2">
             <p>Please enter the code blue to confirm you're not a robot.</p>
-            <div class="d-flex justify-content-center">
-                <img src="/contact/captcha" /><input class="form-control" name="captcha" type="tel" name="captcha" value="" required /><br />
+            <div class="input-group">
+                <span class="input-group-text bg-blue"><img src="/contact/captcha" /></span>
+                <input class="form-control" name="captcha" type="tel" name="captcha" value="" required /><br />
             </div>
             {% include 'errors/validation.html' with {'validate': 'captcha'} %}
         </div>
