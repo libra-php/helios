@@ -17,7 +17,7 @@ return new class implements IMigration
             $table->varchar("title");
             $table->varchar("subtitle");
             $table->varchar("slug");
-            $table->text("content")->nullable();
+            $table->longText("content")->nullable();
             $table->unique("slug");
             $table->timestamp("publish_at")->nullable();
             $table->timestamps();

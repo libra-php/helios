@@ -571,6 +571,16 @@ class Blueprint
     }
 
     /**
+     * Creates a LONGTEXT column
+     * @param string $attribute Name of attribute
+     */
+    public function longText(string $attribute)
+    {
+        $this->definitions[] = sprintf("%s LONGTEXT NOT NULL", $attribute);
+        return $this;
+    }
+
+    /**
      * Creates a TIME column
      * @param string $attribute Name of attribute
      * @param int $precision Total digits

@@ -1,26 +1,29 @@
-<div id="{{ id }}" class="ql-container ql-snow" style="height: 200px;">
-    <div class="ql-editor" data-placeholder="Compose something...">{{ value|raw }}</div>
-</div>
-<input type="hidden" id="hidden-{{ id }}" name="{{ name }}" value="{{ value }}" />
+<textarea 
+    id="{{ id }}"
+    class="{{ class }}"
+    name="{{ name }}"
+    name="{{ name }}"
+    style = "display: none;"
+    {% if readonly %}readonly{% endif %}
+    {% if disabled %}disabled{% endif %}
+    {% if required %}required{% endif %}>
+</textarea>
 <script>
-    var quill = new Quill("#{{ id }}", {
-        theme: 'snow',
-        modules: {
+  $(document).ready(function() {
+    $('#{{ id }}').summernote({
+        placeholder: 'Type your post here',
+        tabsize: 2,
+        height: 120,
         toolbar: [
-          [{ header: [1, 2, false] }],
-          ['bold', 'italic', 'underline'],
-          ['code-block'], // Add code block button
+        ['style', ['style']],
+        ['font', ['bold', 'underline', 'clear']],
+        ['color', ['color']],
+        ['para', ['ul', 'ol', 'paragraph']],
+        ['table', ['table']],
+        ['insert', ['link', 'picture', 'video']],
+        ['view', ['fullscreen', 'codeview', 'help']]
         ]
-      },
-      formats: ['header', 'bold', 'italic', 'underline', 'code-block']
     });
-    var el = document.querySelector('#{{ id }}');
-    var form = el.closest("form");
-    var hiddenInput = document.querySelector('#hidden-{{ id }}');
-
-    form.addEventListener('submit', function() {
-        var content = quill.root.innerHTML;
-        console.log(content);
-        hiddenInput.value = content;
-    });
+    $('#{{ id }}').summernote('code', '{{ value|raw }}');
+  });
 </script>
