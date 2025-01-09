@@ -15,8 +15,8 @@ return new class implements IMigration
             $table->varchar("table_name");
             $table->varchar("table_id");
             $table->varchar("field");
-            $table->text("old_value")->nullable();
-            $table->text("new_value")->nullable();
+            $table->longText("old_value")->nullable();
+            $table->longText("new_value")->nullable();
             $table->varchar("tag")->nullable();
             $table->timestamp("created_at")->default("CURRENT_TIMESTAMP");
             $table->primaryKey("id");

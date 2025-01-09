@@ -31,8 +31,7 @@ class ContactController extends Controller
         imagestring($im, rand(1, 7), rand(1, 7),
             rand(1, 7),  $captcha, $fg);
 
-        header("Cache-Control: no-store,
-            no-cache, must-revalidate"); 
+        header("Cache-Control: no-store, no-cache, must-revalidate"); 
         header('Content-type: image/png');
 
         // Output the captcha as png

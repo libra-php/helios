@@ -346,9 +346,13 @@ a:active {
     background-repeat: no-repeat;
 }
 
-#home #blog-post * {
-    color: #333 !important;
-    background-color: inherit !important;
+#home #blog-content p {
+    text-align: justify;
+    color: #444;
+}
+
+#home #blog-content img {
+    max-width: 100%; 
 }
 
 #home #posts h1 {
