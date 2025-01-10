@@ -53,8 +53,8 @@ class AuditModule extends ModuleController
     function diff(string $column, string $value): string
     {
         $audit = Audit::find($value);
-        $old = $audit->old_value ?? 'null';
-        $new = $audit->new_value ?? 'null';
+        $old = substr($audit->old_value ?? 'null', 0, 255);
+        $new = substr($audit->new_value ?? 'null', 0, 255);
         return template("admin/module/format/diff.html", [
             "diff" => $this->getDiff(preg_split("/[\s]+/", $old), preg_split("/[\s]+/", $new)),
         ]);
