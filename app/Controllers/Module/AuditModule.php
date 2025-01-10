@@ -47,6 +47,7 @@ class AuditModule extends ModuleController
             "All" => "1=1",
         ];
         $this->default_sort = "DESC";
+        $this->has_delete = $this->has_edit = $this->has_create = false;
     }
 
     function diff(string $column, string $value): string

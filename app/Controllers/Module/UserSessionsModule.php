@@ -33,5 +33,6 @@ class UserSessionsModule extends ModuleController
             "url",
         ];
         $this->default_sort = "DESC";
+        $this->has_delete = $this->has_edit = $this->has_create = false;
     }
 }
