@@ -704,7 +704,7 @@ class ModuleController extends Controller
      */
     public function hasDeletePermission(int $id): bool
     {
-        return $this->has_delete && !empty($this->form_columns);
+        return $this->has_delete;
     }
 
     /**
