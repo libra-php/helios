@@ -31,4 +31,13 @@ class BlogPost extends Model
         if (!$this->cover_image) return null;
         return File::find($this->cover_image);
     }
+
+    public function comments(): ?array
+    {
+        $comments = BlogPostComment::where("blog_post_id", $this->id)
+            ->get(lazy: false);
+        if (!$comments) return null;
+
+        return $comments;
+    }
 }

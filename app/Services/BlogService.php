@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\BlogPost;
+use App\Models\BlogPostComment;
 use Carbon\Carbon;
 
 class BlogService
@@ -16,6 +17,7 @@ class BlogService
         if (!$posts) return null;
 
         return array_map(fn($post) => [
+            "id" => $post->id,
             "author" => $post->user()->name,
             "cover" => $post->cover_image ? "/uploads/" . $post->coverImage()?->name : '/images/me-full.jpeg',
             "category" => $post->category()->name,
@@ -38,6 +40,7 @@ class BlogService
         $cover = $post->coverImage()?->name;
 
         return [
+            "id" => $post->id,
             "author" => $post->user()->name,
             "cover" => $cover ? "/uploads/$cover" : null,
             "category" => $post->category()->name,
@@ -48,6 +51,24 @@ class BlogService
             "created_at" => $post->created_at,
             "updated_at" => $post->updated_at,
             "ago" => Carbon::parse($post->updated_at ?? $post->created_at)->diffForHumans(),
+            "comments_enabled" => $post->comments_enabled == 1,
         ];
+    }
+
+    public function getBlogPostComments(int $blog_post_id): ?array
+    {
+        $comments = BlogPostComment::where("blog_post_id", $blog_post_id)
+            ->where("approved", 1)
+            ->get(lazy: false);
+
+        if (!$comments) return null;
+
+        return array_map(fn($comment) => [
+            "id" => $comment->id,
+            "name" => $comment->name,
+            "comment" => $comment->comment,
+            "ago" => Carbon::parse($comment->created_at)->diffForHumans(),
+            "created_at" => $comment->created_at,
+        ], $comments);
     }
 }

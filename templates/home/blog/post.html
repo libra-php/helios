@@ -1,0 +1,71 @@
+{% extends "layouts/home.html" %}
+
+{% block title %}{{ parent() }} - Blog{% endblock %}
+
+{% block view %}
+<div id="blog-post" class="">
+    {% if post.cover %}
+    <div id="blog-cover" style="background-image: url('{{ post.cover }}');">
+        &nbsp;
+    </div>
+    {% endif %}
+    <div class="pt-3">
+        <h1>{{ post.title }}</h1>
+        <h4>{{ post.subtitle }}</h4>
+        <span>
+            <small class="text-muted">Author: {{ post.author }}</small><br />
+            <small class="text-muted"> Last Updated  {{ post.ago }}</small>
+        </span>
+        <hr class="mt-4">
+        <div id="blog-content" class="mt-4">
+            {{ post.content|raw }}
+        </div>
+        {% if post.comments_enabled %}
+            <hr>
+            <div id="blog-pre-comment" onClick="hideBlogPreComment(); showBlogComment();">
+                <label class="mb-1" for="name">Post comment</label>
+                <input class="form-control" type="text" placeholder="Write your comment here" />
+            </div>
+            <div id="blog-comment" style="display: none;">
+                <form method="POST" hx-post="/blog/comment/{{ post.id }}" hx-swap="outerHTML" hx-target="#blog-post" hx-select="#blog-post">
+                    {{ csrf()|raw }}
+                    <div>
+                        <label class="mb-1" for="name">Post comment</label>
+                        <textarea class="form-control" style="height: 200px;" placeholder="Write your comment here" id="comment" name="comment" style="height: 100px" autofocus required></textarea>
+                        {% include 'errors/validation.html' with {'validate': 'comment'} %}
+                    </div>
+                    <div>
+                        <label class="mb-1" for="name">Your name</label>
+                        <input type="name" class="form-control" id="name" name="name" placeholder="Full name or handle" required>
+                        {% include 'errors/validation.html' with {'validate': 'name'} %}
+                    </div>
+                    <div class="mt-3">
+                        <button class="btn btn-success text-white">
+                            Send
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <hr>
+            <div id="blog-comments" hx-trigger="load" hx-get="/blog/comments/{{ post.id }}" hx-swap="outerHTML" hx-target="#blog-comments" hx-select="#blog-comments">
+            </div>
+        {% endif %}
+    </div>
+</div>
+<script>
+    const showBlogComment = () => {
+        var target = document.getElementById("blog-comment");
+        var comment = document.getElementById("comment");
+        target.style.display = 'block';
+        comment.focus();
+    }
+    const hideBlogComment = () => {
+        var target = document.getElementById("blog-comment");
+        target.style.display = 'none';
+    }
+    const hideBlogPreComment = () => {
+        var target = document.getElementById("blog-pre-comment");
+        target.style.display = 'none';
+    }
+</script>
+{% endblock %}

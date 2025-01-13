@@ -46,6 +46,7 @@ class BlogPostsModule extends ModuleController
             "Status" => "status_id",
             "Category" => "category_id",
             "Publish At" => "publish_at",
+            "Comments Enabled" => "comments_enabled",
             "Title" => "title",
             "Subtitle" => "subtitle",
             "Slug" => "slug",
@@ -56,6 +57,7 @@ class BlogPostsModule extends ModuleController
             "publish_at" => "datetime",
             "status_id" => "select",
             "cover_image" => "image",
+            "comments_enabled" => "switch",
             "title" => "input",
             "subtitle" => "input",
             "slug" => "input",
@@ -71,6 +73,7 @@ class BlogPostsModule extends ModuleController
                 ORDER BY name",
         ];
         $this->default_values = [
+            "comments_enabled" => 1,
             "category_id" => 1,
             "status_id" => 2,
         ];

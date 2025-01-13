@@ -14,6 +14,7 @@ return new class implements IMigration
             $table->unsignedBigInteger("cover_image")->nullable();
             $table->unsignedBigInteger("category_id")->nullable()->default(1);
             $table->unsignedBigInteger("status_id")->default(2);
+            $table->unsignedTinyInteger("comments_enabled")->default(1);
             $table->varchar("title");
             $table->varchar("subtitle");
             $table->varchar("slug");

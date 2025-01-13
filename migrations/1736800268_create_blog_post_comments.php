@@ -10,12 +10,14 @@ return new class implements IMigration
     {
         return Schema::create($this->table, function (Blueprint $table) {
             $table->bigIncrements("id");
+            $table->unsignedBigInteger("blog_post_id");
             $table->varchar("name");
             $table->text("comment");
             $table->unsignedInteger("ip");
             $table->unsignedTinyInteger("approved")->default(0);
             $table->timestamps();
             $table->primaryKey("id");
+            $table->foreignKey("blog_post_id")->references("blog_posts", "id")->onDelete("CASCADE");
         });
     }
 
