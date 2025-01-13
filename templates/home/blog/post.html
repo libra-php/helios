@@ -23,19 +23,19 @@
         {% if post.comments_enabled %}
             <hr>
             <div id="blog-pre-comment" onClick="hideBlogPreComment(); showBlogComment();">
-                <label class="mb-1" for="name">Post comment</label>
+                <label class="my-2" for="name">Post comment</label>
                 <input class="form-control" type="text" placeholder="Write your comment here" />
             </div>
             <div id="blog-comment" style="display: none;">
                 <form method="POST" hx-post="/blog/comment/{{ post.id }}" hx-swap="outerHTML" hx-target="#blog-post" hx-select="#blog-post">
                     {{ csrf()|raw }}
                     <div>
-                        <label class="mb-1" for="name">Post comment</label>
+                        <label class="my-2" for="name">Post comment</label>
                         <textarea class="form-control" style="height: 200px;" placeholder="Write your comment here" id="comment" name="comment" style="height: 100px" autofocus required></textarea>
                         {% include 'errors/validation.html' with {'validate': 'comment'} %}
                     </div>
                     <div>
-                        <label class="mb-1" for="name">Your name</label>
+                        <label class="my-2" for="name">Your name</label>
                         <input type="name" class="form-control" id="name" name="name" placeholder="Full name or handle" required>
                         {% include 'errors/validation.html' with {'validate': 'name'} %}
                     </div>

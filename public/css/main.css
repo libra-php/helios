@@ -371,16 +371,18 @@ a:active {
     background-color: rgb(22, 86, 165);
 }
 #home .blog-comment {
-    color: #000 !important;
     font-size: 0.9rem;
 }
-#home .blog-comment .name {
+#home .blog-comment .name strong  {
+    color: #666 !important;
     font-size: 0.8rem;
 }
-#home .blog-comment .ts {
+#home .blog-comment .ts strong {
+    color: #888 !important;
     font-size: 0.7rem;
 
 }
-#home .blog-comment .comment {
+#home .blog-comment .comment p {
+    color: #222 !important;
     font-weight: 400;
 }
