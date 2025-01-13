@@ -182,8 +182,7 @@ class Adapter extends CLI
             exit;
         }
         $migration_path = config("paths.migrations");
-        $migrations = $this->migrations->getMigrationFiles($migration_path);
-        $migration_file = $migration_path . count($migrations) . "_create_$table_name.php";
+        $migration_file = $migration_path . time() . "_create_$table_name.php";
         $class = <<<CLASS
 <?php
 namespace Nebula\Migrations;
