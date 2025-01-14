@@ -17,6 +17,7 @@ return [
     "csp_directives" => [
     ],
     "max_requests" => [
+        'captcha' => 100,
         'default' => 50,
         'api' => 100,
         'forgot-pass' => 5,
@@ -24,6 +25,7 @@ return [
         'login' => 25,
     ],
     "decay_seconds" => [
+        'captcha' => 1,
         'default' => 60,
         'api' => 60,
         'forgot-pass' => 100,

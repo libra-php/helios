@@ -13,7 +13,7 @@ class HomeController extends Controller
         return $this->render("home/index.html");
     }
 
-    #[Get("/captcha", "home.captcha")]
+    #[Get("/captcha", "home.captcha", ["captcha"])]
     public function captcha()
     {
         $captcha = getCaptcha();
