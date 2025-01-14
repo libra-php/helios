@@ -284,12 +284,15 @@ a:active {
  * Home
  */
 #home {
-    font-size: 1.2rem;
     max-width: 800px;
 }
 
 #home * {
     color: #666;
+}
+
+#home p, #home span, #home .table, #home label:not(".form-floating") {
+    font-size: 1.25rem;
 }
 
 #home .navbar-brand {
@@ -307,6 +310,10 @@ a:active {
 #home h4,
 #home h5 {
     color: #444;
+}
+
+#home .captcha {
+    width: 160px;
 }
 
 #home #view {
@@ -370,19 +377,14 @@ a:active {
 #home .bg-blue {
     background-color: rgb(22, 86, 165);
 }
-#home .blog-comment {
-    font-size: 0.9rem;
-}
-#home .blog-comment .name strong  {
-    color: #666 !important;
-    font-size: 0.8rem;
-}
-#home .blog-comment .ts strong {
-    color: #888 !important;
-    font-size: 0.7rem;
-
-}
 #home .blog-comment .comment p {
-    color: #222 !important;
-    font-weight: 400;
+    font-size: 1.0rem;
+}
+#home .blog-comment .name {
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+#home .blog-comment .ago {
+    font-size: 0.7rem;
+    color: #888;
 }

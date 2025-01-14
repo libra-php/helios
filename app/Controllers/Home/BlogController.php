@@ -4,6 +4,7 @@ namespace App\Controllers\Home;
 
 use App\Models\BlogPost;
 use App\Services\BlogService;
+use Helios\View\Flash;
 use Helios\Web\Controller;
 use StellarRouter\{Group, Get, Post};
 
@@ -28,6 +29,7 @@ class BlogController extends Controller
     #[Get("/{slug}", "blog.index")]
     public function post(string $slug): string
     {
+        setCaptcha();
         $post = $this->service->getBlogPostBySlug($slug);
 
         if (!$post) {
@@ -49,10 +51,17 @@ class BlogController extends Controller
         $valid = $this->validateRequest([
             "name" => ["required"],
             "comment" => ["required"],
+            "captcha" => [],
         ]);
 
         if ($valid) {
-            $this->service->createComment($post->id, trim($valid->name), trim($valid->comment));
+            $captcha_success = $valid->captcha == getCaptcha();
+            if (!$captcha_success) {
+                Flash::add("warning", "Invalid captcha code. Please try again.");
+            } else {
+                Flash::add("success", "Thank you for sharing your thoughts! Your comment has been successfully posted.");
+                $this->service->createComment($post->id, trim($valid->name), trim($valid->comment));
+            }
         }
 
         return $this->post($post->slug);

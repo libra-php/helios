@@ -59,6 +59,7 @@ class BlogService
     {
         $comments = BlogPostComment::where("blog_post_id", $blog_post_id)
             ->where("approved", 1)
+            ->orderBy("created_at", "DESC")
             ->get(lazy: false);
 
         if (!$comments) return null;
@@ -79,6 +80,7 @@ class BlogService
             "name" => $name,
             "comment" => $comment,
             "ip" => ip2long(getClientIp()),
+            "approved" => 1,
         ]);
     }
 }

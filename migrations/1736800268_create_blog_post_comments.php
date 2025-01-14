@@ -14,7 +14,7 @@ return new class implements IMigration
             $table->varchar("name");
             $table->text("comment");
             $table->unsignedInteger("ip");
-            $table->unsignedTinyInteger("approved")->default(0);
+            $table->unsignedTinyInteger("approved")->nullable()->default(0);
             $table->timestamps();
             $table->primaryKey("id");
             $table->foreignKey("blog_post_id")->references("blog_posts", "id")->onDelete("CASCADE");

@@ -1009,7 +1009,7 @@ class ModuleController extends Controller
             if (config("app.debug")) {
                 Flash::add("danger", $ex->getMessage());
             }
-            return null;
+            return false;
         }
         if ($result) {
             // Audit the result
