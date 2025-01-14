@@ -71,4 +71,14 @@ class BlogService
             "created_at" => $comment->created_at,
         ], $comments);
     }
+
+    public function createComment(int $post_id, string $name, string $comment)
+    {
+        BlogPostComment::create([
+            "blog_post_id" => $post_id,
+            "name" => $name,
+            "comment" => $comment,
+            "ip" => ip2long(getClientIp()),
+        ]);
+    }
 }

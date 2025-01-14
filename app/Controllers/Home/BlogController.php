@@ -3,7 +3,6 @@
 namespace App\Controllers\Home;
 
 use App\Models\BlogPost;
-use App\Models\BlogPostComment;
 use App\Services\BlogService;
 use Helios\Web\Controller;
 use StellarRouter\{Group, Get, Post};
@@ -11,24 +10,25 @@ use StellarRouter\{Group, Get, Post};
 #[Group(prefix: "/blog")]
 class BlogController extends Controller
 {
-    private BlogService $blog_service;
+    private BlogService $service;
+
     public function __construct()
     {
-        $this->blog_service = new BlogService; 
+        $this->service = new BlogService; 
     }
 
     #[Get("/", "blog.index")]
     public function index(): string
     {
         return $this->render("home/blog/index.html", [
-            "posts" => $this->blog_service->getBlogPosts(),
+            "posts" => $this->service->getBlogPosts(),
         ]);
     }
 
     #[Get("/{slug}", "blog.index")]
     public function post(string $slug): string
     {
-        $post = $this->blog_service->getBlogPostBySlug($slug);
+        $post = $this->service->getBlogPostBySlug($slug);
 
         if (!$post) {
             redirect("/page-not-found");
@@ -52,13 +52,7 @@ class BlogController extends Controller
         ]);
 
         if ($valid) {
-            BlogPostComment::create([
-                "blog_post_id" => $post->id,
-                "name" => $valid->name,
-                "comment" => $valid->comment,
-                "ip" => ip2long(getClientIp()),
-                "approved" => false, // Posts will be approved in the backend
-            ]);
+            $this->service->createComment($post->id, trim($valid->name), trim($valid->comment));
         }
 
         return $this->post($post->slug);
@@ -68,7 +62,7 @@ class BlogController extends Controller
     public function comments(int $id): string
     {
         return $this->render("home/blog/comments.html", [
-            "comments" => $this->blog_service->getBlogPostComments($id)
+            "comments" => $this->service->getBlogPostComments($id)
         ]);
     }
 }
