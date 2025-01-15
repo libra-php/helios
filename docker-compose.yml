@@ -18,6 +18,8 @@ services:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
+    environment:
+      - PATH=/var/www/html/helios:$PATH
     volumes:
       - type: bind
         source: .
@@ -39,7 +41,7 @@ services:
       MYSQL_USER: ${DB_USERNAME:?err}
       MYSQL_PASSWORD: ${DB_PASSWORD:?err}
     ports:
-      - "3307:3306"
+      - "${DB_PORT:?err}:3306"
     volumes:
       - ./docker/mysql:/var/lib/mysql
     networks:
