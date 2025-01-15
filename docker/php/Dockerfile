@@ -25,9 +25,6 @@ WORKDIR /var/www/html
 # Copy all application files
 COPY . /var/www/html
 
-# Ensure correct permissions
-RUN chown -R www-data:www-data /var/www/html
-
 # # Run composer install to install dependencies
 # RUN if [ -f composer.json ]; then \
 #     echo "Running composer install..."; \
