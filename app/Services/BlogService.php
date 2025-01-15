@@ -25,10 +25,19 @@ class BlogService
             "subtitle" => $post->subtitle,
             "slug" => $post->slug,
             "content" => $post->content,
+            "read_min" => $this->estimateReadingTime($post->content),
             "created_at" => $post->created_at,
             "updated_at" => $post->updated_at,
             "ago" => Carbon::parse($post->updated_at ?? $post->created_at)->diffForHumans(),
         ], $posts);
+    }
+
+    public function estimateReadingTime(string $content, int $words_per_minute = 200)
+    {
+        $plain_text = strip_tags(html_entity_decode($content));
+        $word_count = str_word_count($plain_text);
+        $reading_time = ceil($word_count / $words_per_minute);
+        return $reading_time;
     }
 
     public function getBlogPostBySlug(string $slug): ?array
@@ -48,6 +57,7 @@ class BlogService
             "subtitle" => $post->subtitle,
             "slug" => $post->slug,
             "content" => $post->content,
+            "read_min" => $this->estimateReadingTime($post->content),
             "created_at" => $post->created_at,
             "updated_at" => $post->updated_at,
             "ago" => Carbon::parse($post->updated_at ?? $post->created_at)->diffForHumans(),
