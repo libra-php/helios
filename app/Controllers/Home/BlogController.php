@@ -11,12 +11,7 @@ use StellarRouter\{Group, Get, Post};
 #[Group(prefix: "/blog")]
 class BlogController extends Controller
 {
-    private BlogService $service;
-
-    public function __construct()
-    {
-        $this->service = new BlogService; 
-    }
+    public function __construct(private BlogService $service) {}
 
     #[Get("/", "blog.index")]
     public function index(): string
