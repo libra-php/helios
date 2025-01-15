@@ -8,13 +8,7 @@ Clone the latest version of Helios from GitHub.
 git clone https://github.com/libra-php/helios.git
 ```
 
-### Step 2: Install Dependencies
-Use [Composer](https://getcomposer.org) to install the necessary dependencies.
-```bash
-composer install
-```
-
-### Step 3: Configure Environment
+### Step 2: Configure Environment
 Copy the example environment file and update the database configuration with your credentials.
 ```bash
 cp env.example .env
@@ -30,40 +24,35 @@ cp env.example .env
 # DB_CHARSET=utf8mb4
 ```
 
-### Step 4: Set Up Docker Containers
+### Step 3: Set Up Docker Containers
 Run Docker Compose to start the application stack, which includes MySQL, nginx, and PHP.
 ```bash
 sudo docker compose up --build --detach
 ```
 
+### Step 4: Install Composer Dependencies
+```bash
+docker exec -it helios-php composer install
+```
+
 ### Step 5: Generate Application Key
 To ensure the security of your application, generate a unique application key.
 ```bash
-# Access the PHP container
-sudo docker exec -it helios-php bash
-```
-```bash
 # Generate a new application key
-./bin/console generate:key
+docker exec -it helios-php bin/console generate:key
 ```
 
-### Step 6: Handle Permissions
-Access the application at https://0.0.0.0:8080. If you see a "Hello, world!" message, everything is working correctly. 
-
-- If you encounter permission issues with the `app.log` file, access the PHP container and fix it with:
-```bash
-chown -R www-data:www-data storage/
-```
-
-### Step 7: Database Migrations
+### Step 6: Database Migrations
 Run the database migration command from the PHP container
 ```bash
-./bin/console migrate:fresh
+docker exec -it helios-php bin/console migrate:fresh
 ```
 
-### Step 8: Admin Sign-In
+### Step 7: Admin Sign-In
 To access the admin backend, visit https://0.0.0.0:8080/sign-in. Use the default credentials:
 - **Email:** administrator
 - **Password:** Admin2025!
 
 **Important:** Change the default password immediately after logging in.
+
+
