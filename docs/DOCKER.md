@@ -39,13 +39,13 @@ docker exec -it helios-php composer install
 To ensure the security of your application, generate a unique application key.
 ```bash
 # Generate a new application key
-docker exec -it helios-php /var/www/html/helios generate:key
+docker exec -it helios-php bin/console generate:key
 ```
 
 ### Step 6: Database Migrations
 Run the database migration command from the PHP container
 ```bash
-docker exec -it helios-php /var/www/html/helios migrate:fresh
+docker exec -it helios-php bin/console migrate:fresh
 ```
 
 ### Step 7: Admin Sign-In
@@ -54,3 +54,5 @@ To access the admin backend, visit https://0.0.0.0:8080/sign-in. Use the default
 - **Password:** Admin2025!
 
 **Important:** Change the default password immediately after logging in.
+
+
