@@ -39,7 +39,7 @@ services:
       MYSQL_USER: ${DB_USERNAME:?err}
       MYSQL_PASSWORD: ${DB_PASSWORD:?err}
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - ./docker/mysql:/var/lib/mysql
     networks:
