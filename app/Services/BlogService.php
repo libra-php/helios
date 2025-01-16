@@ -112,7 +112,7 @@ class BlogService
         $comment = BlogPostComment::create([
             "blog_post_id" => $blog_post_id,
             "name" => $name,
-            "comment" => $comment,
+            "comment" => nl2br($comment),
             "ip" => ip2long(getClientIp()),
             "approved" => 1,
         ]);

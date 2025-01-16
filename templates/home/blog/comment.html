@@ -2,6 +2,6 @@
     <div class="blog-comment card-body d-flex flex-column">
         <div class="name">{{ comment.name }}</div>
         <div class="ago" hx-trigger={% if comment.update_ts %}"load delay:5s, every 10s"{% else %}"every 5m"{% endif %}hx-swap="textContent" hx-target="this" hx-get="/blog/comment/ts/{{ comment.id }}">{{ comment.ago }}</div>
-        <div class="comment mt-2"><p class="m-0">{{ comment.comment }}</div>
+        <div class="comment mt-2"><p class="m-0">{{ comment.comment|raw }}</div>
     </div>
 </div>
