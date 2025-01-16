@@ -8,7 +8,6 @@ use StellarRouter\{Get, Post};
 
 class TwoFactorAuthenticationController extends Controller
 {
-
     public function __construct(private AuthService $service)
     {
         if (!user()) {
@@ -27,7 +26,9 @@ class TwoFactorAuthenticationController extends Controller
         $user = user();
         return $this->render("admin/two-fa/index.html", [
             "show_qr" => !$user->two_fa_confirmed,
-            "qr_src" => !$user->two_fa_confirmed ? $this->service->generateTwoFactorQR($user) : '',
+            "qr_src" => !$user->two_fa_confirmed
+                ? $this->service->generateTwoFactorQR($user)
+                : "",
         ]);
     }
 
@@ -37,11 +38,7 @@ class TwoFactorAuthenticationController extends Controller
         $this->addErrorMessage("min_length", "Please enter your 2FA code");
         $this->addErrorMessage("max_length", "Please enter your 2FA code");
         $valid = $this->validateRequest([
-            "code" => [
-                "required",
-                "min_length:=6",
-                "max_length:=6",
-            ]
+            "code" => ["required", "min_length:=6", "max_length:=6"],
         ]);
         if ($valid) {
             if ($this->service->testTwoFactorCode(user(), $valid->code)) {

@@ -10,7 +10,6 @@ class ForgotPasswordController extends Controller
 {
     public function __construct(private AuthService $service)
     {
-        
     }
 
     #[Get("/forgot-password", "forgot-password.index")]
@@ -19,11 +18,11 @@ class ForgotPasswordController extends Controller
         return $this->render("admin/forgot-password/index.html");
     }
 
-    #[Post("/forgot-password", "forgot-password.post", ['forgot-pass'])]
+    #[Post("/forgot-password", "forgot-password.post", ["forgot-pass"])]
     public function post(): string
     {
         $valid = $this->validateRequest([
-            'email' => ['required', 'email'],
+            "email" => ["required", "email"],
         ]);
 
         if ($valid) {
@@ -33,4 +32,3 @@ class ForgotPasswordController extends Controller
         return $this->index();
     }
 }
-

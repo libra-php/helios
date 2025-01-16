@@ -16,7 +16,7 @@ class ProfileModule extends UsersModule
         $this->has_create = false;
         $this->searchable = [];
         $this->filter_links = [
-            "Me" => "id=".user()->id
+            "Me" => "id=" . user()->id,
         ];
         $this->roles = [];
         $this->module_title = "Profile";

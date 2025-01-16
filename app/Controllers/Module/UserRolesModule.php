@@ -22,19 +22,16 @@ class UserRolesModule extends ModuleController
             "Created" => "created_at",
         ];
         $this->table_format = [
-            "created_at" => "ago"
+            "created_at" => "ago",
         ];
         $this->form_columns = [
-            "Name" => "name"
+            "Name" => "name",
         ];
         $this->form_controls = [
             "name" => "input",
         ];
         $this->validation_rules = [
-            "name" => [
-                "required",
-                "unique:=user_roles",
-            ]
+            "name" => ["required", "unique:=user_roles"],
         ];
     }
 

@@ -24,24 +24,37 @@ class RegisterController extends Controller
         return $this->render("admin/register/index.html");
     }
 
-    #[Post("/register", "register.post", ['register'])]
+    #[Post("/register", "register.post", ["register"])]
     public function post(): string
     {
-        $this->addErrorMessage("password.regex", "Must contain: 1 uppercase, 1 number, and 1 symbol");
+        $this->addErrorMessage(
+            "password.regex",
+            "Must contain: 1 uppercase, 1 number, and 1 symbol"
+        );
         $this->addErrorMessage("username.regex", "Invalid username");
         $valid = $this->validateRequest([
             "name" => ["required"],
             "email" => ["required", "email", "unique:=users"],
-            "username" => ["required", "unique:=users", "regex:=^[a-zA-Z0-9]+$"],
-            "password" => [
-                "required", 
-                "min_length:=8", 
-                "regex:=^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+            "username" => [
+                "required",
+                "unique:=users",
+                "regex:=^[a-zA-Z0-9]+$",
             ],
-            "password_match" => ["required", function ($value) {
-                $this->addErrorMessage("password_match", "Passwords must match");
-                return request()->get("password") === $value;
-            }],
+            "password" => [
+                "required",
+                "min_length:=8",
+                "regex:=^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
+            ],
+            "password_match" => [
+                "required",
+                function ($value) {
+                    $this->addErrorMessage(
+                        "password_match",
+                        "Passwords must match"
+                    );
+                    return request()->get("password") === $value;
+                },
+            ],
         ]);
         if ($valid) {
             $user = $this->service->registerUser($valid);

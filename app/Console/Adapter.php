@@ -21,7 +21,7 @@ class Adapter extends KernelAdapter
     protected function option(string $option)
     {
         match ($option) {
-            'version' => $this->version(),
+            "version" => $this->version(),
             default => null,
         };
     }

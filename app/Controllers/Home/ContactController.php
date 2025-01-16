@@ -28,9 +28,15 @@ class ContactController extends Controller
         if ($valid) {
             $captcha_success = $valid->captcha == getCaptcha();
             if (!$captcha_success) {
-                Flash::add("warning", "Invalid captcha code. Please try again.");
+                Flash::add(
+                    "warning",
+                    "Invalid captcha code. Please try again."
+                );
             } else {
-                Flash::add("success", "Thank you for your message! I’ll get back to you as soon as possible!");
+                Flash::add(
+                    "success",
+                    "Thank you for your message! I’ll get back to you as soon as possible!"
+                );
                 EmailJob::create([
                     "tag" => "home_contact",
                     "subject" => "Direct message",

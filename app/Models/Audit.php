@@ -8,7 +8,7 @@ class Audit extends Model
 {
     public function __construct(?string $id = null)
     {
-        parent::__construct('audit', $id);
+        parent::__construct("audit", $id);
     }
 
     public function user(): User

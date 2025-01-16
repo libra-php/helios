@@ -26,7 +26,7 @@ class BlogPostsModule extends ModuleController
                 WHERE blog_categories.id = category_id) as category",
             "Title" => "title",
             "Created" => "created_at",
-            "Updated" => "updated_at"
+            "Updated" => "updated_at",
         ];
         $this->table_format = [
             "created_at" => "ago",
@@ -37,10 +37,7 @@ class BlogPostsModule extends ModuleController
             "Published" => "status_id=3",
             "Archived" => "status_id=1",
         ];
-        $this->searchable = [
-            "title",
-            "subtitle",
-        ];
+        $this->searchable = ["title", "subtitle"];
 
         $this->form_columns = [
             "Status" => "status_id",
@@ -88,14 +85,19 @@ class BlogPostsModule extends ModuleController
             "publish_at" => [],
         ];
 
-        $this->addErrorMessage("slug.regex", "The slug must be a lowercase string containing only letters, numbers, and hyphens. It should not start or end with a hyphen, and consecutive hyphens are not allowed.");
+        $this->addErrorMessage(
+            "slug.regex",
+            "The slug must be a lowercase string containing only letters, numbers, and hyphens. It should not start or end with a hyphen, and consecutive hyphens are not allowed."
+        );
         $this->addErrorMessage("slug", "Slug already exists");
 
         if ($id) {
             // Edit
-            $this->validation_rules["slug"][] = function($value) use ($id) {
+            $this->validation_rules["slug"][] = function ($value) use ($id) {
                 $post = BlogPost::find($id);
-                if ($post && $post->slug === $value) return true;
+                if ($post && $post->slug === $value) {
+                    return true;
+                }
 
                 $post = BlogPost::where("slug", $value)->get(1);
                 return !$post;

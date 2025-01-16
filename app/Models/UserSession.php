@@ -8,7 +8,7 @@ class UserSession extends Model
 {
     public function __construct(?string $id = null)
     {
-        parent::__construct('user_sessions', $id);
+        parent::__construct("user_sessions", $id);
     }
 
     public function role(): UserRole

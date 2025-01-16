@@ -6,7 +6,12 @@ use Helios\Admin\ModuleController;
 use StellarRouter\Group;
 
 /** @package App\Controllers\Module */
-#[Group(prefix: "/admin/user/sessions", middleware: ["module" => "user-sessions"])]
+#[
+    Group(
+        prefix: "/admin/user/sessions",
+        middleware: ["module" => "user-sessions"]
+    )
+]
 class UserSessionsModule extends ModuleController
 {
     public function init(?int $id): void
@@ -28,10 +33,7 @@ class UserSessionsModule extends ModuleController
         $this->table_format = [
             "created_at" => "ago",
         ];
-        $this->searchable = [
-            "module",
-            "url",
-        ];
+        $this->searchable = ["module", "url"];
         $this->default_sort = "DESC";
         $this->has_delete = $this->has_edit = $this->has_create = false;
     }

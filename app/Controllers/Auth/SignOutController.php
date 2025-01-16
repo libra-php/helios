@@ -10,7 +10,6 @@ class SignOutController extends Controller
 {
     public function __construct(private AuthService $service)
     {
-        
     }
 
     #[Get("/sign-out", "sign-out.index")]

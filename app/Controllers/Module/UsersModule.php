@@ -15,7 +15,7 @@ class UsersModule extends ModuleController
 
     public function init(?int $id): void
     {
-        $this->service = new AuthService;
+        $this->service = new AuthService();
         $this->roles = ["Super Admin"];
         $this->table = "users";
         $this->module_title = "Users";
@@ -24,11 +24,12 @@ class UsersModule extends ModuleController
             "ID" => "id",
             "UUID" => "uuid",
             "Username" => "username",
-            "Role" => "(SELECT name FROM user_roles WHERE id = user_role_id) as role",
+            "Role" =>
+                "(SELECT name FROM user_roles WHERE id = user_role_id) as role",
             "Email" => "email",
             "Name" => "name",
             "Created" => "created_at",
-            "Updated" => "updated_at"
+            "Updated" => "updated_at",
         ];
         $this->table_format = [
             "created_at" => "ago",
@@ -38,12 +39,7 @@ class UsersModule extends ModuleController
             "Me" => "id=" . user()->id,
             "All" => "1=1",
         ];
-        $this->searchable = [
-            "uuid",
-            "username",
-            "email",
-            "name",
-        ];
+        $this->searchable = ["uuid", "username", "email", "name"];
 
         $this->form_columns = [
             "Avatar" => "avatar",
@@ -59,11 +55,11 @@ class UsersModule extends ModuleController
             "name" => "input",
             "user_role_id" => "select",
             "password" => function ($opts) {
-                $opts['value'] = '';
+                $opts["value"] = "";
                 return $this->password($opts);
             },
             "password_match" => function ($opts) {
-                $opts['value'] = '';
+                $opts["value"] = "";
                 return $this->password($opts);
             },
         ];
@@ -75,23 +71,26 @@ class UsersModule extends ModuleController
         $this->form_controls["email"] = $id == 1 ? "readonly" : "input";
         $this->form_controls["username"] = $id == 1 ? "readonly" : "input";
 
-        $password_pattern = "^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$";
+        $password_pattern =
+            "^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$";
 
         $this->validation_rules = [
             "name" => ["required"],
             "email" => ["required"],
             "username" => ["required", "regex:=^[a-zA-Z0-9]+$"],
             "user_role_id" => ["required"],
-            "password" => [
-                "min_length:=8",
-                "regex:=$password_pattern"
+            "password" => ["min_length:=8", "regex:=$password_pattern"],
+            "password_match" => [
+                function ($value) {
+                    return request()->get("password") === $value;
+                },
             ],
-            "password_match" => [function ($value) {
-                return request()->get("password") === $value;
-            }],
         ];
 
-        $this->addErrorMessage("password.regex", "Must contain: 1 uppercase, 1 number, and 1 symbol");
+        $this->addErrorMessage(
+            "password.regex",
+            "Must contain: 1 uppercase, 1 number, and 1 symbol"
+        );
         $this->addErrorMessage("username.regex", "Invalid username");
         $this->addErrorMessage("password_match", "Passwords must match");
         $this->addErrorMessage("email.unique", "Email is already in use");
@@ -105,14 +104,20 @@ class UsersModule extends ModuleController
             }
             $this->validation_rules["email"][] = function ($value) use ($id) {
                 $user = User::find($id);
-                if ($user && $user->email === $value) return true;
+                if ($user && $user->email === $value) {
+                    return true;
+                }
 
                 $user = User::where("email", $value)->get(1);
                 return !$user;
             };
-            $this->validation_rules["username"][] = function ($value) use ($id) {
+            $this->validation_rules["username"][] = function ($value) use (
+                $id
+            ) {
                 $user = User::find($id);
-                if ($user && $user->username === $value) return true;
+                if ($user && $user->username === $value) {
+                    return true;
+                }
 
                 $user = User::where("username", $value)->get(1);
                 return !$user;
@@ -129,20 +134,20 @@ class UsersModule extends ModuleController
 
     protected function new(array $data): ?int
     {
-        $data['password'] = $this->service->hashPassword($data['password']);
-        $data['two_fa_secret'] = $this->service->generateTwoFactorSecret();
-        unset($data['password_match']);
+        $data["password"] = $this->service->hashPassword($data["password"]);
+        $data["two_fa_secret"] = $this->service->generateTwoFactorSecret();
+        unset($data["password_match"]);
         return parent::new($data);
     }
 
     protected function save(int $id, array $data): bool
     {
-        if (!$data['password'] && !$data['password_match']) {
-            unset($data['password']);
-            unset($data['password_match']);
+        if (!$data["password"] && !$data["password_match"]) {
+            unset($data["password"]);
+            unset($data["password_match"]);
         } else {
-            $data['password'] = $this->service->hashPassword($data['password']);
-            unset($data['password_match']);
+            $data["password"] = $this->service->hashPassword($data["password"]);
+            unset($data["password_match"]);
         }
         return parent::save($id, $data);
     }

@@ -6,7 +6,12 @@ use Helios\Admin\ModuleController;
 use StellarRouter\Group;
 
 /** @package App\Controllers\Module */
-#[Group(prefix: "/admin/blog/comments", middleware: ["module" => "blog-comments"])]
+#[
+    Group(
+        prefix: "/admin/blog/comments",
+        middleware: ["module" => "blog-comments"]
+    )
+]
 class BlogCommentsModule extends ModuleController
 {
     public function init(?int $id): void
@@ -16,7 +21,8 @@ class BlogCommentsModule extends ModuleController
         $this->module_title = "Comments";
         $this->link_parent = "Blog";
         $this->table_columns = [
-            "Blog Post" => "(SELECT title FROM blog_posts WHERE id = blog_post_id) blog_post",
+            "Blog Post" =>
+                "(SELECT title FROM blog_posts WHERE id = blog_post_id) blog_post",
             "Name" => "name",
             "Created" => "created_at",
         ];

@@ -53,22 +53,28 @@ class AuditModule extends ModuleController
     function diff(string $column, string $value): string
     {
         $audit = Audit::find($value);
-        $old = substr($audit->old_value ?? 'null', 0, 255);
-        $new = substr($audit->new_value ?? 'null', 0, 255);
+        $old = substr($audit->old_value ?? "null", 0, 255);
+        $new = substr($audit->new_value ?? "null", 0, 255);
         return template("admin/module/format/diff.html", [
-            "diff" => $this->getDiff(preg_split("/[\s]+/", $old), preg_split("/[\s]+/", $new)),
+            "diff" => $this->getDiff(
+                preg_split("/[\s]+/", $old),
+                preg_split("/[\s]+/", $new)
+            ),
         ]);
     }
 
     function getDiff(array $old, array $new): array
     {
-        $matrix = array();
+        $matrix = [];
         $maxlen = 0;
         foreach ($old as $oindex => $ovalue) {
             $nkeys = array_keys($new, $ovalue);
             foreach ($nkeys as $nindex) {
-                $matrix[$oindex][$nindex] = isset($matrix[$oindex - 1][$nindex - 1]) ?
-                    $matrix[$oindex - 1][$nindex - 1] + 1 : 1;
+                $matrix[$oindex][$nindex] = isset(
+                    $matrix[$oindex - 1][$nindex - 1]
+                )
+                    ? $matrix[$oindex - 1][$nindex - 1] + 1
+                    : 1;
                 if ($matrix[$oindex][$nindex] > $maxlen) {
                     $maxlen = $matrix[$oindex][$nindex];
                     $omax = $oindex + 1 - $maxlen;
@@ -76,11 +82,19 @@ class AuditModule extends ModuleController
                 }
             }
         }
-        if ($maxlen == 0) return array(array('d' => $old, 'i' => $new));
+        if ($maxlen == 0) {
+            return [["d" => $old, "i" => $new]];
+        }
         return array_merge(
-            $this->getDiff(array_slice($old, 0, $omax), array_slice($new, 0, $nmax)),
+            $this->getDiff(
+                array_slice($old, 0, $omax),
+                array_slice($new, 0, $nmax)
+            ),
             array_slice($new, $nmax, $maxlen),
-            $this->getDiff(array_slice($old, $omax + $maxlen), array_slice($new, $nmax + $maxlen))
+            $this->getDiff(
+                array_slice($old, $omax + $maxlen),
+                array_slice($new, $nmax + $maxlen)
+            )
         );
     }
 }

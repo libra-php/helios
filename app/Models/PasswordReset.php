@@ -8,7 +8,7 @@ class PasswordReset extends Model
 {
     public function __construct(?string $id = null)
     {
-        parent::__construct('password_resets', $id);
+        parent::__construct("password_resets", $id);
     }
 
     public function emailJob(): EmailJob

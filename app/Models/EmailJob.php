@@ -8,6 +8,6 @@ class EmailJob extends Model
 {
     public function __construct(?string $id = null)
     {
-        parent::__construct('email_jobs', $id);
+        parent::__construct("email_jobs", $id);
     }
 }

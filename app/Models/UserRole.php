@@ -8,6 +8,6 @@ class UserRole extends Model
 {
     public function __construct(?string $id = null)
     {
-        parent::__construct('user_roles', $id);
+        parent::__construct("user_roles", $id);
     }
 }

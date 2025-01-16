@@ -11,7 +11,9 @@ use StellarRouter\{Group, Get, Post};
 #[Group(prefix: "/blog")]
 class BlogController extends Controller
 {
-    public function __construct(private BlogService $service) {}
+    public function __construct(private BlogService $service)
+    {
+    }
 
     #[Get("/", "blog.index")]
     public function index(): string
@@ -31,7 +33,7 @@ class BlogController extends Controller
             redirect("/page-not-found");
         }
 
-        header("HX-Push-Url: /blog/{$post['slug']}");
+        header("HX-Push-Url: /blog/{$post["slug"]}");
 
         return $this->render("home/blog/post.html", [
             "post" => $post,
@@ -52,10 +54,20 @@ class BlogController extends Controller
         if ($valid) {
             $captcha_success = $valid->captcha == getCaptcha();
             if (!$captcha_success) {
-                Flash::add("warning", "Invalid captcha code. Please try again.");
+                Flash::add(
+                    "warning",
+                    "Invalid captcha code. Please try again."
+                );
             } else {
-                Flash::add("success", "Thank you for sharing your thoughts! Your comment has been successfully posted.");
-                $this->service->createComment($post->id, trim($valid->name), trim($valid->comment));
+                Flash::add(
+                    "success",
+                    "Thank you for sharing your thoughts! Your comment has been successfully posted."
+                );
+                $this->service->createComment(
+                    $post->id,
+                    trim($valid->name),
+                    trim($valid->comment)
+                );
             }
         }
 
@@ -66,7 +78,7 @@ class BlogController extends Controller
     public function comments(int $id): string
     {
         return $this->render("home/blog/comments.html", [
-            "comments" => $this->service->getBlogPostComments($id)
+            "comments" => $this->service->getBlogPostComments($id),
         ]);
     }
 }

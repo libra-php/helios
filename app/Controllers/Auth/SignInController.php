@@ -8,23 +8,25 @@ use StellarRouter\{Get, Post};
 
 class SignInController extends Controller
 {
-    public function __construct(private AuthService $service) {}
+    public function __construct(private AuthService $service)
+    {
+    }
 
     #[Get("/sign-in", "sign-in.index")]
     public function index(): string
     {
         return $this->render("admin/sign-in/index.html", [
-            "register_enabled" => config("security.register_enabled")
+            "register_enabled" => config("security.register_enabled"),
         ]);
     }
 
-    #[Post("/sign-in", "sign-in.post", ['login'])]
+    #[Post("/sign-in", "sign-in.post", ["login"])]
     public function post(): string
     {
         $valid = $this->validateRequest([
-            'email_or_username' => ['required'],
-            'password' => ['required'],
-            'remember_me' => [],
+            "email_or_username" => ["required"],
+            "password" => ["required"],
+            "remember_me" => [],
         ]);
 
         if ($valid) {

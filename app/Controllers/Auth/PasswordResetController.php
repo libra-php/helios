@@ -12,7 +12,6 @@ class PasswordResetController extends Controller
 {
     public function __construct(private AuthService $service)
     {
-        
     }
 
     #[Get("/password-reset/{token}", "password-reset.index")]
@@ -41,14 +40,20 @@ class PasswordResetController extends Controller
         if ($password_reset) {
             $valid = $this->validateRequest([
                 "password" => [
-                    "required", 
-                    "min_length:=8", 
-                    "regex:=^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                    "required",
+                    "min_length:=8",
+                    "regex:=^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
                 ],
-                "password_match" => ["required", function ($value) {
-                    $this->addErrorMessage("password_match", "Passwords must match");
-                    return request()->get("password") === $value;
-                }],
+                "password_match" => [
+                    "required",
+                    function ($value) {
+                        $this->addErrorMessage(
+                            "password_match",
+                            "Passwords must match"
+                        );
+                        return request()->get("password") === $value;
+                    },
+                ],
             ]);
             if ($valid) {
                 $user = User::findOrFail($password_reset->user_id);
@@ -83,5 +88,3 @@ class PasswordResetController extends Controller
         return $this->index($token);
     }
 }
-
-

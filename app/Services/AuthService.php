@@ -52,19 +52,16 @@ class AuthService
 
     public function generateTwoFactorQR(User $user): string
     {
-        // Generate a 2FA QR 
+        // Generate a 2FA QR
         $google2fa = new Google2FA();
         $g2faUrl = $google2fa->getQRCodeUrl(
             config("app.name"),
             $user->email,
-            $user->two_fa_secret,
+            $user->two_fa_secret
         );
 
         $writer = new Writer(
-            new ImageRenderer(
-                new RendererStyle(200),
-                new ImagickImageBackEnd()
-            )
+            new ImageRenderer(new RendererStyle(200), new ImagickImageBackEnd())
         );
 
         return base64_encode($writer->writeString($g2faUrl));
@@ -111,7 +108,8 @@ class AuthService
 
         // Look for user by email or username
         $user = User::where("email", $request->email_or_username)
-            ->orWhere("username", $request->email_or_username)->get(1);
+            ->orWhere("username", $request->email_or_username)
+            ->get(1);
         if (!$user) {
             // If we don't find a user, bail
             return false;
@@ -153,7 +151,10 @@ class AuthService
                 $now = Carbon::now();
                 $expires_at = Carbon::parse($user->locked_until);
                 $minutes = ceil($now->diffInMinutes($expires_at));
-                Flash::add("warning", "This account is temporarily locked. Please try again in $minutes minute(s).");
+                Flash::add(
+                    "warning",
+                    "This account is temporarily locked. Please try again in $minutes minute(s)."
+                );
                 return false;
             }
 
@@ -178,16 +179,22 @@ class AuthService
             if (!$password_reset || !$password_reset->email_job_id) {
                 self::passwordReset($user);
             } else {
-                // There is already a valid password reset link, 
+                // There is already a valid password reset link,
                 // avoid sending any new mail
                 $now = Carbon::now();
                 $expires_at = Carbon::parse($password_reset->expires_at);
                 $minutes = ceil($now->diffInMinutes($expires_at));
-                Flash::add("success", "Please check your email inbox for instructions on how to reset your password. This link is valid for $minutes minute(s).");
+                Flash::add(
+                    "success",
+                    "Please check your email inbox for instructions on how to reset your password. This link is valid for $minutes minute(s)."
+                );
                 return;
             }
         }
-        Flash::add("success", "If the email exists, a password reset link has been sent.");
+        Flash::add(
+            "success",
+            "If the email exists, a password reset link has been sent."
+        );
     }
 
     public function registerUser(object $request): User
