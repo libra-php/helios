@@ -144,7 +144,7 @@ class Model implements IModel
     /**
      * Refresh model attributes
      */
-    public function refresh(): Model|static
+    public function refresh(): Model
     {
         $this->loadAttributes($this->id);
         return $this;
@@ -280,7 +280,7 @@ class Model implements IModel
     /**
      * Save the current model
      */
-    public function save(): Model|static
+    public function save(): Model
     {
         $key = $this->primaryKey;
         $params = [...array_values($this->attributes), $this->id];
@@ -299,7 +299,7 @@ class Model implements IModel
     /**
      * Update the current model with provided data
      */
-    public function update(array $data): Model|static
+    public function update(array $data): Model
     {
         $key = $this->primaryKey;
         $params = [...array_values($data), $this->id];
