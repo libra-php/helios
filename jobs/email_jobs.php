@@ -8,9 +8,13 @@ require_once __DIR__ . "/../vendor/autoload.php";
 
 use App\Models\EmailJob;
 
+$opts = "t:";
+$options = getopt($opts);
+$tag = $options["t"];
+
 $max_retries = 3;
 
-$jobs = EmailJob::where("tag", "home_contact")
+$jobs = EmailJob::where("tag", $tag)
     ->andWhere("retries", "<", $max_retries)
     ->andWhere("send_at", "<", date("Y-m-d H:i:s"))
     ->andWhere("sent", 0)
