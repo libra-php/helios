@@ -43,9 +43,10 @@ services:
     ports:
       - "${DB_PORT:?err}:3306"
     volumes:
-      - ./docker/mysql:/var/lib/mysql
+      - ./docker/mysql:/var/lib/mysql:rw
     networks:
       - app-network
+    user: mysql
     container_name: helios-mysql
 
 networks:
