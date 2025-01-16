@@ -17,12 +17,12 @@ return [
     "csp_directives" => [
     ],
     "max_requests" => [
-        'captcha' => 100,
-        'default' => 50,
-        'api' => 100,
-        'forgot-pass' => 5,
-        'register' => 10,
-        'login' => 25,
+        'captcha' => 200,
+        'default' => 100,
+        'api' => 200,
+        'forgot-pass' => 20,
+        'register' => 20,
+        'login' => 50,
     ],
     "decay_seconds" => [
         'captcha' => 1,
