@@ -2,12 +2,14 @@
 
 namespace App\Controllers\Auth;
 
-use Helios\Admin\Auth;
+use App\Services\AuthService;
 use Helios\Web\Controller;
 use StellarRouter\{Get, Post};
 
 class SignInController extends Controller
 {
+    public function __construct(private AuthService $service) {}
+
     #[Get("/sign-in", "sign-in.index")]
     public function index(): string
     {
@@ -26,7 +28,7 @@ class SignInController extends Controller
         ]);
 
         if ($valid) {
-            if (Auth::signIn($valid)) {
+            if ($this->service->signIn($valid)) {
                 $two_factor_enabled = config("security.two_factor_enabled");
                 if ($two_factor_enabled) {
                     $route = findRoute("2fa.index");

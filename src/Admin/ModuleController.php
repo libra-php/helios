@@ -3,6 +3,7 @@
 namespace Helios\Admin;
 
 use App\Models\{Audit, UserSession, File};
+use App\Services\AuthService;
 use Exception;
 use Helios\Database\QueryBuilder;
 use Helios\View\{Flash, FormControls, TableFormat};
@@ -18,7 +19,7 @@ class ModuleController extends Controller
     use TableFormat;
 
     // The module
-    private string $module;
+    private string $module = '';
     public bool $enabled = true;
     public string $module_title = '';
     public string $link_parent = '';
@@ -77,9 +78,10 @@ class ModuleController extends Controller
     protected function setup()
     {
         $user = user();
+        $auth_service = new AuthService;
 
         // Check for admin default password
-        if ($user->id == 1 && Auth::testPassword(config("security.default_admin_pass"), $user->password)) {
+        if ($user->id == 1 && $auth_service->testPassword(config("security.default_admin_pass"), $user->password)) {
             Flash::add("warning", "You are currently using the default admin password. For your security, please <a href='/admin/users/edit/1'><u>update your password</u></a> immediately to protect your account from unauthorized access.");
         }
     }
@@ -611,11 +613,12 @@ class ModuleController extends Controller
     protected function getModuleData(): array
     {
         // Data used by modules
+        $route = moduleRoute("module.index", $this->module);
         return [
             "module" => $this->module,
             "title" => $this->module_title,
             "parent" => $this->link_parent,
-            "route" => rtrim(moduleRoute("module.index", $this->module), DIRECTORY_SEPARATOR),
+            "route" => rtrim($route ?? '', DIRECTORY_SEPARATOR),
             "primary_key" => $this->primary_key,
         ];
     }

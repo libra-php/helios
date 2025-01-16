@@ -7,6 +7,7 @@
 use App\Console\Kernel as ConsoleKernel;
 use App\Http\Kernel as HttpKernel;
 use App\Models\User;
+use App\Services\AuthService;
 use Helios\Admin\Auth;
 use Helios\Application;
 use Helios\Email\EmailSMTP;
@@ -164,11 +165,12 @@ function session(): Session
 }
 
 /**
- * Return current app user
+ * Return current authenticated app user
  */
 function user(): ?User
 {
-    return Auth::user();
+    $auth_service = new AuthService;
+    return $auth_service->user();
 }
 
 /**

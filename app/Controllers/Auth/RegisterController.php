@@ -2,14 +2,14 @@
 
 namespace App\Controllers\Auth;
 
-use Helios\Admin\Auth;
+use App\Services\AuthService;
 use Helios\View\Flash;
 use Helios\Web\Controller;
 use StellarRouter\{Get, Post};
 
 class RegisterController extends Controller
 {
-    public function __construct()
+    public function __construct(private AuthService $service)
     {
         if (!config("security.register_enabled")) {
             error_log("Registration is disabled. IP: " . getClientIp());
@@ -44,9 +44,9 @@ class RegisterController extends Controller
             }],
         ]);
         if ($valid) {
-            $user = Auth::registerUser($valid);
+            $user = $this->service->registerUser($valid);
             if ($user) {
-                Auth::logUser($user);
+                $this->service->logUser($user);
                 $two_factor_enabled = config("security.two_factor_enabled");
                 if ($two_factor_enabled) {
                     $route = findRoute("2fa.index");

@@ -2,14 +2,14 @@
 
 namespace App\Controllers\Auth;
 
-use Helios\Admin\Auth;
+use App\Services\AuthService;
 use Helios\Web\Controller;
 use StellarRouter\{Get, Post};
 
 class TwoFactorAuthenticationController extends Controller
 {
 
-    public function __construct()
+    public function __construct(private AuthService $service)
     {
         if (!user()) {
             $route = findRoute("sign-in.index");
@@ -27,7 +27,7 @@ class TwoFactorAuthenticationController extends Controller
         $user = user();
         return $this->render("admin/two-fa/index.html", [
             "show_qr" => !$user->two_fa_confirmed,
-            "qr_src" => !$user->two_fa_confirmed ? Auth::generateTwoFactorQR($user) : '',
+            "qr_src" => !$user->two_fa_confirmed ? $this->service->generateTwoFactorQR($user) : '',
         ]);
     }
 
@@ -44,7 +44,7 @@ class TwoFactorAuthenticationController extends Controller
             ]
         ]);
         if ($valid) {
-            if (Auth::testTwoFactorCode(user(), $valid->code)) {
+            if ($this->service->testTwoFactorCode(user(), $valid->code)) {
                 $route = moduleRoute("module.index", "users");
                 redirect($route, [
                     "target" => "#two-factor-authentication",
