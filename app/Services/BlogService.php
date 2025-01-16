@@ -68,7 +68,7 @@ class BlogService
     public function getBlogPostComments(int $blog_post_id): ?array
     {
         $comments = BlogPostComment::where("blog_post_id", $blog_post_id)
-            ->where("approved", 1)
+            ->andWhere("approved", 1)
             ->orderBy("created_at", "DESC")
             ->get(lazy: false);
 
@@ -83,10 +83,10 @@ class BlogService
         ], $comments);
     }
 
-    public function createComment(int $post_id, string $name, string $comment)
+    public function createComment(int $blog_post_id, string $name, string $comment)
     {
         BlogPostComment::create([
-            "blog_post_id" => $post_id,
+            "blog_post_id" => $blog_post_id,
             "name" => $name,
             "comment" => $comment,
             "ip" => ip2long(getClientIp()),

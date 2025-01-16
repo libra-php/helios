@@ -29,5 +29,8 @@ $scheduler->php($jobs . "/password_reset.php")->everyMinute();
 // Publish blog posts
 $scheduler->php($jobs . "/publish_blog.php")->everyMinute();
 
+// Send contact emails
+$scheduler->php($jobs . "/contact.php")->everyMinute();
+
 // Let the scheduler execute jobs which are due.
 $scheduler->run();

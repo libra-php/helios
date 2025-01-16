@@ -8,7 +8,7 @@ class Kernel extends Console
 {
     public function main()
     {
-        $adapter = new Adapter;
+        $adapter = container()->get(Adapter::class);
         $adapter->run();
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Send password reset emails
+ * Send contact emails
  */
 
 require_once __DIR__ . "/../vendor/autoload.php";
@@ -10,7 +10,7 @@ use App\Models\EmailJob;
 
 $max_retries = 3;
 
-$jobs = EmailJob::where("tag", "password_reset")
+$jobs = EmailJob::where("tag", "home_contact")
     ->andWhere("retries", "<", $max_retries)
     ->andWhere("send_at", "<", date("Y-m-d H:i:s"))
     ->andWhere("sent", 0)
@@ -29,3 +29,4 @@ foreach ($jobs as $email) {
     }
     $email->save();
 }
+

@@ -652,7 +652,7 @@ class ModuleController extends Controller
                 $class = $route->getHandlerClass();
                 if (key_exists('module', $middleware)) {
                     $route = $middleware['module'];
-                    $module = new $class();
+                    $module = container()->get($class);
                     if (!$module->enabled) continue;
                     $parent = $module->link_parent;
                     $title = $module->module_title;

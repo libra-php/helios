@@ -12,7 +12,7 @@ class EmailSMTP
 
     public function __construct()
     {
-        $this->mailer = new PHPMailer();
+        $this->mailer = container()->get(PHPMailer::class);
     }
 
     public function init(): void
