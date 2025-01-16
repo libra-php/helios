@@ -6,8 +6,8 @@ use PDOStatement;
 
 class QueryBuilder
 {
-    private string $mode = '';
-    private string $table = '';
+    private string $mode = "";
+    private string $table = "";
     private array $select = [];
     private array $insert = [];
     private array $update = [];
@@ -24,7 +24,9 @@ class QueryBuilder
     {
         $class = get_called_class();
         $qb = new $class();
-        if (empty($columns)) $columns = ['*'];
+        if (empty($columns)) {
+            $columns = ["*"];
+        }
         $qb->mode = "select";
         $qb->select = $columns;
         return $qb;
@@ -64,10 +66,10 @@ class QueryBuilder
     public function getQuery(): string
     {
         return match ($this->mode) {
-            'select' => $this->buildSelect(),
-            'insert' => $this->buildInsert(),
-            'update' => $this->buildUpdate(),
-            'delete' => $this->buildDelete(),
+            "select" => $this->buildSelect(),
+            "insert" => $this->buildInsert(),
+            "update" => $this->buildUpdate(),
+            "delete" => $this->buildDelete(),
         };
     }
 
@@ -163,20 +165,24 @@ class QueryBuilder
     {
         if ($this->offset && $this->limit) {
             $limit = " LIMIT $this->offset, $this->limit";
-        } else if ($this->limit > 0) {
+        } elseif ($this->limit > 0) {
             $limit = " LIMIT $this->limit";
         } else {
-            $limit = '';
+            $limit = "";
         }
         $sql = sprintf(
             "SELECT %s FROM `%s`%s%s%s%s%s%s",
             implode(", ", $this->select),
             $this->table,
-            $this->where ? " WHERE " . implode(" AND ", $this->where) : '',
-            $this->orWhere ? " OR " . implode(" OR ", $this->orWhere): '',
-            $this->group_by ? " GROUP BY " . implode(", ", $this->group_by) : '',
-            $this->having ? " HAVING " . implode(" AND ", $this->having) : '',
-            $this->order_by ? " ORDER BY " . implode(", ", $this->order_by) : '',
+            $this->where ? " WHERE " . implode(" AND ", $this->where) : "",
+            $this->orWhere ? " OR " . implode(" OR ", $this->orWhere) : "",
+            $this->group_by
+                ? " GROUP BY " . implode(", ", $this->group_by)
+                : "",
+            $this->having ? " HAVING " . implode(" AND ", $this->having) : "",
+            $this->order_by
+                ? " ORDER BY " . implode(", ", $this->order_by)
+                : "",
             $limit
         );
         return trim($sql);
@@ -188,7 +194,7 @@ class QueryBuilder
             "INSERT INTO `%s` (%s) VALUES (%s)",
             $this->table,
             implode(", ", array_keys($this->insert)),
-            implode(',', array_fill(0, count($this->insert), "?"))
+            implode(",", array_fill(0, count($this->insert), "?"))
         );
         return trim($sql);
     }
@@ -198,8 +204,14 @@ class QueryBuilder
         $sql = sprintf(
             "UPDATE `%s` SET %s%s",
             $this->table,
-            implode(', ', array_map(fn($column) => "$column = ?", array_keys($this->update))),
-            $this->where ? " WHERE " . implode(" AND ", $this->where) : ''
+            implode(
+                ", ",
+                array_map(
+                    fn($column) => "$column = ?",
+                    array_keys($this->update)
+                )
+            ),
+            $this->where ? " WHERE " . implode(" AND ", $this->where) : ""
         );
         return trim($sql);
     }
@@ -209,7 +221,7 @@ class QueryBuilder
         $sql = sprintf(
             "DELETE FROM `%s`%s",
             $this->table,
-            $this->where ? " WHERE " . implode(" AND ", $this->where) : ''
+            $this->where ? " WHERE " . implode(" AND ", $this->where) : ""
         );
         return trim($sql);
     }

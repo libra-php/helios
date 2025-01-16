@@ -19,28 +19,21 @@ class ModuleController extends Controller
     use TableFormat;
 
     // The module
-    private string $module = '';
+    private string $module = "";
     public bool $enabled = true;
-    public string $module_title = '';
-    public string $link_parent = '';
+    public string $module_title = "";
+    public string $link_parent = "";
     public array $roles = [];
 
     // The sql stuff
-    protected string $primary_key = 'id';
-    protected string $table = '';
+    protected string $primary_key = "id";
+    protected string $table = "";
     protected array $where = [];
     protected array $having = [];
     protected array $order_by = [];
     protected array $params = [];
     protected int $per_page = 25;
-    protected array $per_page_options = [
-        25,
-        50,
-        100,
-        250,
-        500,
-        1000,
-    ];
+    protected array $per_page_options = [25, 50, 100, 250, 500, 1000];
     protected int $page = 1;
     protected string $default_order = "";
     protected string $default_sort = "ASC";
@@ -53,7 +46,7 @@ class ModuleController extends Controller
     protected array $filter_links = [];
     protected int $filter_link_index = 0;
     protected array $searchable = [];
-    protected string $search_term = '';
+    protected string $search_term = "";
 
     // Form stuff
     protected array $form_columns = [];
@@ -78,11 +71,20 @@ class ModuleController extends Controller
     protected function setup()
     {
         $user = user();
-        $auth_service = new AuthService;
+        $auth_service = new AuthService();
 
         // Check for admin default password
-        if ($user->id == 1 && $auth_service->testPassword(config("security.default_admin_pass"), $user->password)) {
-            Flash::add("warning", "You are currently using the default admin password. For your security, please <a href='/admin/users/edit/1'><u>update your password</u></a> immediately to protect your account from unauthorized access.");
+        if (
+            $user->id == 1 &&
+            $auth_service->testPassword(
+                config("security.default_admin_pass"),
+                $user->password
+            )
+        ) {
+            Flash::add(
+                "warning",
+                "You are currently using the default admin password. For your security, please <a href='/admin/users/edit/1'><u>update your password</u></a> immediately to protect your account from unauthorized access."
+            );
         }
     }
 
@@ -170,8 +172,8 @@ class ModuleController extends Controller
         $total_pages = ceil($total_results / $this->per_page);
         while ($this->page <= $total_pages) {
             $result = $this->getTableData();
-            foreach ($result['data'] as $item) {
-                $row = array_map(fn ($one) => $one['raw'], $item);
+            foreach ($result["data"] as $item) {
+                $row = array_map(fn($one) => $one["raw"], $item);
                 $values = array_values($row);
                 fputcsv($fp, $values);
             }
@@ -195,7 +197,7 @@ class ModuleController extends Controller
         $filters = array_values($this->filter_links);
         $this->addWhere($filters[$index]);
         $count = $this->getTotalResultsFilterLink();
-        return $count === 1001 ? '1000+' : $count;
+        return $count === 1001 ? "1000+" : $count;
     }
 
     /**
@@ -415,7 +417,9 @@ class ModuleController extends Controller
      */
     protected function recordUserSession(): void
     {
-        $actual_link = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        $actual_link =
+            (empty($_SERVER["HTTPS"]) ? "http" : "https") .
+            "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
         UserSession::create([
             "user_id" => user()->id,
             "module" => $this->module,
@@ -431,10 +435,21 @@ class ModuleController extends Controller
     {
         // Search
         if (!empty($this->searchable)) {
-            $this->search_term = $this->getSession("search_term") ?? $this->search_term;
-            $map = array_map(fn ($column) => "$column LIKE ?", $this->searchable);
+            $this->search_term =
+                $this->getSession("search_term") ?? $this->search_term;
+            $map = array_map(
+                fn($column) => "$column LIKE ?",
+                $this->searchable
+            );
             $clause = "((" . implode(") OR (", $map) . "))";
-            $this->addWhere($clause, ...array_fill(0, count($this->searchable), "%$this->search_term%"));
+            $this->addWhere(
+                $clause,
+                ...array_fill(
+                    0,
+                    count($this->searchable),
+                    "%$this->search_term%"
+                )
+            );
         }
 
         // Sort
@@ -451,7 +466,9 @@ class ModuleController extends Controller
         // Filter link
         if (!$skip_filter_links) {
             if (!empty($this->filter_links)) {
-                $this->filter_link_index = $this->getSession("filter_link") ?? $this->filter_link_index;
+                $this->filter_link_index =
+                    $this->getSession("filter_link") ??
+                    $this->filter_link_index;
                 $filters = array_values($this->filter_links);
                 $this->addWhere($filters[$this->filter_link_index]);
             }
@@ -477,9 +494,12 @@ class ModuleController extends Controller
         $file = request()->files->get($name);
         if ($file && $file->isValid()) {
             $upload_dir = config("paths.uploads");
-            $original_name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $original_name = pathinfo(
+                $file->getClientOriginalName(),
+                PATHINFO_FILENAME
+            );
             $extension = $file->getClientOriginalExtension();
-            $safe_name = $original_name . '-' . uniqid() . '.' . $extension;
+            $safe_name = $original_name . "-" . uniqid() . "." . $extension;
             $upload_file_path = $upload_dir . $safe_name;
 
             // Create upload directory if it doesn't exist
@@ -520,7 +540,7 @@ class ModuleController extends Controller
     {
         $search_term = trim($search_term);
         $search_term = filter_var($search_term, FILTER_SANITIZE_ENCODED);
-        if ($search_term !== '') {
+        if ($search_term !== "") {
             $this->setSession("search_term", $search_term);
         } else {
             $this->deleteSession("search_term");
@@ -533,7 +553,10 @@ class ModuleController extends Controller
      */
     protected function handleSort(string $index): void
     {
-        $headers = array_map(fn ($column) => $this->getAlias($column), array_values($this->filterTableColumns()));
+        $headers = array_map(
+            fn($column) => $this->getAlias($column),
+            array_values($this->filterTableColumns())
+        );
         $column = $headers[$index];
         if ($column) {
             $session_order = $this->getSession("order");
@@ -542,7 +565,10 @@ class ModuleController extends Controller
             if ($session_order && $session_sort) {
                 if ($session_order === $column) {
                     // This is the current order column, flip the sort
-                    $this->setSession("sort", $session_sort === "ASC" ? "DESC" : "ASC");
+                    $this->setSession(
+                        "sort",
+                        $session_sort === "ASC" ? "DESC" : "ASC"
+                    );
                 } else {
                     // Different column, so start ASC
                     $this->setSession("sort", "ASC");
@@ -551,9 +577,15 @@ class ModuleController extends Controller
                 // The session hasn't been set yet
                 // If it is the primary key (default order) flip the sort
                 // Otherwise we will always start a new session as default sort
-                if ($column === $this->primary_key && $this->default_sort === 'ASC') {
+                if (
+                    $column === $this->primary_key &&
+                    $this->default_sort === "ASC"
+                ) {
                     $sort = "DESC";
-                } elseif ($column === $this->primary_key && $this->default_sort === 'DESC') {
+                } elseif (
+                    $column === $this->primary_key &&
+                    $this->default_sort === "DESC"
+                ) {
                     $sort = "ASC";
                 } else {
                     $sort = $this->default_sort;
@@ -587,7 +619,7 @@ class ModuleController extends Controller
      */
     protected function setSession(string $key, mixed $value): void
     {
-        session()->set($this->module . '_' . $key, $value);
+        session()->set($this->module . "_" . $key, $value);
     }
 
     /**
@@ -595,7 +627,7 @@ class ModuleController extends Controller
      */
     protected function getSession(string $key): mixed
     {
-        $session = session()->get($this->module . '_' . $key);
+        $session = session()->get($this->module . "_" . $key);
         return $session;
     }
 
@@ -604,7 +636,7 @@ class ModuleController extends Controller
      */
     protected function deleteSession(string $key): void
     {
-        session()->delete($this->module . '_' . $key);
+        session()->delete($this->module . "_" . $key);
     }
 
     /**
@@ -618,7 +650,7 @@ class ModuleController extends Controller
             "module" => $this->module,
             "title" => $this->module_title,
             "parent" => $this->link_parent,
-            "route" => rtrim($route ?? '', DIRECTORY_SEPARATOR),
+            "route" => rtrim($route ?? "", DIRECTORY_SEPARATOR),
             "primary_key" => $this->primary_key,
         ];
     }
@@ -628,7 +660,9 @@ class ModuleController extends Controller
      */
     protected function getFilterData(): array
     {
-        $order = $this->getAlias($this->getSession("order") ?? $this->default_order);
+        $order = $this->getAlias(
+            $this->getSession("order") ?? $this->default_order
+        );
         // Data used by table filters
         return [
             "filter_links" => array_keys($this->filter_links),
@@ -646,22 +680,29 @@ class ModuleController extends Controller
     protected function getLinks(): array
     {
         $links = [];
-        $routes = app()->router()->getRoutes();
+        $routes = app()
+            ->router()
+            ->getRoutes();
         foreach ($routes as $route) {
             $name = $route->getName();
             $path = $route->getPath();
-            if ($name === 'module.index') {
+            if ($name === "module.index") {
                 $middleware = $route->getMiddleware();
                 $class = $route->getHandlerClass();
-                if (key_exists('module', $middleware)) {
-                    $route = $middleware['module'];
+                if (key_exists("module", $middleware)) {
+                    $route = $middleware["module"];
                     $module = container()->get($class);
-                    if (!$module->enabled) continue;
+                    if (!$module->enabled) {
+                        continue;
+                    }
                     $parent = $module->link_parent;
                     $title = $module->module_title;
                     $roles = $module->roles;
                     // Make sure the user role is allowed to see this link
-                    if (empty($roles) || in_array(user()->role()->name, $roles)) {
+                    if (
+                        empty($roles) ||
+                        in_array(user()->role()->name, $roles)
+                    ) {
                         $links[$parent][] = [
                             "url" => $path,
                             "label" => $title,
@@ -678,10 +719,10 @@ class ModuleController extends Controller
             "boost" => "false",
         ];
         // Sort the menu headings
-        uksort($links, fn ($a, $b) => $a <=> $b);
+        uksort($links, fn($a, $b) => $a <=> $b);
         // Sort each group
         foreach ($links as &$group) {
-            uasort($group, fn ($a, $b) => $a['label'] <=> $b['label']);
+            uasort($group, fn($a, $b) => $a["label"] <=> $b["label"]);
         }
         return $links;
     }
@@ -762,7 +803,10 @@ class ModuleController extends Controller
         return [
             "page" => $this->page,
             "per_page" => $this->per_page,
-            "per_page_options" => array_filter($this->per_page_options, fn($value) => $value <= $total_results * 2),
+            "per_page_options" => array_filter(
+                $this->per_page_options,
+                fn($value) => $value <= $total_results * 2
+            ),
             "total_results" => $total_results,
             "total_pages" => $total_pages,
             "link_range" => 2,
@@ -799,19 +843,25 @@ class ModuleController extends Controller
             return [];
         }
         $opts = [
-            "class" => "form-control" . (key_exists($column, $this->request_errors) ? ' is-invalid' : ''),
+            "class" =>
+                "form-control" .
+                (key_exists($column, $this->request_errors)
+                    ? " is-invalid"
+                    : ""),
             "id" => "control-$column",
             "name" => $column,
             "title" => $label,
             "value" => $value,
         ];
-        if ($type === 'select' && isset($this->dropdown_queries[$column])) {
+        if ($type === "select" && isset($this->dropdown_queries[$column])) {
             if (is_array($this->dropdown_queries[$column])) {
                 // Array of dropdown options
-                $opts['options'] = $this->dropdown_queries[$column];
+                $opts["options"] = $this->dropdown_queries[$column];
             } else {
                 // Must be query
-                $opts['options'] = db()->fetchAll($this->dropdown_queries[$column]);
+                $opts["options"] = db()->fetchAll(
+                    $this->dropdown_queries[$column]
+                );
             }
         }
         return [
@@ -838,7 +888,12 @@ class ModuleController extends Controller
             ->execute()
             ->fetch(PDO::FETCH_ASSOC);
         // Prepare the edit form data
-        $data = array_map([$this, "formMap"], array_keys($this->form_columns), array_keys($result), array_values($result));
+        $data = array_map(
+            [$this, "formMap"],
+            array_keys($this->form_columns),
+            array_keys($result),
+            array_values($result)
+        );
         return [
             "data" => $data,
             "action" => route()->getPrefix() . "/$id",
@@ -855,7 +910,12 @@ class ModuleController extends Controller
         foreach ($this->form_columns as $label => $column) {
             $values[] = $this->default_values[$column] ?? null;
         }
-        $data = array_map([$this, "formMap"], array_keys($this->form_columns), array_values($this->form_columns), $values);
+        $data = array_map(
+            [$this, "formMap"],
+            array_keys($this->form_columns),
+            array_values($this->form_columns),
+            $values
+        );
         return [
             "data" => $data,
             "action" => route()->getPrefix(),
@@ -891,16 +951,23 @@ class ModuleController extends Controller
             ->fetchAll(PDO::FETCH_ASSOC);
         // Prepare the data structure for the table
         foreach ($data as &$result) {
-            $result = array_map(function ($label, $column, $value) use ($result) {
-                $format = $this->table_format[$column] ?? null;
-                return [
-                    "label" => is_string($label) ? $label : null,
-                    "column" => $column,
-                    "raw" => $value,
-                    "formatted" => $value ? $this->format($format, $column, $value) : '',
-                    "id" => $result[$this->primary_key],
-                ];
-            }, array_keys($this->table_columns), array_keys($result), array_values($result));
+            $result = array_map(
+                function ($label, $column, $value) use ($result) {
+                    $format = $this->table_format[$column] ?? null;
+                    return [
+                        "label" => is_string($label) ? $label : null,
+                        "column" => $column,
+                        "raw" => $value,
+                        "formatted" => $value
+                            ? $this->format($format, $column, $value)
+                            : "",
+                        "id" => $result[$this->primary_key],
+                    ];
+                },
+                array_keys($this->table_columns),
+                array_keys($result),
+                array_values($result)
+            );
         }
         $headers = [];
         foreach ($this->filterTableColumns() as $label => $column) {
@@ -971,20 +1038,26 @@ class ModuleController extends Controller
     {
         // Handle file uploads
         foreach ($this->form_controls as $column => $control) {
-            if (is_string($control) && in_array($control, ['image', 'file'])) {
+            if (is_string($control) && in_array($control, ["image", "file"])) {
                 $file = $this->handleFileUpload($column);
                 if ($file) {
                     $data[$column] = $file->id;
                 } else {
                     unset($data[$column]);
                 }
-            } else if (is_string($control) && in_array($control, ['date', 'time', 'datetime'])) {
+            } elseif (
+                is_string($control) &&
+                in_array($control, ["date", "time", "datetime"])
+            ) {
                 // Handle empty string for datetime controls
-                if ($data[$column] === '') {
+                if ($data[$column] === "") {
                     $data[$column] = null;
                 }
-            } else if (is_string($control) && in_array($control, ['switch', 'checkbox'])) {
-                if ($data[$column] === 'on') {
+            } elseif (
+                is_string($control) &&
+                in_array($control, ["switch", "checkbox"])
+            ) {
+                if ($data[$column] === "on") {
                     $data[$column] = 1;
                 }
             }
@@ -994,7 +1067,8 @@ class ModuleController extends Controller
         // The primary key is required for the update
         $params[] = $id;
         $qb = new QueryBuilder();
-        $row = $qb->select()
+        $row = $qb
+            ->select()
             ->from($this->table)
             ->where(["{$this->primary_key} = ?"])
             ->params([$id])
@@ -1042,20 +1116,26 @@ class ModuleController extends Controller
     {
         // Handle file uploads
         foreach ($this->form_controls as $column => $control) {
-            if (is_string($control) && in_array($control, ['image', 'file'])) {
+            if (is_string($control) && in_array($control, ["image", "file"])) {
                 $file = $this->handleFileUpload($column);
                 if ($file) {
                     $data[$column] = $file->id;
                 } else {
                     unset($data[$column]);
                 }
-            } else if (is_string($control) && in_array($control, ['date', 'time', 'datetime'])) {
+            } elseif (
+                is_string($control) &&
+                in_array($control, ["date", "time", "datetime"])
+            ) {
                 // Handle empty string for datetime controls
-                if ($data[$column] === '') {
+                if ($data[$column] === "") {
                     $data[$column] = null;
                 }
-            } else if (is_string($control) && in_array($control, ['switch', 'checkbox'])) {
-                if ($data[$column] === 'on') {
+            } elseif (
+                is_string($control) &&
+                in_array($control, ["switch", "checkbox"])
+            ) {
+                if ($data[$column] === "on") {
                     $data[$column] = 1;
                 }
             }
@@ -1078,7 +1158,8 @@ class ModuleController extends Controller
         }
         if ($result) {
             $id = db()->lastInsertId();
-            $row = $qb->select()
+            $row = $qb
+                ->select()
                 ->from($this->table)
                 ->where(["{$this->primary_key} = ?"])
                 ->params([$id])

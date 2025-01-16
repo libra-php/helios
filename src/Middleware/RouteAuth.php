@@ -18,9 +18,7 @@ class RouteAuth implements IMiddleware
         $middleware = $request->get("route")?->getMiddleware();
         $two_factor_enabled = config("security.two_factor_enabled");
         $two_factor_confirmed = session()->get("two_factor_confirmed");
-        $valid = $two_factor_enabled
-            ? $user && $two_factor_confirmed
-            : $user;
+        $valid = $two_factor_enabled ? $user && $two_factor_confirmed : $user;
 
         if ($middleware && in_array("auth", $middleware) && !$valid) {
             redirect(findRoute("sign-in.index"));

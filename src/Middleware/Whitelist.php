@@ -13,10 +13,12 @@ class Whitelist implements IMiddleware
         $clientIp = $request->getClientIp();
 
         if (!in_array($clientIp, $whitelist)) {
-            return new Response('Access denied: Your IP address is not whitelisted.', Response::HTTP_FORBIDDEN);
+            return new Response(
+                "Access denied: Your IP address is not whitelisted.",
+                Response::HTTP_FORBIDDEN
+            );
         }
 
         return $next($request);
     }
 }
-

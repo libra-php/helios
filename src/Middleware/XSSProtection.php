@@ -16,8 +16,8 @@ class XSSProtection implements IMiddleware
         $this->sanitizeInput($request);
 
         $response = $next($request);
-        $response->headers->set('X-XSS-Protection', '1; mode=block');
-        $response->headers->set('X-Content-Type-Options', 'nosniff');
+        $response->headers->set("X-XSS-Protection", "1; mode=block");
+        $response->headers->set("X-Content-Type-Options", "nosniff");
 
         return $response;
     }
@@ -38,10 +38,10 @@ class XSSProtection implements IMiddleware
     private function sanitize($value)
     {
         if (is_array($value)) {
-            return array_map([$this, 'sanitize'], $value);
+            return array_map([$this, "sanitize"], $value);
         }
 
         // Strip tags and encode special characters
-        return htmlspecialchars(strip_tags($value), ENT_QUOTES, 'UTF-8');
+        return htmlspecialchars(strip_tags($value), ENT_QUOTES, "UTF-8");
     }
 }

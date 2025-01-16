@@ -16,10 +16,12 @@ class MaintenanceMode implements IMiddleware
         $isMaintenanceMode = config("app.maintenance_mode");
 
         if ($isMaintenanceMode) {
-            return new Response( "The application is currently undergoing maintenance. Please check back later.", Response::HTTP_SERVICE_UNAVAILABLE);
+            return new Response(
+                "The application is currently undergoing maintenance. Please check back later.",
+                Response::HTTP_SERVICE_UNAVAILABLE
+            );
         }
 
         return $next($request);
     }
 }
-

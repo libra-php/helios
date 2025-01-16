@@ -13,10 +13,9 @@ class Blacklist implements IMiddleware
         $clientIp = $request->getClientIp();
 
         if (in_array($clientIp, $whitelist)) {
-            return new Response('Access denied', Response::HTTP_FORBIDDEN);
+            return new Response("Access denied", Response::HTTP_FORBIDDEN);
         }
 
         return $next($request);
     }
 }
-

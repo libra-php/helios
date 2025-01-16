@@ -19,7 +19,10 @@ class CSRF implements IMiddleware
 
         if (!in_array("api", $middleware)) {
             if (!$this->validate($request)) {
-                return new Response("Invalid CSRF token", Response::HTTP_FORBIDDEN);
+                return new Response(
+                    "Invalid CSRF token",
+                    Response::HTTP_FORBIDDEN
+                );
             }
         }
 

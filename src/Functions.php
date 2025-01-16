@@ -104,10 +104,12 @@ function config(string $name): mixed
     $config_path = __DIR__ . "/../config/$file.php";
     if (file_exists($config_path)) {
         $config = require $config_path;
-        if (!is_array($config)) throw new Error("config: must be an array");
+        if (!is_array($config)) {
+            throw new Error("config: must be an array");
+        }
         if ($key && key_exists($key, $config)) {
             return $config[$key];
-        } else if ($key && !key_exists($key, $config)) {
+        } elseif ($key && !key_exists($key, $config)) {
             throw new Error("config: key doesn't exist");
         } else {
             return $config;
@@ -169,7 +171,7 @@ function session(): Session
  */
 function user(): ?User
 {
-    $auth_service = new AuthService;
+    $auth_service = new AuthService();
     return $auth_service->user();
 }
 
@@ -179,10 +181,15 @@ function user(): ?User
 function moduleRoute(string $name, string $module, ...$replacements): ?string
 {
     $router = app()->router();
-    $route = array_filter($router->getRoutes(), function($route) use ($name, $module) {
+    $route = array_filter($router->getRoutes(), function ($route) use (
+        $name,
+        $module
+    ) {
         $route_name = $route->getName();
         $middleware = $route->getMiddleware();
-        return isset($middleware['module']) && $middleware['module'] === $module && $route_name === $name;
+        return isset($middleware["module"]) &&
+            $middleware["module"] === $module &&
+            $route_name === $name;
     });
 
     if (empty($route)) {
@@ -193,7 +200,7 @@ function moduleRoute(string $name, string $module, ...$replacements): ?string
     $path = $route->getPath();
 
     foreach ($replacements as $replacement) {
-        $path = preg_replace('/\{\w+\}/', $replacement, $path, 1);
+        $path = preg_replace("/\{\w+\}/", $replacement, $path, 1);
     }
 
     return $path;
@@ -214,7 +221,7 @@ function findRoute(string $name, ...$replacements): ?string
     $path = $route->getPath();
 
     foreach ($replacements as $replacement) {
-        $path = preg_replace('/\{\w+\}/', $replacement, $path, 1);
+        $path = preg_replace("/\{\w+\}/", $replacement, $path, 1);
     }
 
     return $path;
@@ -223,21 +230,23 @@ function findRoute(string $name, ...$replacements): ?string
 /**
  * Redirect to an enpoint (htmx)
  */
-function redirect(string $path, array $options = [
-    "target" => "body",
-    "select" => "body",
-    "swap" => "outerHTML"
-]): void
-{
+function redirect(
+    string $path,
+    array $options = [
+        "target" => "body",
+        "select" => "body",
+        "swap" => "outerHTML",
+    ]
+): void {
     if (request()->headers->has("HX-Request")) {
-        $options['path'] = $path;
-        $header =  sprintf("HX-Location:%s", json_encode($options));
+        $options["path"] = $path;
+        $header = sprintf("HX-Location:%s", json_encode($options));
         header($header);
-        exit;
+        exit();
     } else {
-        $header =  sprintf("Location:%s", $path);
+        $header = sprintf("Location:%s", $path);
         header($header);
-        exit;
+        exit();
     }
 }
 
@@ -261,18 +270,18 @@ function trigger(string $hook_name)
 /**
  * Get client ip address
  */
-function getClientIp() 
+function getClientIp()
 {
-    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+    if (!empty($_SERVER["HTTP_CLIENT_IP"])) {
         // IP from shared internet
-        return $_SERVER['HTTP_CLIENT_IP'];
-    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        return $_SERVER["HTTP_CLIENT_IP"];
+    } elseif (!empty($_SERVER["HTTP_X_FORWARDED_FOR"])) {
         // IP from a proxy
-        $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+        $ips = explode(",", $_SERVER["HTTP_X_FORWARDED_FOR"]);
         return trim($ips[0]); // Take the first IP, which is the client IP
     } else {
         // IP directly from REMOTE_ADDR
-        return $_SERVER['REMOTE_ADDR'];
+        return $_SERVER["REMOTE_ADDR"];
     }
 }
 
@@ -281,7 +290,7 @@ function getClientIp()
  */
 function email(): EmailSMTP
 {
-    $mailer = new EmailSMTP; 
+    $mailer = new EmailSMTP();
     $mailer->init();
     return $mailer;
 }

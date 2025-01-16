@@ -33,11 +33,14 @@ class Http implements IKernel
     public function main()
     {
         $this->request = container()->get(Request::class);
-        $this->route = $this->router
-            ->handleRequest($this->request->getMethod(), $this->request->getPathInfo());
+        $this->route = $this->router->handleRequest(
+            $this->request->getMethod(),
+            $this->request->getPathInfo()
+        );
         $this->request->attributes->add(["route" => $this->route]);
         $middleware = container()->get(Middleware::class);
-        $response = $middleware->layer($this->middleware)
+        $response = $middleware
+            ->layer($this->middleware)
             ->handle($this->request, fn() => $this->resolve());
         $response->prepare($this->request);
         $response->send();
@@ -75,7 +78,7 @@ class Http implements IKernel
 
     private function initRouter()
     {
-        $this->router = new Router;
+        $this->router = new Router();
     }
 
     private function initMiddleware()

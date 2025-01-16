@@ -9,7 +9,7 @@ class Schema
 {
     public static function create(string $table_name, Closure $callback): string
     {
-        $blueprint = new Blueprint;
+        $blueprint = new Blueprint();
         $callback($blueprint);
         $sql = sprintf(
             "CREATE TABLE IF NOT EXISTS %s (%s)",
@@ -28,7 +28,9 @@ class Schema
     {
         $migration_path = config("paths.migrations") . $path;
         if (!file_exists($migration_path)) {
-            throw new Exception(" Migration file doesn't exist: $migration_path");
+            throw new Exception(
+                " Migration file doesn't exist: $migration_path"
+            );
         }
         $sql = file_get_contents($migration_path);
         return $sql;
@@ -39,13 +41,19 @@ class Schema
         return "$char" . implode("$char, $char", $data) . "$char";
     }
 
-    public static function insert(string $table_name, array $columns, ...$data): string
-    {
+    public static function insert(
+        string $table_name,
+        array $columns,
+        ...$data
+    ): string {
         $columns = self::surround($columns, "`");
         $sql = "INSERT INTO $table_name ($columns) VALUES ";
         $insert = [];
         foreach ($data as $values) {
-            $values = array_map(fn($value) => !is_null($value) ? "'$value'" : "NULL", $values);
+            $values = array_map(
+                fn($value) => !is_null($value) ? "'$value'" : "NULL",
+                $values
+            );
             $values = implode(", ", $values);
             $insert[] = "($values)";
         }

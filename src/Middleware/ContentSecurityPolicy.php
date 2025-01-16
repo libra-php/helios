@@ -25,7 +25,7 @@ class ContentSecurityPolicy implements IMiddleware
         $response = $next($request);
 
         // Add the CSP header with the nonce and other directives
-        $response->headers->set('Content-Security-Policy', $this->policy);
+        $response->headers->set("Content-Security-Policy", $this->policy);
 
         return $response;
     }
@@ -46,9 +46,9 @@ class ContentSecurityPolicy implements IMiddleware
 
         $policyParts = [];
         foreach ($directives as $directive => $value) {
-            $policyParts[] = $directive . ' ' . $value;
+            $policyParts[] = $directive . " " . $value;
         }
 
-        return implode('; ', $policyParts);
+        return implode("; ", $policyParts);
     }
 }

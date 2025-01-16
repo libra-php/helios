@@ -26,14 +26,8 @@ class Adapter extends CLI
             "generate:key",
             "Generate secure application key"
         );
-        $options->registerCommand(
-            "cache:create",
-            "Create the template cache",
-        );
-        $options->registerCommand(
-            "cache:clear",
-            "Clear the template cache",
-        );
+        $options->registerCommand("cache:create", "Create the template cache");
+        $options->registerCommand("cache:clear", "Clear the template cache");
         $options->registerCommand(
             "migrate:create",
             "Generate a new migration file"
@@ -66,7 +60,9 @@ class Adapter extends CLI
             "migrate:fresh" => $this->migrateFresh(),
             "migrate:up" => $this->runMigration($options->getArgs(), "up"),
             "migrate:down" => $this->runMigration($options->getArgs(), "down"),
-            "migrate:create" => $this->createMigration($options->getArgs()[0] ?? ''),
+            "migrate:create" => $this->createMigration(
+                $options->getArgs()[0] ?? ""
+            ),
             default => "",
         };
         $this->command($options->getCmd());
@@ -76,17 +72,23 @@ class Adapter extends CLI
     /**
      * Override
      */
-    protected function register(Options $options) {}
+    protected function register(Options $options)
+    {
+    }
 
     /**
      * Override
      */
-    protected function option(string $option) {}
+    protected function option(string $option)
+    {
+    }
 
     /**
      * Override
      */
-    protected function command(string $command) {}
+    protected function command(string $command)
+    {
+    }
 
     private function generateKey(): void
     {
@@ -109,16 +111,20 @@ class Adapter extends CLI
         }
 
         // Change ownership to www-data
-        $user = 'www-data';
-        $group = 'www-data';
+        $user = "www-data";
+        $group = "www-data";
 
         if (!chown($path, $user) || !chgrp($path, $group)) {
-            $this->error(" Failed to set ownership for cache directory: {$path}");
+            $this->error(
+                " Failed to set ownership for cache directory: {$path}"
+            );
         }
 
         // Ensure permissions are correct
         if (!chmod($path, 0775)) {
-            $this->error(" Failed to set permissions for cache directory: {$path}");
+            $this->error(
+                " Failed to set permissions for cache directory: {$path}"
+            );
         }
         $this->success(" Cache directory created at: {$path}");
         exit();
@@ -129,7 +135,9 @@ class Adapter extends CLI
         $cache = config("paths.template-cache");
 
         if (is_dir($cache)) {
-            exec("find $cache -mindepth 1 ! -name '.gitignore' -type d -exec rm -rf {} +");
+            exec(
+                "find $cache -mindepth 1 ! -name '.gitignore' -type d -exec rm -rf {} +"
+            );
         }
         exit();
     }
@@ -179,7 +187,7 @@ class Adapter extends CLI
     {
         if (!$table_name) {
             $this->warning("You must provide a table name");
-            exit;
+            exit();
         }
         $migration_path = config("paths.migrations");
         $migration_file = $migration_path . time() . "_create_$table_name.php";
@@ -244,12 +252,16 @@ CLASS;
     {
         $this->info($prompt . " (yes/no): ");
         $input = strtolower(trim(fgets(STDIN)));
-        return $input === "yes" || $input === 'y';
+        return $input === "yes" || $input === "y";
     }
 
     private function migrateFresh(): void
     {
-        if (!$this->confirm("Are you sure you want to proceed? This action will drop the database and run migration files, resulting in a complete loss of all current data.")) {
+        if (
+            !$this->confirm(
+                "Are you sure you want to proceed? This action will drop the database and run migration files, resulting in a complete loss of all current data."
+            )
+        ) {
             $this->info("Okay, aborting migration.");
             exit();
         }

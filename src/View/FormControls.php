@@ -4,7 +4,6 @@ namespace Helios\View;
 
 use App\Models\File;
 
-
 trait FormControls
 {
     protected array $form_controls = [];
@@ -16,7 +15,7 @@ trait FormControls
     {
         if (is_callable($type)) {
             return $type($opts);
-        } else if (method_exists($this, $type)) {
+        } elseif (method_exists($this, $type)) {
             return call_user_func([$this, $type], $opts);
         } else {
             throw new \Error("control type does not exist: $type");
@@ -25,7 +24,7 @@ trait FormControls
 
     protected function input(array $opts): string
     {
-        if (!isset($opts['type'])) {
+        if (!isset($opts["type"])) {
             $opts["type"] = "input";
         }
         return template("admin/module/controls/input.html", $opts);
@@ -113,7 +112,7 @@ trait FormControls
     protected function checkbox(array $opts): string
     {
         $opts["class"] = "form-check-input";
-        $opts["checked"] = $opts['value'] == 1 || $opts['value'] == 'on';
+        $opts["checked"] = $opts["value"] == 1 || $opts["value"] == "on";
         $opts["type"] = "checkbox";
         return $this->input($opts);
     }

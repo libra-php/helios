@@ -13,10 +13,10 @@ class TwigExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('csrf', [$this, 'csrf']),
-            new TwigFunction('dump', [$this, 'dump']),
-            new TwigFunction('route', [$this, 'route']),
-            new TwigFunction('old', [$this, 'old']),
+            new TwigFunction("csrf", [$this, "csrf"]),
+            new TwigFunction("dump", [$this, "dump"]),
+            new TwigFunction("route", [$this, "route"]),
+            new TwigFunction("old", [$this, "old"]),
         ];
     }
 
@@ -38,7 +38,7 @@ class TwigExtension extends AbstractExtension
         $token = session()->get("csrf_token");
         return template("components/csrf.html", ["token" => $token]);
     }
-    public function old(string $name, mixed $default = ''): string
+    public function old(string $name, mixed $default = ""): string
     {
         return request()->request->get($name, $default);
     }

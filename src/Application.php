@@ -2,7 +2,6 @@
 
 namespace Helios;
 
-
 use DI\Container;
 use Dotenv\Dotenv;
 use Error;
@@ -15,7 +14,8 @@ class Application
 
     private Container $container;
 
-    public function __construct(private IKernel $kernel) {
+    public function __construct(private IKernel $kernel)
+    {
         $this->initEnvironment();
         $this->initContainer();
     }

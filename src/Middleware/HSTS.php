@@ -11,8 +11,12 @@ use Symfony\Component\HttpFoundation\{Response, Request};
  */
 class HSTS implements IMiddleware
 {
-    public function __construct(private int $maxAge = 31536000, private bool $includeSubDomains = true, private bool $preload = true)
-    {}
+    public function __construct(
+        private int $maxAge = 31536000,
+        private bool $includeSubDomains = true,
+        private bool $preload = true
+    ) {
+    }
 
     public function handle(Request $request, Closure $next): Response
     {
@@ -26,7 +30,7 @@ class HSTS implements IMiddleware
             $hstsHeader .= "; preload";
         }
 
-        $response->headers->set('Strict-Transport-Security', $hstsHeader);
+        $response->headers->set("Strict-Transport-Security", $hstsHeader);
 
         return $response;
     }

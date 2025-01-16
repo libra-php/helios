@@ -2,7 +2,7 @@
 
 namespace Helios\Utils;
 
-define('INTEGER_LENGTH', 64);
+define("INTEGER_LENGTH", 64);
 
 class Bitmask
 {
@@ -10,7 +10,12 @@ class Bitmask
 
     public function __construct(private int $decimal)
     {
-        $this->binary = str_pad(decbin($decimal), INTEGER_LENGTH, '0', STR_PAD_LEFT);
+        $this->binary = str_pad(
+            decbin($decimal),
+            INTEGER_LENGTH,
+            "0",
+            STR_PAD_LEFT
+        );
     }
 
     public function getDecimal(): string
@@ -32,6 +37,6 @@ class Bitmask
     public function toggleState(int $position): void
     {
         // XOR assignment, flips bit at position
-        $this->decimal ^= (1 << $position);
+        $this->decimal ^= 1 << $position;
     }
 }

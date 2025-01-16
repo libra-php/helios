@@ -6,11 +6,13 @@ trait Singleton
 {
     private static $instance;
 
-    private function __construct() {
+    private function __construct()
+    {
         // Prevent instantiation from outside the class
     }
 
-    private function __clone() {
+    private function __clone()
+    {
         // Prevent cloning of the instance
     }
 
