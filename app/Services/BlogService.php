@@ -138,4 +138,12 @@ class BlogService
             return Carbon::parse($comment->created_at)->diffForHumans();
         }
     }
+
+    public function getBlogPostCommentCount(int $post_id): int
+    {
+        $comments = BlogPostComment::where("blog_post_id", $post_id)
+            ->andWhere("approved", 1)
+            ->get(lazy: false);
+        return count($comments);
+    }
 }

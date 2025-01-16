@@ -3,6 +3,7 @@
 namespace App\Controllers\Home;
 
 use App\Models\BlogPost;
+use App\Models\BlogPostComment;
 use App\Services\BlogService;
 use Helios\View\Flash;
 use Helios\Web\Controller;
@@ -58,8 +59,15 @@ class BlogController extends Controller
                     trim($valid->name),
                     trim($valid->comment)
                 );
-                trigger("load-comment-control");
+
                 if ($comment) {
+                    $comment_count = $this->service->getBlogPostCommentCount($post_id);
+                    if ($comment_count > 1) {
+                        trigger("load-comment-control");
+                    } else {
+                        trigger("load-comment-control, load-comments");
+                    }
+
                     return $this->render("home/blog/comment.html", [
                         "comment" => $comment,
                     ]);
@@ -74,6 +82,7 @@ class BlogController extends Controller
     public function comments(int $post_id): string
     {
         return $this->render("home/blog/comments.html", [
+            "post_id" => $post_id,
             "comments" => $this->service->getBlogPostComments($post_id),
         ]);
     }
