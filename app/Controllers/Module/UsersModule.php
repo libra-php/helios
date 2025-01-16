@@ -3,7 +3,7 @@
 namespace App\Controllers\Module;
 
 use App\Models\User;
-use Helios\Admin\Auth;
+use App\Services\AuthService;
 use Helios\Admin\ModuleController;
 use StellarRouter\Group;
 
@@ -11,8 +11,11 @@ use StellarRouter\Group;
 #[Group(prefix: "/admin/users", middleware: ["module" => "users"])]
 class UsersModule extends ModuleController
 {
+    private AuthService $service;
+
     public function init(?int $id): void
     {
+        $this->service = new AuthService;
         $this->roles = ["Super Admin"];
         $this->table = "users";
         $this->module_title = "Users";
@@ -126,8 +129,8 @@ class UsersModule extends ModuleController
 
     protected function new(array $data): ?int
     {
-        $data['password'] = Auth::hashPassword($data['password']);
-        $data['two_fa_secret'] = Auth::generateTwoFactorSecret();
+        $data['password'] = $this->service->hashPassword($data['password']);
+        $data['two_fa_secret'] = $this->service->generateTwoFactorSecret();
         unset($data['password_match']);
         return parent::new($data);
     }
@@ -138,7 +141,7 @@ class UsersModule extends ModuleController
             unset($data['password']);
             unset($data['password_match']);
         } else {
-            $data['password'] = Auth::hashPassword($data['password']);
+            $data['password'] = $this->service->hashPassword($data['password']);
             unset($data['password_match']);
         }
         return parent::save($id, $data);

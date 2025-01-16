@@ -4,12 +4,17 @@ namespace App\Controllers\Auth;
 
 use App\Models\PasswordReset;
 use App\Models\User;
-use Helios\Admin\Auth;
+use App\Services\AuthService;
 use Helios\Web\Controller;
 use StellarRouter\{Get, Post};
 
 class PasswordResetController extends Controller
 {
+    public function __construct(private AuthService $service)
+    {
+        
+    }
+
     #[Get("/password-reset/{token}", "password-reset.index")]
     public function index(string $token): string
     {
@@ -47,8 +52,8 @@ class PasswordResetController extends Controller
             ]);
             if ($valid) {
                 $user = User::findOrFail($password_reset->user_id);
-                Auth::changePassword($user, $valid->password);
-                Auth::logUser($user);
+                $this->service->changePassword($user, $valid->password);
+                $this->service->logUser($user);
 
                 // Change complete
                 $password_reset->complete = 1;

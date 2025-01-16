@@ -2,12 +2,17 @@
 
 namespace App\Controllers\Auth;
 
-use Helios\Admin\Auth;
+use App\Services\AuthService;
 use Helios\Web\Controller;
 use StellarRouter\{Get, Post};
 
 class ForgotPasswordController extends Controller
 {
+    public function __construct(private AuthService $service)
+    {
+        
+    }
+
     #[Get("/forgot-password", "forgot-password.index")]
     public function index(): string
     {
@@ -22,7 +27,7 @@ class ForgotPasswordController extends Controller
         ]);
 
         if ($valid) {
-            Auth::requestPasswordReset($valid);
+            $this->service->requestPasswordReset($valid);
         }
 
         return $this->index();

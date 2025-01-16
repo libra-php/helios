@@ -2,6 +2,7 @@
 
 namespace Nebula\Migrations;
 
+use App\Services\AuthService;
 use Helios\Admin\Auth;
 use Helios\Database\{Blueprint, Schema, IMigration};
 
@@ -36,6 +37,7 @@ return new class implements IMigration
 
     public function afterUp(): string
     {
+        $service = new AuthService;
         return Schema::insert($this->table,
             [
                 "name",
@@ -49,8 +51,8 @@ return new class implements IMigration
                 "Administrator",
                 "administrator",
                 "admin",
-                Auth::hashPassword(config("security.default_admin_pass")),
-                Auth::generateTwoFactorSecret(),
+                $service->hashPassword(config("security.default_admin_pass")),
+                $service->generateTwoFactorSecret(),
                 1
             ]
         );

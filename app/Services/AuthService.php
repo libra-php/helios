@@ -1,6 +1,6 @@
 <?php
 
-namespace Helios\Admin;
+namespace App\Services;
 
 use App\Models\EmailJob;
 use App\Models\PasswordReset;
@@ -13,9 +13,9 @@ use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use Carbon\Carbon;
 
-class Auth
+class AuthService
 {
-    public static function user(): ?User
+    public function user(): ?User
     {
         $session_uuid = session()->get("user_uuid");
         $cookie_uuid = request()->cookies->get("user_uuid");
@@ -29,28 +29,28 @@ class Auth
         return null;
     }
 
-    public static function testPassword(string $password, string $hash): bool
+    public function testPassword(string $password, string $hash): bool
     {
         return password_verify($password, $hash);
     }
 
-    public static function hashPassword(string $password): string
+    public function hashPassword(string $password): string
     {
         return password_hash($password, PASSWORD_ARGON2I);
     }
 
-    public static function generatePasswordToken(): string
+    public function generatePasswordToken(): string
     {
         return bin2hex(random_bytes(32));
     }
 
-    public static function generateTwoFactorSecret(): string
+    public function generateTwoFactorSecret(): string
     {
         $google2fa = new Google2FA();
         return $google2fa->generateSecretKey();
     }
 
-    public static function generateTwoFactorQR(User $user): string
+    public function generateTwoFactorQR(User $user): string
     {
         // Generate a 2FA QR 
         $google2fa = new Google2FA();
@@ -70,7 +70,7 @@ class Auth
         return base64_encode($writer->writeString($g2faUrl));
     }
 
-    public static function testTwoFactorCode(User $user, string $code): bool
+    public function testTwoFactorCode(User $user, string $code): bool
     {
         $google2fa = new Google2FA();
         $result = $google2fa->verifyKey($user->two_fa_secret, $code);
@@ -105,7 +105,7 @@ class Auth
         return $result ? true : false;
     }
 
-    public static function signIn(object $request): bool
+    public function signIn(object $request): bool
     {
         // WARN: This request must be validated
 
@@ -161,7 +161,7 @@ class Auth
         }
     }
 
-    public static function requestPasswordReset(object $request): void
+    public function requestPasswordReset(object $request): void
     {
         // Look for user by email
         $user = User::where("email", $request->email)->get(1);
@@ -190,7 +190,7 @@ class Auth
         Flash::add("success", "If the email exists, a password reset link has been sent.");
     }
 
-    public static function registerUser(object $request): User
+    public function registerUser(object $request): User
     {
         unset($request->password_match);
         $request->two_fa_secret = self::generateTwoFactorSecret();
@@ -198,7 +198,7 @@ class Auth
         return User::create((array) $request);
     }
 
-    public static function changePassword(User $user, string $password)
+    public function changePassword(User $user, string $password)
     {
         $user->password = self::hashPassword($password);
         $user->two_fa_secret = self::generateTwoFactorSecret();
@@ -206,7 +206,7 @@ class Auth
         $user->save();
     }
 
-    public static function passwordReset(User $user): void
+    public function passwordReset(User $user): void
     {
         $reset_token_time = config("security.reset_token_time");
         $expires_at = time() + $reset_token_time;
@@ -229,7 +229,7 @@ class Auth
         }
     }
 
-    public static function emailPasswordReset(User $user, string $token)
+    public function emailPasswordReset(User $user, string $token)
     {
         $project_name = config("app.name");
         $project_url = config("app.url");
@@ -250,7 +250,7 @@ class Auth
         ]);
     }
 
-    public static function confirm2FA(User $user): void
+    public function confirm2FA(User $user): void
     {
         // Confirm the two fa code
         session()->set("two_factor_confirmed", true);
@@ -258,7 +258,7 @@ class Auth
         $user->save();
     }
 
-    public static function logUser(User $user, bool $remember_me = false): void
+    public function logUser(User $user, bool $remember_me = false): void
     {
         // Set user login_at
         $user->login_at = date("Y-m-d H:i:s");
@@ -273,14 +273,14 @@ class Auth
         }
     }
 
-    public static function failedAttempt(User $user): void
+    public function failedAttempt(User $user): void
     {
         // Failed login attempt
         $user->failed_login++;
         $user->save();
     }
 
-    public static function lockUser(User $user): void
+    public function lockUser(User $user): void
     {
         // Lock the user
         $lockout_time = config("security.lockout_time");
@@ -289,7 +289,7 @@ class Auth
         $user->save();
     }
 
-    public static function unlockUser(User $user): void
+    public function unlockUser(User $user): void
     {
         // Unlock the user
         $user->failed_login = 0;
@@ -297,7 +297,7 @@ class Auth
         $user->save();
     }
 
-    public static function signOut(): void
+    public function signOut(): void
     {
         // Destroy the user session & cookies
         unset($_COOKIE["user_uuid"]);
