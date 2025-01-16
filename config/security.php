@@ -17,6 +17,7 @@ return [
     ],
     "max_requests" => [
         'captcha' => 200,
+        'default' => 0,
         'api' => 200,
         'forgot-pass' => 20,
         'register' => 20,
@@ -24,6 +25,7 @@ return [
     ],
     "decay_seconds" => [
         'captcha' => 1,
+        'default' => 0,
         'api' => 60,
         'forgot-pass' => 100,
         'register' => 300,
