@@ -29,38 +29,41 @@ class RequestLimit implements IMiddleware
         }
         $maxRequests = config("security.max_requests")[$key];
         $decaySeconds = config("security.decay_seconds")[$key];
-        $clientIdentifier = $request->getClientIp();
-        $cacheKey = "request_limit_" . $clientIdentifier;
 
-        if (!session()->has($cacheKey)) {
-            session()->set($cacheKey, [
-                "count" => 0,
-                "timestamp" => time(),
-            ]);
+        if ($key !== 'default') {
+            $clientIdentifier = $request->getClientIp();
+            $cacheKey = "request_limit_" . $clientIdentifier;
+
+            if (!session()->has($cacheKey)) {
+                session()->set($cacheKey, [
+                    "count" => 0,
+                    "timestamp" => time(),
+                ]);
+            }
+
+            $limit = session()->get($cacheKey);
+
+            if (time() - $limit["timestamp"] > $decaySeconds) {
+                $limit["count"] = 0;
+                $limit["timestamp"] = time();
+            }
+
+            $limit["count"]++;
+
+            if ($limit["count"] > $maxRequests) {
+                return $key === "api"
+                    ? new JsonResponse(
+                        ["message" => "Too many requests. Try again later."],
+                        Response::HTTP_TOO_MANY_REQUESTS
+                    )
+                    : new Response(
+                        "Too many requests. Try again later.",
+                        Response::HTTP_TOO_MANY_REQUESTS
+                    );
+            }
+
+            session()->set($cacheKey, $limit);
         }
-
-        $limit = session()->get($cacheKey);
-
-        if (time() - $limit["timestamp"] > $decaySeconds) {
-            $limit["count"] = 0;
-            $limit["timestamp"] = time();
-        }
-
-        $limit["count"]++;
-
-        if ($limit["count"] > $maxRequests) {
-            return $key === "api"
-                ? new JsonResponse(
-                    ["message" => "Too many requests. Try again later."],
-                    Response::HTTP_TOO_MANY_REQUESTS
-                )
-                : new Response(
-                    "Too many requests. Try again later.",
-                    Response::HTTP_TOO_MANY_REQUESTS
-                );
-        }
-
-        session()->set($cacheKey, $limit);
 
         $response = $next($request);
 
