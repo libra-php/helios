@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\Module;
+namespace App\Controllers\Module\Blog;
 
 use Helios\Admin\ModuleController;
 use StellarRouter\Group;
@@ -8,20 +8,22 @@ use StellarRouter\Group;
 /** @package App\Controllers\Module */
 #[
     Group(
-        prefix: "/admin/blog/categories",
-        middleware: ["module" => "blog-categories"]
+        prefix: "/admin/blog/comments",
+        middleware: ["module" => "blog-comments"]
     )
 ]
-class BlogCategoriesModule extends ModuleController
+class CommentsModule extends ModuleController
 {
     public function init(?int $id): void
     {
         $this->roles = ["Super Admin", "Admin"];
-        $this->table = "blog_categories";
-        $this->module_title = "Categories";
+        $this->table = "blog_post_comments";
+        $this->module_title = "Comments";
         $this->link_parent = "Blog";
         $this->table_columns = [
+            "ID" => "id",
             "Name" => "name",
+            "Comment" => "CONCAT(LEFT(comment, 12), '...') as comment",
             "Created" => "created_at",
         ];
         $this->table_format = [
@@ -30,17 +32,16 @@ class BlogCategoriesModule extends ModuleController
 
         $this->form_columns = [
             "Name" => "name",
+            "Comment" => "comment",
+            "Approved" => "approved",
         ];
         $this->form_controls = [
             "name" => "input",
+            "comment" => "textarea",
+            "approved" => "switch",
         ];
         $this->validation_rules = [
-            "name" => ["required"],
+            "approved" => [],
         ];
-    }
-
-    public function hasDeletePermission(int $id): bool
-    {
-        return $id != 1 && parent::hasDeletePermission($id);
     }
 }

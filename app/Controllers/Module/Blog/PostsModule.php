@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\Module;
+namespace App\Controllers\Module\Blog;
 
 use App\Models\BlogPost;
 use Helios\Admin\ModuleController;
@@ -8,7 +8,7 @@ use StellarRouter\Group;
 
 /** @package App\Controllers\Module */
 #[Group(prefix: "/admin/blog/posts", middleware: ["module" => "blog-posts"])]
-class BlogPostsModule extends ModuleController
+class PostsModule extends ModuleController
 {
     public function init(?int $id): void
     {
