@@ -68,7 +68,7 @@ class Model implements IModel
     public static function all(): array
     {
         $class = get_called_class();
-        $model = container()->get($class);
+        $model = new $class;
         $results = $model->qb
             ->select($model->columns)
             ->from($model->table)
@@ -84,7 +84,7 @@ class Model implements IModel
     public static function create(array $data): static|Model|bool|null
     {
         $class = get_called_class();
-        $model = container()->get($class);
+        $model = new $class;
         $result = $model->qb
             ->insert($data)
             ->into($model->table)
@@ -110,7 +110,7 @@ class Model implements IModel
 
         foreach ($id as $model_id) {
             $class = get_called_class();
-            $model = container()->get($class);
+            $model = new $class;
             $key = $model->primaryKey;
             $result = $model->qb
                 ->delete()
@@ -151,7 +151,7 @@ class Model implements IModel
     public static function find(string $id): null|Model|static
     {
         $class = get_called_class();
-        $model = container()->get($class);
+        $model = new $class;
         try {
             $result = new $model($id);
             return $result;
@@ -166,7 +166,7 @@ class Model implements IModel
     public static function findOrFail(string $id): Model|static
     {
         $class = get_called_class();
-        $model = container()->get($class);
+        $model = new $class;
         return new $model($id);
     }
 
@@ -310,11 +310,12 @@ class Model implements IModel
 
     /**
      * Add to the model where clause (separated by AND)
+     * @static
      */
-    public static function where(string $column, string $operator = '=', ?string $value = null): Model|static
+    public static function where(string $column, string $operator = '=', ?string $value = null): static
     {
         $class = get_called_class();
-        $model = container()->get($class);
+        $model = new $class;
 
         // Default operator is =
         if (!in_array(strtolower($operator), $model->validOperators)) {
@@ -325,6 +326,22 @@ class Model implements IModel
         $model->where[] = "($column $operator ?)";
         $model->params[] = $value;
         return $model;
+    }
+
+    /**
+     * Add to the model where clause (separated by OR)
+     */
+    public function andWhere(string $column, string $operator = '=', ?string $value = null): Model
+    {
+        // Default operator is =
+        if (!in_array(strtolower($operator), $this->validOperators)) {
+            $value = $operator;
+            $operator = '=';
+        }
+        // Add the where clause and params
+        $this->where[] = "($column $operator ?)";
+        $this->params[] = $value;
+        return $this;
     }
 
     /**

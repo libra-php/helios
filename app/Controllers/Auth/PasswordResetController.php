@@ -14,7 +14,7 @@ class PasswordResetController extends Controller
     public function index(string $token): string
     {
         $password_reset = PasswordReset::where("token", $token)
-            ->where("expires_at", ">", date("Y-m-d H:i:s"))
+            ->andWhere("expires_at", ">", date("Y-m-d H:i:s"))
             ->orderBy("id", "DESC")
             ->get(1);
         if (!$password_reset || $password_reset->complete) {
@@ -30,7 +30,7 @@ class PasswordResetController extends Controller
     public function post(string $token): string
     {
         $password_reset = PasswordReset::where("token", $token)
-            ->where("expires_at", ">", date("Y-m-d H:i:s"))
+            ->andWhere("expires_at", ">", date("Y-m-d H:i:s"))
             ->orderBy("id", "DESC")
             ->get(1);
         if ($password_reset) {

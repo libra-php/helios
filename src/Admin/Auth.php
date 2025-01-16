@@ -170,7 +170,7 @@ class Auth
         if ($user && !$user->locked_until) {
             // Check if there is a password reset in progress
             $password_reset = PasswordReset::where("user_id", $user->id)
-                ->where("expires_at", ">", date("Y-m-d H:i:s"))
+                ->andWhere("expires_at", ">", date("Y-m-d H:i:s"))
                 ->orderBy("id", "DESC")
                 ->get(1);
             // If not, or the prev attempt did not send,

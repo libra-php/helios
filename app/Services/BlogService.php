@@ -68,7 +68,7 @@ class BlogService
     public function getBlogPostComments(int $blog_post_id): ?array
     {
         $comments = BlogPostComment::where("blog_post_id", $blog_post_id)
-            ->where("approved", 1)
+            ->andWhere("approved", 1)
             ->orderBy("created_at", "DESC")
             ->get(lazy: false);
 
