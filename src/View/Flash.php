@@ -4,8 +4,6 @@ namespace Helios\View;
 
 class Flash
 {
-    private static array $messages = [];
-
     /**
      * Add a flash message to the messages array
      * @param string $type (warning,danger,success,info,etc)
@@ -13,7 +11,9 @@ class Flash
      */
     public static function add(string $type, string $message): void
     {
-        self::$messages[strtolower($type)][] = $message;
+        $flash = session()->get("flash") ?? [];
+        $flash[strtolower($type)][] = $message;
+        session()->set("flash", $flash);
     }
 
     /**
@@ -22,6 +22,8 @@ class Flash
      */
     public static function get(): array
     {
-        return self::$messages;
+        $flash = session()->get("flash") ?? [];
+        session()->set("flash", []);
+        return $flash;
     }
 }

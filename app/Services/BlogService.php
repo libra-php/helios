@@ -107,13 +107,24 @@ class BlogService
         int $blog_post_id,
         string $name,
         string $comment
-    ) {
-        BlogPostComment::create([
+    ): ?array {
+        $comment = BlogPostComment::create([
             "blog_post_id" => $blog_post_id,
             "name" => $name,
             "comment" => $comment,
             "ip" => ip2long(getClientIp()),
             "approved" => 1,
         ]);
+
+        if ($comment) {
+            return [
+                "id" => $comment->id,
+                "name" => $comment->name,
+                "comment" => $comment->comment,
+                "ago" => Carbon::parse($comment->created_at)->diffForHumans(),
+                "created_at" => $comment->created_at,
+            ];
+        }
+        return null;
     }
 }

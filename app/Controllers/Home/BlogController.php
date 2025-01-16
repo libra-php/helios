@@ -26,7 +26,6 @@ class BlogController extends Controller
     #[Get("/{slug}", "blog.index")]
     public function post(string $slug): string
     {
-        setCaptcha();
         $post = $this->service->getBlogPostBySlug($slug);
 
         if (!$post) {
@@ -53,25 +52,22 @@ class BlogController extends Controller
 
         if ($valid) {
             $captcha_success = $valid->captcha == getCaptcha();
-            if (!$captcha_success) {
-                Flash::add(
-                    "warning",
-                    "Invalid captcha code. Please try again."
-                );
-            } else {
-                Flash::add(
-                    "success",
-                    "Thank you for sharing your thoughts! Your comment has been successfully posted."
-                );
-                $this->service->createComment(
+            if ($captcha_success) {
+                $comment = $this->service->createComment(
                     $post->id,
                     trim($valid->name),
                     trim($valid->comment)
                 );
+                trigger("load-comment-control");
+                if ($comment) {
+                    return $this->render("home/blog/comment.html", [
+                        "comment" => $comment,
+                    ]);
+                }
             }
         }
-
-        return $this->post($post->slug);
+        Flash::add("warning", "Invalid captcha code. Please try again.");
+        trigger("load-comment-control");
     }
 
     #[Get("/comments/{id}", "blog.comments")]
@@ -79,6 +75,15 @@ class BlogController extends Controller
     {
         return $this->render("home/blog/comments.html", [
             "comments" => $this->service->getBlogPostComments($id),
+        ]);
+    }
+
+    #[Get("/comment/control/{id}", "blog.comments-control")]
+    public function comments_control(int $id): string
+    {
+        setCaptcha();
+        return $this->render("home/blog/comment-control.html", [
+            "id" => $id
         ]);
     }
 }
