@@ -314,7 +314,7 @@ class Model implements IModel
     public static function where(string $column, string $operator = '=', ?string $value = null): Model|static
     {
         $class = get_called_class();
-        $model = new $class;
+        $model = container()->get($class);
 
         // Default operator is =
         if (!in_array(strtolower($operator), $model->validOperators)) {

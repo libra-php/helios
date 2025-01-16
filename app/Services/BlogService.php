@@ -83,10 +83,10 @@ class BlogService
         ], $comments);
     }
 
-    public function createComment(int $post_id, string $name, string $comment)
+    public function createComment(int $blog_post_id, string $name, string $comment)
     {
         BlogPostComment::create([
-            "blog_post_id" => $post_id,
+            "blog_post_id" => $blog_post_id,
             "name" => $name,
             "comment" => $comment,
             "ip" => ip2long(getClientIp()),
