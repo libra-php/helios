@@ -39,10 +39,10 @@ class BlogController extends Controller
         ]);
     }
 
-    #[Post("/comment/{id}", "blog.comment")]
-    public function comment(int $id): string
+    #[Post("/comment/{post_id}", "blog.comment")]
+    public function comment(int $post_id): string
     {
-        $post = BlogPost::findOrFail($id);
+        $post = BlogPost::findOrFail($post_id);
 
         $valid = $this->validateRequest([
             "name" => ["required"],
@@ -70,20 +70,26 @@ class BlogController extends Controller
         trigger("load-comment-control");
     }
 
-    #[Get("/comments/{id}", "blog.comments")]
-    public function comments(int $id): string
+    #[Get("/comments/{post_id}", "blog.comments")]
+    public function comments(int $post_id): string
     {
         return $this->render("home/blog/comments.html", [
-            "comments" => $this->service->getBlogPostComments($id),
+            "comments" => $this->service->getBlogPostComments($post_id),
         ]);
     }
 
-    #[Get("/comment/control/{id}", "blog.comments-control")]
-    public function comments_control(int $id): string
+    #[Get("/comment/control/{post_id}", "blog.comments-control")]
+    public function comments_control(int $post_id): string
     {
         setCaptcha();
         return $this->render("home/blog/comment-control.html", [
-            "id" => $id
+            "id" => $post_id
         ]);
+    }
+
+    #[Get("/comment/ts/{comment_id}", "blog.update-ts")]
+    public function update_ts(int $comment_id): string
+    {
+        return $this->service->getCommentTimestamp($comment_id);
     }
 }

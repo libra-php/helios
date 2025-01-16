@@ -1,4 +1,4 @@
-<div id="comment-control" hx-trigger="load-comment-control from:body" hx-get="/blog/comments/control/{{ id }}" hx-swap="outerHTML" hx-target="this" hx-select="#comment-control">
+<div id="comment-control" hx-trigger="load-comment-control from:body" hx-get="/blog/comment/control/{{ id }}" hx-swap="outerHTML" hx-target="this" hx-select="#comment-control">
     {% include "components/flash.html" %}
     <div id="pre-comment" onClick="hideBlogPreComment(); showBlogComment();">
         <label class="my-2" for="name">Post comment</label>

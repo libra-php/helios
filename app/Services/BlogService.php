@@ -98,6 +98,7 @@ class BlogService
                 "comment" => $comment->comment,
                 "ago" => Carbon::parse($comment->created_at)->diffForHumans(),
                 "created_at" => $comment->created_at,
+                "update_ts" => $comment->created_at > date("Y-m-d H:i:s", strtotime("-1 minute"))
             ],
             $comments
         );
@@ -123,8 +124,18 @@ class BlogService
                 "comment" => $comment->comment,
                 "ago" => Carbon::parse($comment->created_at)->diffForHumans(),
                 "created_at" => $comment->created_at,
+                "update_ts" => $comment->created_at > date("Y-m-d H:i:s", strtotime("-1 minute"))
             ];
         }
         return null;
+    }
+
+    public function getCommentTimestamp(int $comment_id): string
+    {
+        $comment = BlogPostComment::find($comment_id);
+
+        if ($comment) {
+            return Carbon::parse($comment->created_at)->diffForHumans();
+        }
     }
 }
