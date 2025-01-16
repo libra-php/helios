@@ -43,5 +43,6 @@ class CommentsModule extends ModuleController
         $this->validation_rules = [
             "approved" => [],
         ];
+        $this->default_sort = "DESC";
     }
 }
