@@ -388,6 +388,12 @@ a:active {
     font-size: 0.7rem;
     color: #888;
 }
-.border-gray {
+#home .border-gray {
     border: 1px solid rgba(0, 0, 0, 0.176)
+}
+#home .table {
+    margin-bottom: 0;
+}
+#home .table tr:last-child td {
+    border-bottom:0;
 }
