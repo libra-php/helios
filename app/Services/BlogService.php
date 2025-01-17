@@ -22,9 +22,6 @@ class BlogService
             fn($post) => [
                 "id" => $post->id,
                 "author" => $post->user()->name,
-                "cover" => $post->cover_image
-                    ? "/uploads/" . $post->coverImage()?->name
-                    : "/images/me-full.jpeg",
                 "category" => $post->category()->name,
                 "title" => $post->title,
                 "subtitle" => $post->subtitle,

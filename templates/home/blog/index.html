@@ -3,17 +3,20 @@
 {% block title %}{{ parent() }} - Blog{% endblock %}
 
 {% block view %}
-<h1># Code. Hockey. Repeat.</h1>
-<p>This blog is proof that I can code and type coherent sentences (most of the time). I write about interesting technology, software development, and the occasional hockey rant.</p>
+<div id="blog">
+    <h1 class="mb-3"># Code. Hockey. Repeat.</h1>
+    <div class="card p-2">
+        <span>This blog is proof that I can code and type coherent sentences (most of the time). I write about interesting technology, software development, and the occasional hockey rant.</span>
+    </div>
+</div>
 
 <div id="posts" class="mt-5">
-    <h3 class="mb-4">## Posts</h3>
+    <h3 class="mb-3">## Posts</h3>
     {% if posts %}
         {% for post in posts %}
-        <div class="post bg-white p-2 rounded mb-2" hx-get="/blog/{{ post.slug }}" title="View">
+        <div class="post card p-3 mb-2" hx-get="/blog/{{ post.slug }}" title="View">
             <div class="d-flex align-items-center">
-                <div class="cover" style="background-image: url('{{ post.cover }}');">&nbsp;</div>
-                <div class="d-flex flex-column truncate">
+                <div class="d-flex flex-grow-1 flex-column truncate">
                     <h1 class="m-0 truncate" title="{{ post.title }}">{{ post.title }}</h1>
                     <h4 class="mt-2 truncate" title="{{ post.subtitle }}">{{ post.subtitle }}</h4>
                     <div class="d-flex align-items-center m-0">
@@ -29,7 +32,9 @@
         </div>
         {% endfor %}
     {% else %}
-    <p>No posts yet, but stay tuned—new content is coming soon!</p>
+    <div class="card p-2">
+        <span>No posts yet, but stay tuned—new content is coming soon!</span>
+    </div>
     {% endif %}
 </div>
 {% endblock %}

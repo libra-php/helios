@@ -1,15 +1,16 @@
 {% extends "layouts/home.html" %}
 
-{% block title %}{{ parent() }} - Blog{% endblock %}
+{% block title %}{{ parent() }} - Blog Post{% endblock %}
 
 {% block view %}
-<div id="blog-post" class="">
-    {% if post.cover %}
-    <div id="blog-cover" style="background-image: url('{{ post.cover }}');">
-        &nbsp;
-    </div>
-    {% endif %}
-    <div class="pt-3">
+<div id="post">
+    <div id="content" class="card">
+        {% if post.cover %}
+        <div id="blog-cover" style="background-image: url('{{ post.cover }}');">
+            &nbsp;
+        </div>
+        {% endif %}
+        <div class="p-3">
         <h1>{{ post.title }}</h1>
         <h4 class="mb-3">{{ post.subtitle }}</h4>
         <div class="d-flex align-items-center m-0">
@@ -21,33 +22,36 @@
             <small class="text-muted p-0">{{ post.read_min }} min read</small>
         </div>
         <hr class="mt-4">
-        <div id="blog-content" class="mt-4">
-            {{ post.content|raw }}
+        {{ post.content|raw }}
         </div>
-        {% if post.comments_enabled %}
-            <div id="blog-comments">
-                <hr>
-                <div hx-trigger="load" hx-get="/blog/comment/control/{{ post.id }}" hx-swap="outerHTML" hx-target="this" hx-select="#comment-control"></div>
-                <div hx-trigger="load" hx-get="/blog/comments/{{ post.id }}" hx-swap="outerHTML" hx-target="this" hx-select="#comments">
-                </div>
-            </div>
-        {% endif %}
     </div>
+    {% if post.comments_enabled %}
+        <div id="blog-comments">
+            <hr>
+            <div hx-trigger="load" hx-get="/blog/comment/control/{{ post.id }}" hx-swap="outerHTML" hx-target="this" hx-select="#comment-control"></div>
+            <div hx-trigger="load" hx-get="/blog/comments/{{ post.id }}" hx-swap="outerHTML" hx-target="this" hx-select="#comments">
+            </div>
+        </div>
+    {% endif %}
 </div>
 <script>
+const hideBlogComment = () => {
+    var comment_section = document.getElementById("comment-section");
+    comment_section.style.display = 'none';
+}
 const showBlogComment = () => {
     var comment_section = document.getElementById("comment-section");
     var comment = document.getElementById("comment");
     comment_section.style.display = 'block';
     comment.focus();
 }
-const hideBlogComment = () => {
-    var comment_section = document.getElementById("comment-section");
-    comment_section.style.display = 'none';
-}
 const hideBlogPreComment = () => {
     var pre_comment = document.getElementById("pre-comment");
     pre_comment.style.display = 'none';
+}
+const showBlogPreComment = () => {
+    var pre_comment = document.getElementById("pre-comment");
+    pre_comment.style.display = 'block';
 }
 </script>
 {% endblock %}

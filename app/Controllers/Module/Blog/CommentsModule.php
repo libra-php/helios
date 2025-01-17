@@ -23,7 +23,8 @@ class CommentsModule extends ModuleController
         $this->table_columns = [
             "ID" => "id",
             "Name" => "name",
-            "Comment" => "CONCAT(LEFT(comment, 12), '...') as comment",
+            "Comment" => "CONCAT(LEFT(comment, 5), '...') as comment",
+            "Approved" => "if(approved = 1, 'Yes', 'No') as approved",
             "Created" => "created_at",
         ];
         $this->table_format = [
@@ -42,6 +43,10 @@ class CommentsModule extends ModuleController
         ];
         $this->validation_rules = [
             "approved" => [],
+        ];
+        $this->filter_links = [
+            "Not Approved" => "approved!=1",
+            "Approved" => "approved=1",
         ];
         $this->default_sort = "DESC";
     }

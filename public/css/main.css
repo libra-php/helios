@@ -345,8 +345,8 @@ a:active {
 }
 
 #home .post .cover {
-    width: 110px;
-    height: 110px;
+    width: 102px !important;
+    height: 102px !important;
     margin-right: 15px;
     background-size: cover;
     background-position: center;
@@ -387,4 +387,7 @@ a:active {
 #home .blog-comment .ago {
     font-size: 0.7rem;
     color: #888;
+}
+.border-gray {
+    border: 1px solid rgba(0, 0, 0, 0.176)
 }
