@@ -394,6 +394,7 @@ a:active {
 #home .table {
     margin-bottom: 0;
 }
-#home .table tr:last-child td {
+#home .table tbody > tr:last-child > td, 
+#home .table tbody > tr:last-child > th {
     border-bottom:0;
 }
