@@ -21,6 +21,7 @@ class CategoriesModule extends ModuleController
         $this->module_title = "Categories";
         $this->link_parent = "Blog";
         $this->table_columns = [
+            "ID" => "id",
             "Name" => "name",
             "Created" => "created_at",
         ];
@@ -37,6 +38,7 @@ class CategoriesModule extends ModuleController
         $this->validation_rules = [
             "name" => ["required"],
         ];
+        $this->default_order = "name";
     }
 
     public function hasDeletePermission(int $id): bool
