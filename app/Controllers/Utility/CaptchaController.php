@@ -16,23 +16,25 @@ class CaptchaController extends Controller
             return;
         }
 
-        // 50x24 standard captcha image
         $im = imagecreatetruecolor(50, 24);
-
         $bg = imagecolorallocate($im, 22, 86, 165);
         $fg = imagecolorallocate($im, 255, 255, 255);
         imagefill($im, 0, 0, $bg);
 
-        // Print the captcha text in the image
-        // with random position & size
         imagestring($im, rand(1, 7), rand(1, 7), rand(1, 7), $captcha, $fg);
 
-        header("Cache-Control: no-store, no-cache, must-revalidate");
-        header("Content-type: image/png");
+        // Prevent output before headers
+        ob_start();
 
-        // Output the captcha as png
+        header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+        header("Content-Type: image/png");
+
         imagepng($im);
         imagedestroy($im);
+
+        // Output image data
+        ob_end_flush();
     }
 }
-
