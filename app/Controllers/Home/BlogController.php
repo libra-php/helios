@@ -78,6 +78,15 @@ class BlogController extends Controller
         trigger("load-comment-control");
     }
 
+    #[Get("/images/{post_id}", "blog.comments")]
+    public function images(int $post_id): string
+    {
+        return $this->render("home/blog/images.html", [
+            "post_id" => $post_id,
+            "images" => $this->service->getBlogPostImages($post_id),
+        ]);
+    }
+
     #[Get("/comments/{post_id}", "blog.comments")]
     public function comments(int $post_id): string
     {

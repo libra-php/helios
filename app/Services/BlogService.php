@@ -4,13 +4,14 @@ namespace App\Services;
 
 use App\Models\BlogPost;
 use App\Models\BlogPostComment;
+use App\Models\BlogPostImages;
 use Carbon\Carbon;
 
 class BlogService
 {
     public function getBlogPosts(): ?array
     {
-        $posts = BlogPost::where("status_id", 3)
+        $posts = BlogPost::where("status_id", 3) // published
             ->orderBy("created_at", "DESC")
             ->get(lazy: false);
 
@@ -75,6 +76,22 @@ class BlogService
             )->diffForHumans(),
             "comments_enabled" => $post->comments_enabled == 1,
         ];
+    }
+
+    public function getBlogPostImages(int $blog_post_id): ?array
+    {
+        $images = BlogPostImages::where("blog_post_id", $blog_post_id)
+            ->get(lazy: false);
+
+        if (!$images) {
+            return null;
+        }
+
+        return array_map(fn($image) => [
+            "id" => $image->id,
+            "image" => $image->image(),
+            "caption" => $image->caption,
+        ], $images);
     }
 
     public function getBlogPostComments(int $blog_post_id): ?array

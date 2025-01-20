@@ -172,13 +172,14 @@ a:active {
 .navbar .dropdown-menu {
     z-index: 1021;
 }
-
+.navbar .dropdown-menu li {
+    padding: 8px;
+}
 .navbar .avatar {
     width: 22px;
     height: 22px;
     border-radius: 50%;
 }
-
 .navbar .scroll-menu {
     max-height: 90vh;
     overflow-y: auto;

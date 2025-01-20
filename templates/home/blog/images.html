@@ -1,0 +1,12 @@
+{% if images %}
+<div class="p-3" id="images" hx-boost="false">
+    <hr>
+    <h5>Images</h5>
+    <div class="d-flex">
+        <hr>
+        {% for image in images %}
+            <a href="{{ image.image }}"><img class="img-thumbnail me-2" src="{{ image.image }}" title={{ image.caption }} /></a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
