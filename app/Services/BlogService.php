@@ -29,8 +29,7 @@ class BlogService
                 "slug" => $post->slug,
                 "content" => $post->content,
                 "read_min" => $this->estimateReadingTime($post->content),
-                "created_at" => $post->created_at,
-                "updated_at" => $post->updated_at,
+                "created_at" => date('Y-m-d', strtotime($post->created_at)),
                 "ago" => Carbon::parse(
                     $post->updated_at ?? $post->created_at
                 )->diffForHumans(),
@@ -69,8 +68,7 @@ class BlogService
             "slug" => $post->slug,
             "content" => $post->content,
             "read_min" => $this->estimateReadingTime($post->content),
-            "created_at" => $post->created_at,
-            "updated_at" => $post->updated_at,
+            "created_at" => date('Y-m-d', strtotime($post->created_at)),
             "ago" => Carbon::parse(
                 $post->updated_at ?? $post->created_at
             )->diffForHumans(),
@@ -112,7 +110,7 @@ class BlogService
                 "name" => $comment->name,
                 "comment" => $comment->comment,
                 "ago" => Carbon::parse($comment->created_at)->diffForHumans(),
-                "created_at" => $comment->created_at,
+                "created_at" => date('Y-m-d', strtotime($comment->created_at)),
                 "update_ts" => $comment->created_at > date("Y-m-d H:i:s", strtotime("-1 minute"))
             ],
             $comments
@@ -138,7 +136,7 @@ class BlogService
                 "name" => $comment->name,
                 "comment" => $comment->comment,
                 "ago" => Carbon::parse($comment->created_at)->diffForHumans(),
-                "created_at" => $comment->created_at,
+                "created_at" => date('Y-m-d', strtotime($comment->created_at)),
                 "update_ts" => $comment->created_at > date("Y-m-d H:i:s", strtotime("-1 minute"))
             ];
         }
