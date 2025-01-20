@@ -22,6 +22,8 @@ class ImagesModule extends ModuleController
         $this->link_parent = "Blog";
         $this->table_columns = [
             "ID" => "id",
+            "Blog Post" => "(SELECT CONCAT(LEFT(title, 5), '...') FROM blog_posts WHERE blog_posts.id = blog_post_id) as blog_post",
+            "Image" => "(SELECT name FROM files where files.id = image) as image",
             "Created" => "created_at",
         ];
         $this->table_format = [
