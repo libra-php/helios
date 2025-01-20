@@ -11,9 +11,14 @@ class BlogPostImages extends Model
         parent::__construct("blog_post_images", $id);
     }
 
+    public function file(): File
+    {
+        return File::findOrFail($this->image);
+    }
+
     public function image()
     {
-        $image = File::findOrFail($this->image);
+        $image = $this->file();
         return "/uploads/{$image->name}";
     }
 

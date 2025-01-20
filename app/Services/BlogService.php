@@ -89,6 +89,7 @@ class BlogService
 
         return array_map(fn($image) => [
             "id" => $image->id,
+            "thumbnail" => "/image/resize/80/80/{$image->file()->uuid}",
             "image" => $image->image(),
             "caption" => $image->caption,
         ], $images);

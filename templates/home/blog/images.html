@@ -5,7 +5,7 @@
     <div class="d-flex">
         <hr>
         {% for image in images %}
-            <a href="{{ image.image }}"><img class="img-thumbnail me-2" src="{{ image.image }}" title={{ image.caption }} /></a>
+            <a href="{{ image.image }}"><img loading="lazy" class="img-thumbnail me-2" src="{{ image.thumbnail }}" title={{ image.caption }} /></a>
         {% endfor %}
     </div>
 </div>
