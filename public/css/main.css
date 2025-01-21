@@ -173,7 +173,7 @@ a:active {
 .navbar .dropdown-menu {
     z-index: 1021;
 }
-.navbar .dropdown-menu li {
+#admin .navbar .dropdown-menu li {
     padding: 8px;
 }
 .navbar .avatar {
