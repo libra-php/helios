@@ -347,7 +347,7 @@ a:active {
     font-family: "Noto Serif", serif;
 }
 #home #post #body * {
-    color: #333 !important;
+    color: #444 !important;
 }
 #home #posts h1 {
     font-size: 1.3rem;
