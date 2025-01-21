@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Controllers\Module;
+namespace App\Controllers\Module\User;
 
 use Helios\Admin\ModuleController;
 use StellarRouter\Group;
 
 /** @package App\Controllers\Module */
 #[Group(prefix: "/admin/user/roles", middleware: ["module" => "user-roles"])]
-class UserRolesModule extends ModuleController
+class RolesModule extends ModuleController
 {
     public function init(?int $id): void
     {

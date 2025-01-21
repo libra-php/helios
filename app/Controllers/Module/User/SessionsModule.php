@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\Module;
+namespace App\Controllers\Module\User;
 
 use Helios\Admin\ModuleController;
 use StellarRouter\Group;
@@ -12,7 +12,7 @@ use StellarRouter\Group;
         middleware: ["module" => "user-sessions"]
     )
 ]
-class UserSessionsModule extends ModuleController
+class SessionsModule extends ModuleController
 {
     public function init(?int $id): void
     {
