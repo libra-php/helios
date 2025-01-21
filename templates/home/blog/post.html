@@ -3,6 +3,13 @@
 {% block title %}{{ parent() }} - Blog - {{ post.title }}{% endblock %}
 
 {% block view %}
+<meta property="og:title" content="{{ post.title }}">
+<meta property="og:description" content="{{ post.subtitle }}">
+<meta property="og:url" content="https://williamhleucka.com/blog/{{ post.slug }}">
+<meta property="og:type" content="article">
+{% if post.cover %}
+<meta property="og:image" content="https://williamhleucka.com{{ post.cover }}">
+{% endif %}
 <div id="post">
     <div id="content" class="card">
         {% if post.cover %}
