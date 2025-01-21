@@ -126,13 +126,15 @@ trait FormControls
 
     protected function textarea(array $opts): string
     {
-        $opts["rows"] = 10;
+        $opts["rows"] = $opts["rows"] ?? 10;
         return template("admin/module/controls/textarea.html", $opts);
     }
 
     protected function editor(array $opts): string
     {
-        $opts["class"] = "editor";
+        $opts["rows"] = 30;
+        $textarea = $this->textarea($opts);
+        $opts["textarea"] = $textarea;
         return template("admin/module/controls/editor.html", $opts);
     }
 
