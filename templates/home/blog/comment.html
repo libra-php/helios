@@ -1,10 +1,15 @@
-<div class="card mt-2">
-    <div class="blog-comment card-body d-flex flex-column">
-        <div class="d-flex align-items-center">
-            <div class="name">{{ comment.name }}</div>
-            <span class="px-2">·</span>
-            <div class="ago" hx-trigger={% if comment.update_ts %}"load delay:5s, every 10s"{% else %}"every 5m"{% endif %}hx-swap="textContent" hx-target="this" hx-get="/blog/comment/ts/{{ comment.id }}">{{ comment.ago }}</div>
+<div class="card mt-3">
+    <div class="blog-comment p-3">
+        <div class="d-flex justify-content-start align-items-start">
+            <img class="avatar rounded m-1" src="https://ui-avatars.com/api/?name={{ comment.name|url_encode }}">
+            <div class="d-flex flex-column ms-3">
+                <div class="d-flex align-items-center">
+                    <div class="name">{{ comment.name }}</div>
+                    <span class="px-2">·</span>
+                    <div class="ago" hx-trigger={% if comment.update_ts %}"load delay:5s, every 10s"{% else %}"every 5m"{% endif %}hx-swap="textContent" hx-target="this" hx-get="/blog/comment/ts/{{ comment.id }}">{{ comment.ago }}</div>
+                </div>
+                <div class="comment mt-2"><p class="m-0">{{ comment.comment|raw }}</div>
+            </div>
         </div>
-        <div class="comment mt-2"><p class="m-0">{{ comment.comment|raw }}</div>
     </div>
 </div>

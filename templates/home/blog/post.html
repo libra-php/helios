@@ -32,7 +32,9 @@
             </div>
         </div>
         <hr class="mt-4">
-        {{ post.content|raw }}
+        <div id="body">
+            {{ post.content|raw }}
+        </div>
         </div>
         <div hx-trigger="load" hx-get="/blog/images/{{ post.id }}" hx-swap="outerHTML" hx-target="this" hx-select="#images"></div>
     </div>
