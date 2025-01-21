@@ -12,7 +12,6 @@ use PDO;
 use Ramsey\Uuid\Uuid;
 use StellarRouter\{Get, Post, Delete};
 
-/** @package Helios\Admin */
 class ModuleController extends Controller
 {
     use FormControls;

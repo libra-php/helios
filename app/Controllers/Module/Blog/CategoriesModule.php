@@ -5,7 +5,6 @@ namespace App\Controllers\Module\Blog;
 use Helios\Admin\ModuleController;
 use StellarRouter\Group;
 
-/** @package App\Controllers\Module */
 #[
     Group(
         prefix: "/admin/blog/categories",

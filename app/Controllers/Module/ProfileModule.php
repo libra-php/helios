@@ -5,7 +5,6 @@ namespace App\Controllers\Module;
 use StellarRouter\Group;
 use App\Controllers\Module\User\UsersModule;
 
-/** @package App\Controllers\Module */
 #[Group(prefix: "/admin/profile", middleware: ["module" => "profile"])]
 class ProfileModule extends UsersModule
 {

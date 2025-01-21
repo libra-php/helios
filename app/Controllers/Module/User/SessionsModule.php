@@ -5,7 +5,6 @@ namespace App\Controllers\Module\User;
 use Helios\Admin\ModuleController;
 use StellarRouter\Group;
 
-/** @package App\Controllers\Module */
 #[
     Group(
         prefix: "/admin/user/sessions",

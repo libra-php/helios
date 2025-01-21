@@ -6,7 +6,6 @@ use App\Models\File;
 use Helios\Admin\ModuleController;
 use StellarRouter\Group;
 
-/** @package App\Controllers\Module */
 #[Group(prefix: "/admin/files", middleware: ["module" => "files"])]
 class FilesModule extends ModuleController
 {

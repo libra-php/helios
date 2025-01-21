@@ -6,7 +6,6 @@ use App\Models\BlogPost;
 use Helios\Admin\ModuleController;
 use StellarRouter\Group;
 
-/** @package App\Controllers\Module */
 #[Group(prefix: "/admin/blog/posts", middleware: ["module" => "blog-posts"])]
 class PostsModule extends ModuleController
 {
