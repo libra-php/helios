@@ -1,4 +1,4 @@
-{% if table.data and pagination.total_pages > 1 %}
+{% if table.data and pagination.total_results > 25 %}
 <section id="pagination-page" class="d-flex align-items-center mt-2">
     <nav id="pagination" aria-label="page controls" hx-indicator="#bread-spinner" hx-boost="true" hx-get="{{ module.route }}" hx-select="#module" hx-target="#module" hx-swap="outerHTML" hx-trigger="load-pagination from:body">
         <ul class="pagination pagination-sm m-0">
