@@ -66,7 +66,7 @@ class BlogController extends Controller
                         "subject" => "New blog comment",
                         "body" => template("home/email/blog-comment.html", [
                             "name" => $valid->name,
-                            "comment" => nl2br($valid->comment),
+                            "comment" => nl2br(trim($valid->comment)),
                             "url" => config("app.url") . "/blog/" . $post->slug
                         ]),
                         "to_address" => "william.hleucka@gmail.com",
