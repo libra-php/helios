@@ -10,20 +10,12 @@ use StellarRouter\{Get, Post};
 
 class PasswordResetController extends Controller
 {
-    public function __construct(private AuthService $service)
-    {
-    }
+    public function __construct(private AuthService $service) {}
 
     #[Get("/password-reset/{token}", "password-reset.index")]
     public function index(string $token): string
     {
-        $password_reset = PasswordReset::where("token", $token)
-            ->andWhere("expires_at", ">", date("Y-m-d H:i:s"))
-            ->orderBy("id", "DESC")
-            ->get(1);
-        if (!$password_reset || $password_reset->complete) {
-            redirect("/permission-denied");
-        }
+        $this->service->validatePasswordResetToken($token);
 
         return $this->render("admin/password-reset/index.html", [
             "token" => $token,
@@ -33,56 +25,30 @@ class PasswordResetController extends Controller
     #[Post("/password-reset/{token}", "password-reset.post")]
     public function post(string $token): string
     {
-        $password_reset = PasswordReset::where("token", $token)
-            ->andWhere("expires_at", ">", date("Y-m-d H:i:s"))
-            ->orderBy("id", "DESC")
-            ->get(1);
-        if ($password_reset) {
-            $valid = $this->validateRequest([
-                "password" => [
-                    "required",
-                    "min_length:=8",
-                    "regex:=^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
-                ],
-                "password_match" => [
-                    "required",
-                    function ($value) {
-                        $this->addErrorMessage(
-                            "password_match",
-                            "Passwords must match"
-                        );
-                        return request()->get("password") === $value;
-                    },
-                ],
-            ]);
-            if ($valid) {
-                $user = User::findOrFail($password_reset->user_id);
-                $this->service->changePassword($user, $valid->password);
-                $this->service->logUser($user);
+        $password_reset = $this->service->validatePasswordResetToken($token);
 
-                // Change complete
-                $password_reset->complete = 1;
-                $password_reset->save();
+        $valid = $this->validateRequest([
+            "password" => [
+                "required",
+                "min_length:=8",
+                "regex:=^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
+            ],
+            "password_match" => [
+                "required",
+                function ($value) {
+                    $this->addErrorMessage(
+                        "password_match",
+                        "Passwords must match"
+                    );
+                    return request()->get("password") === $value;
+                },
+            ],
+        ]);
 
-                $two_factor_enabled = config("security.two_factor_enabled");
-                if ($two_factor_enabled) {
-                    $route = findRoute("2fa.index");
-                    redirect($route, [
-                        "target" => "#password-reset",
-                        "select" => "#two-factor-authentication",
-                        "swap" => "outerHTML",
-                    ]);
-                } else {
-                    $route = moduleRoute("module.index", "users");
-                    redirect($route, [
-                        "target" => "#password-reset",
-                        "select" => "#admin",
-                        "swap" => "outerHTML",
-                    ]);
-                }
-            }
-        } else {
-            redirect("/permission-denied");
+        if ($valid) {
+            $this->service->changePassword($password_reset, $valid->password);
+            $this->service->logUser($password_reset->user());
+            $this->service->redirectPasswordReset();
         }
 
         return $this->index($token);

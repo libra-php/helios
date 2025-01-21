@@ -8,9 +8,7 @@ use StellarRouter\{Get, Post};
 
 class ForgotPasswordController extends Controller
 {
-    public function __construct(private AuthService $service)
-    {
-    }
+    public function __construct(private AuthService $service) {}
 
     #[Get("/forgot-password", "forgot-password.index")]
     public function index(): string

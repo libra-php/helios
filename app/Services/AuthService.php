@@ -44,6 +44,38 @@ class AuthService
         return bin2hex(random_bytes(32));
     }
 
+    public function validatePasswordResetToken(string $token): PasswordReset
+    {
+        $password_reset = PasswordReset::where("token", $token)
+            ->andWhere("expires_at", ">", date("Y-m-d H:i:s"))
+            ->orderBy("id", "DESC")
+            ->get(1);
+        if (!$password_reset || $password_reset->complete) {
+            redirect("/permission-denied");
+        }
+        return $password_reset;
+    }
+
+    public function redirectPasswordReset(): void
+    {
+        $two_factor_enabled = config("security.two_factor_enabled");
+        if ($two_factor_enabled) {
+            $route = findRoute("2fa.index");
+            redirect($route, [
+                "target" => "#password-reset",
+                "select" => "#two-factor-authentication",
+                "swap" => "outerHTML",
+            ]);
+        } else {
+            $route = moduleRoute("module.index", "profile");
+            redirect($route, [
+                "target" => "#password-reset",
+                "select" => "#admin",
+                "swap" => "outerHTML",
+            ]);
+        }
+    }
+
     public function generateTwoFactorSecret(): string
     {
         $google2fa = new Google2FA();
@@ -75,15 +107,15 @@ class AuthService
 
         if (!$result) {
             // Failed 2FA code
-            self::failedAttempt($user);
+            $this->failedAttempt($user);
 
             if ($user->failed_login >= $max_failed_login) {
                 if (is_null($user->locked_until)) {
                     // Bad!
-                    self::lockUser($user);
+                    $this->lockUser($user);
                 }
                 // Kill the session
-                self::signOut();
+                $this->signOut();
                 // Redirect to sign in
                 $route = findRoute("sign-in.index");
                 redirect($route, [
@@ -95,8 +127,8 @@ class AuthService
             return false;
         } else {
             // Confirm the 2FA auth and unlock user
-            self::confirm2FA($user);
-            self::unlockUser($user);
+            $this->confirmTwoFactorAuthentication($user);
+            $this->unlockUser($user);
         }
 
         return $result ? true : false;
@@ -104,8 +136,6 @@ class AuthService
 
     public function signIn(object $request): bool
     {
-        // WARN: This request must be validated
-
         // Look for user by email or username
         $user = User::where("email", $request->email_or_username)
             ->orWhere("username", $request->email_or_username)
@@ -115,7 +145,7 @@ class AuthService
             return false;
         } else {
             // Check the password
-            $result = self::testPassword($request->password, $user->password);
+            $result = $this->testPassword($request->password, $user->password);
             $max_failed_login = config("security.max_failed_login");
             $current_date = date("Y-m-d H:i:s");
 
@@ -123,26 +153,26 @@ class AuthService
             if (!is_null($user->locked_until)) {
                 // Is it time to unlock?
                 if ($current_date > $user->locked_until) {
-                    self::unlockUser($user);
+                    $this->unlockUser($user);
                 }
             }
 
             if (!$result) {
                 // Bad username/email + password
-                self::failedAttempt($user);
+                $this->failedAttempt($user);
 
                 // Check login attempts
                 if ($user->failed_login >= $max_failed_login) {
                     if (is_null($user->locked_until)) {
                         // Awww, too bad
-                        self::lockUser($user);
+                        $this->lockUser($user);
                     }
                 }
             } elseif (is_null($user->locked_until) && $result) {
                 // Authentication successful + unlock user
                 $remember_me = $request->remember_me ? true : false;
-                self::logUser($user, $remember_me);
-                self::unlockUser($user);
+                $this->logUser($user, $remember_me);
+                $this->unlockUser($user);
             }
 
             // Set warning message if account is locked
@@ -160,6 +190,16 @@ class AuthService
 
             return $result ? true : false;
         }
+    }
+
+    public function redirectAuth()
+    {
+        $route = findRoute("sign-in.index");
+        redirect($route, [
+            "target" => "#two-factor-authentication",
+            "select" => "#sign-in",
+            "swap" => "outerHTML",
+        ]);
     }
 
     public function redirectSignIn(): void
@@ -197,7 +237,7 @@ class AuthService
             // If not, or the prev attempt did not send,
             // then send it!
             if (!$password_reset || !$password_reset->email_job_id) {
-                self::passwordReset($user);
+                $this->passwordReset($user);
             } else {
                 // There is already a valid password reset link,
                 // avoid sending any new mail
@@ -229,8 +269,8 @@ class AuthService
     public function registerUser(object $request): User
     {
         unset($request->password_match);
-        $request->two_fa_secret = self::generateTwoFactorSecret();
-        $request->password = self::hashPassword($request->password);
+        $request->two_fa_secret = $this->generateTwoFactorSecret();
+        $request->password = $this->hashPassword($request->password);
         return User::create((array) $request);
     }
 
@@ -254,12 +294,19 @@ class AuthService
         }
     }
 
-    public function changePassword(User $user, string $password)
+    public function changePassword(PasswordReset $password_reset, string $password)
     {
-        $user->password = self::hashPassword($password);
-        $user->two_fa_secret = self::generateTwoFactorSecret();
+        $user = $password_reset->user();
+
+        // Update user
+        $user->password = $this->hashPassword($password);
+        $user->two_fa_secret = $this->generateTwoFactorSecret();
         $user->two_fa_confirmed = 0;
         $user->save();
+
+        // Change complete
+        $password_reset->complete = 1;
+        $password_reset->save();
     }
 
     public function passwordReset(User $user): void
@@ -267,7 +314,7 @@ class AuthService
         $reset_token_time = config("security.reset_token_time");
         $expires_at = time() + $reset_token_time;
         $ip = getClientIp();
-        $token = self::generatePasswordToken();
+        $token = $this->generatePasswordToken();
         // Create a password reset for the user
         $password_reset = PasswordReset::create([
             "user_id" => $user->id,
@@ -276,7 +323,7 @@ class AuthService
             "expires_at" => date("Y-m-d H:i:s", $expires_at),
         ]);
         if ($password_reset) {
-            $email_job = self::emailPasswordReset($user, $token);
+            $email_job = $this->emailPasswordReset($user, $token);
             if ($email_job) {
                 // Record that it was sent successfully
                 $password_reset->email_job_id = $email_job->id;
@@ -306,12 +353,22 @@ class AuthService
         ]);
     }
 
-    public function confirm2FA(User $user): void
+    public function confirmTwoFactorAuthentication(User $user): void
     {
         // Confirm the two fa code
         session()->set("two_factor_confirmed", true);
         $user->two_fa_confirmed = 1;
         $user->save();
+    }
+
+    public function redirectTwoFactorAuthentication()
+    {
+        $route = moduleRoute("module.index", "users");
+        redirect($route, [
+            "target" => "#two-factor-authentication",
+            "select" => "#admin",
+            "swap" => "outerHTML",
+        ]);
     }
 
     public function logUser(User $user, bool $remember_me = false): void

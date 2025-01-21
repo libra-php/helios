@@ -11,12 +11,7 @@ class TwoFactorAuthenticationController extends Controller
     public function __construct(private AuthService $service)
     {
         if (!user()) {
-            $route = findRoute("sign-in.index");
-            redirect($route, [
-                "target" => "#two-factor-authentication",
-                "select" => "#sign-in",
-                "swap" => "outerHTML",
-            ]);
+            $this->service->redirectAuth();
         }
     }
 
@@ -35,19 +30,16 @@ class TwoFactorAuthenticationController extends Controller
     #[Post("/two-factor-authentication", "sign-in.post")]
     public function post(): string
     {
-        $this->addErrorMessage("min_length", "Please enter your 2FA code");
-        $this->addErrorMessage("max_length", "Please enter your 2FA code");
         $valid = $this->validateRequest([
             "code" => ["required", "min_length:=6", "max_length:=6"],
         ]);
+
+        $this->addErrorMessage("min_length", "Please enter your 2FA code");
+        $this->addErrorMessage("max_length", "Please enter your 2FA code");
+
         if ($valid) {
             if ($this->service->testTwoFactorCode(user(), $valid->code)) {
-                $route = moduleRoute("module.index", "users");
-                redirect($route, [
-                    "target" => "#two-factor-authentication",
-                    "select" => "#admin",
-                    "swap" => "outerHTML",
-                ]);
+                $this->service->redirectTwoFactorAuthentication();
             } else {
                 $this->addRequestError("code", "Invalid code");
             }
