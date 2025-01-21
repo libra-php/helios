@@ -3,7 +3,7 @@
 namespace App\Controllers\Home;
 
 use App\Models\BlogPost;
-use App\Models\BlogPostComment;
+use App\Models\EmailJob;
 use App\Services\BlogService;
 use Helios\View\Flash;
 use Helios\Web\Controller;
@@ -61,6 +61,18 @@ class BlogController extends Controller
                 );
 
                 if ($comment) {
+                    EmailJob::create([
+                        "tag" => "blog_comment",
+                        "subject" => "New blog comment",
+                        "body" => template("home/email/blog-comment.html", [
+                            "name" => $valid->name,
+                            "comment" => nl2br($valid->comment),
+                            "url" => config("app.url") . "/blog/" . $post->slug
+                        ]),
+                        "to_address" => "william.hleucka@gmail.com",
+                        "send_at" => date("Y-m-d H:i:s"),
+                    ]);
+
                     $comment_count = $this->service->getBlogPostCommentCount($post_id);
                     if ($comment_count > 1) {
                         trigger("load-comment-control");
