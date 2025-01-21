@@ -77,7 +77,7 @@ class UsersModule extends ModuleController
         $this->validation_rules = [
             "name" => ["required"],
             "email" => ["required"],
-            "username" => ["required", "regex:=^[a-zA-Z0-9]+$"],
+            "username" => ["required", "regex:=^[a-zA-Z0-9_-]+$"],
             "user_role_id" => ["required"],
             "password" => ["min_length:=8", "regex:=$password_pattern"],
             "password_match" => [

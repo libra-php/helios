@@ -11,11 +11,7 @@ class RegisterController extends Controller
 {
     public function __construct(private AuthService $service)
     {
-        if (!config("security.register_enabled")) {
-            error_log("Registration is disabled. IP: " . getClientIp());
-            $route = findRoute("sign-in.index");
-            redirect($route);
-        }
+        $this->service->checkRegisterEnabled();
     }
 
     #[Get("/register", "register.index")]
@@ -27,18 +23,13 @@ class RegisterController extends Controller
     #[Post("/register", "register.post", ["register"])]
     public function post(): string
     {
-        $this->addErrorMessage(
-            "password.regex",
-            "Must contain: 1 uppercase, 1 number, and 1 symbol"
-        );
-        $this->addErrorMessage("username.regex", "Invalid username");
         $valid = $this->validateRequest([
             "name" => ["required"],
             "email" => ["required", "email", "unique:=users"],
             "username" => [
                 "required",
                 "unique:=users",
-                "regex:=^[a-zA-Z0-9]+$",
+                "regex:=^[a-zA-Z0-9_-]+$",
             ],
             "password" => [
                 "required",
@@ -56,26 +47,18 @@ class RegisterController extends Controller
                 },
             ],
         ]);
+        // Update validation messages
+        $this->addErrorMessage(
+            "password.regex",
+            "Must contain: 1 uppercase, 1 number, and 1 symbol"
+        );
+        $this->addErrorMessage("username.regex", "Invalid username");
+
         if ($valid) {
-            $user = $this->service->registerUser($valid);
-            if ($user) {
-                $this->service->logUser($user);
-                $two_factor_enabled = config("security.two_factor_enabled");
-                if ($two_factor_enabled) {
-                    $route = findRoute("2fa.index");
-                    redirect($route, [
-                        "target" => "#register",
-                        "select" => "#two-factor-authentication",
-                        "swap" => "outerHTML",
-                    ]);
-                } else {
-                    $route = moduleRoute("module.index", "users");
-                    redirect($route, [
-                        "target" => "#register",
-                        "select" => "#admin",
-                        "swap" => "outerHTML",
-                    ]);
-                }
+            $new_user = $this->service->registerUser($valid);
+            if ($new_user) {
+                $this->service->logUser($new_user);
+                $this->service->redirectRegister();
             } else {
                 Flash::add("warning", "Failed to create new account");
             }

@@ -162,7 +162,7 @@ class AuthService
         }
     }
 
-    public function redirectSignIn()
+    public function redirectSignIn(): void
     {
         $two_factor_enabled = config("security.two_factor_enabled");
         if ($two_factor_enabled) {
@@ -217,12 +217,41 @@ class AuthService
         );
     }
 
+    public function checkRegisterEnabled(): void
+    {
+        if (!config("security.register_enabled")) {
+            error_log("Registration is disabled. IP: " . getClientIp());
+            $route = findRoute("sign-in.index");
+            redirect($route);
+        }
+    }
+
     public function registerUser(object $request): User
     {
         unset($request->password_match);
         $request->two_fa_secret = self::generateTwoFactorSecret();
         $request->password = self::hashPassword($request->password);
         return User::create((array) $request);
+    }
+
+    public function redirectRegister()
+    {
+        $two_factor_enabled = config("security.two_factor_enabled");
+        if ($two_factor_enabled) {
+            $route = findRoute("2fa.index");
+            redirect($route, [
+                "target" => "#register",
+                "select" => "#two-factor-authentication",
+                "swap" => "outerHTML",
+            ]);
+        } else {
+            $route = moduleRoute("module.index", "profile");
+            redirect($route, [
+                "target" => "#register",
+                "select" => "#admin",
+                "swap" => "outerHTML",
+            ]);
+        }
     }
 
     public function changePassword(User $user, string $password)
