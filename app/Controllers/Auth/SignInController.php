@@ -8,9 +8,7 @@ use StellarRouter\{Get, Post};
 
 class SignInController extends Controller
 {
-    public function __construct(private AuthService $service)
-    {
-    }
+    public function __construct(private AuthService $service) {}
 
     #[Get("/sign-in", "sign-in.index")]
     public function index(): string
@@ -31,22 +29,7 @@ class SignInController extends Controller
 
         if ($valid) {
             if ($this->service->signIn($valid)) {
-                $two_factor_enabled = config("security.two_factor_enabled");
-                if ($two_factor_enabled) {
-                    $route = findRoute("2fa.index");
-                    redirect($route, [
-                        "target" => "#sign-in",
-                        "select" => "#two-factor-authentication",
-                        "swap" => "outerHTML",
-                    ]);
-                } else {
-                    $route = moduleRoute("module.index", "profile");
-                    redirect($route, [
-                        "target" => "#sign-in",
-                        "select" => "#admin",
-                        "swap" => "outerHTML",
-                    ]);
-                }
+                $this->service->redirectSignIn();
             }
             $this->addRequestError("password", "Invalid email or password");
         }

@@ -162,6 +162,26 @@ class AuthService
         }
     }
 
+    public function redirectSignIn()
+    {
+        $two_factor_enabled = config("security.two_factor_enabled");
+        if ($two_factor_enabled) {
+            $route = findRoute("2fa.index");
+            redirect($route, [
+                "target" => "#sign-in",
+                "select" => "#two-factor-authentication",
+                "swap" => "outerHTML",
+            ]);
+        } else {
+            $route = moduleRoute("module.index", "profile");
+            redirect($route, [
+                "target" => "#sign-in",
+                "select" => "#admin",
+                "swap" => "outerHTML",
+            ]);
+        }
+    }
+
     public function requestPasswordReset(object $request): void
     {
         // Look for user by email
