@@ -27,6 +27,7 @@
             <div class="mt-5" id="body">
                 {{ post.content|raw }}
             </div>
+            <div hx-trigger="load" hx-get="/blog/images/{{ post.id }}" hx-swap="outerHTML" hx-target="this" hx-select="#images"></div>
             <hr class="mt-5">
             <div class="d-flex flex-column" style="line-height: 12px;">
                 <div class="d-flex align-items-center">
@@ -39,7 +40,6 @@
                 </div>
             </div>
         </div>
-        <div hx-trigger="load" hx-get="/blog/images/{{ post.id }}" hx-swap="outerHTML" hx-target="this" hx-select="#images"></div>
     </div>
     {% if post.comments_enabled %}
         <div id="blog-comments">
