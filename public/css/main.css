@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap');
 
 /**
  * Main cont
@@ -344,7 +343,6 @@ a:active {
 /** Blog */
 #home #post #body {
     font-size: 1.1rem;
-    font-family: "Noto Serif", serif;
 }
 #home #post #body * {
     color: #444 !important;
@@ -376,7 +374,6 @@ a:active {
     background-repeat: no-repeat;
 }
 #home .blog-comment .comment p {
-    font-family: "Noto Serif", serif;
     font-size: 1.0rem;
 }
 #home .blog-comment .name {
