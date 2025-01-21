@@ -175,6 +175,9 @@ a:active {
 #admin .navbar .dropdown-menu li {
     padding: 8px;
 }
+.navbar .dropdown-item:active {
+    background-color: #eee;
+}
 .navbar .avatar {
     width: 22px;
     height: 22px;
