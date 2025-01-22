@@ -118,6 +118,7 @@ a:active {
 .editor textarea {
     font-family: monospace;
     font-size: 0.9rem;
+    white-space: pre;
 }
 
 /**
