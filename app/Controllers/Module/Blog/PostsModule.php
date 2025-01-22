@@ -60,6 +60,16 @@ class PostsModule extends ModuleController
             "category_id" => "select",
             "content" => "editor",
         ];
+        $this->form_actions = [
+            [
+                "label" => "Preview",
+                "action" => "preview",
+                "class" => "btn-primary text-white",
+                "boost" => false,
+                "new_window" => true,
+                "confirm" => "Are you sure you have saved your work?"
+            ]
+        ];
         $this->dropdown_queries = [
             "status_id" => "SELECT id as value, name as label 
                 FROM blog_post_status 
@@ -106,6 +116,15 @@ class PostsModule extends ModuleController
             // Create
             $this->validation_rules["slug"][] = "unique:=blog_posts";
         }
+    }
+
+    protected function processAction(int $id, string $action): void
+    {
+        $post = BlogPost::findOrFail($id);
+        match($action) {
+            'preview' => redirect("/blog/preview/{$post->slug}"),
+            default => throw new \Error("unknown action"),
+        };
     }
 
     protected function new(array $data): ?int

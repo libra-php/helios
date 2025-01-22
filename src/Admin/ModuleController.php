@@ -52,6 +52,7 @@ class ModuleController extends Controller
     protected array $dropdown_queries = [];
     protected array $validation_rules = [];
     protected array $default_values = [];
+    protected array $form_actions = [];
 
     // Permissions
     protected bool $has_edit = true;
@@ -172,7 +173,7 @@ class ModuleController extends Controller
         while ($this->page <= $total_pages) {
             $result = $this->getTableData();
             foreach ($result["data"] as $item) {
-                $row = array_map(fn($one) => $one["raw"], $item);
+                $row = array_map(fn ($one) => $one["raw"], $item);
                 $values = array_values($row);
                 fputcsv($fp, $values);
             }
@@ -303,10 +304,17 @@ class ModuleController extends Controller
             }
         }
 
+        // Process any form actions
+        $action = request()->query->get("action");
+        if ($action) {
+            $this->processAction($id, $action);
+        }
+
         $view = $this->render("/admin/module/edit.html", [
             "id" => $id,
             "module" => $this->getModuleData(),
             "form" => $this->getEditFormData($id),
+            "actions" => $this->form_actions,
             "links" => $this->getLinks(),
             "avatar" => user()->avatar(),
         ]);
@@ -411,6 +419,11 @@ class ModuleController extends Controller
         // Configure module
     }
 
+    protected function processAction(int $id, string $action): void
+    {
+        // Override method
+    }
+
     /**
      * Record active user session
      */
@@ -437,7 +450,7 @@ class ModuleController extends Controller
             $this->search_term =
                 $this->getSession("search_term") ?? $this->search_term;
             $map = array_map(
-                fn($column) => "$column LIKE ?",
+                fn ($column) => "$column LIKE ?",
                 $this->searchable
             );
             $clause = "((" . implode(") OR (", $map) . "))";
@@ -553,7 +566,7 @@ class ModuleController extends Controller
     protected function handleSort(string $index): void
     {
         $headers = array_map(
-            fn($column) => $this->getAlias($column),
+            fn ($column) => $this->getAlias($column),
             array_values($this->filterTableColumns())
         );
         $column = $headers[$index];
@@ -718,10 +731,10 @@ class ModuleController extends Controller
             "boost" => "false",
         ];
         // Sort the menu headings
-        uksort($links, fn($a, $b) => $a <=> $b);
+        uksort($links, fn ($a, $b) => $a <=> $b);
         // Sort each group
         foreach ($links as &$group) {
-            uasort($group, fn($a, $b) => $a["label"] <=> $b["label"]);
+            uasort($group, fn ($a, $b) => $a["label"] <=> $b["label"]);
         }
         return $links;
     }
@@ -804,7 +817,7 @@ class ModuleController extends Controller
             "per_page" => $this->per_page,
             "per_page_options" => array_filter(
                 $this->per_page_options,
-                fn($value) => $value <= $total_results * 2
+                fn ($value) => $value <= $total_results * 2
             ),
             "total_results" => $total_results,
             "total_pages" => $total_pages,

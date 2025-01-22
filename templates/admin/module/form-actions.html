@@ -1,0 +1,14 @@
+{% if actions %}
+<div class="d-flex mb-3">
+    {% for action in actions %}
+    <a class="btn btn-sm me-1 {{ action.class }}" 
+        {% if action.new_window %}target="_blank"{% endif %} 
+        {% if action.boost %}hx-boost="true"{% endif %} 
+        {% if action.target %}hx-target="{{ action.target }}"{% endif %} 
+        {% if action.select %}hx-select="{{ action.select }}"{% endif %} 
+        {% if action.swap %}hx-swap="{{ action.swap }}"{% endif %} 
+        {% if action.confirm %}onclick="return confirm('{{ action.confirm }}')"{% endif %} 
+        href="?action={{ action.action }}">{{ action.label }}</a>
+    {% endfor %}
+</div>
+{% endif %}

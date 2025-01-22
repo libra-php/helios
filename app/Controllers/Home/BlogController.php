@@ -24,8 +24,24 @@ class BlogController extends Controller
         ]);
     }
 
-    #[Get("/{slug}", "blog.index")]
-    public function post(string $slug): string
+    #[Get("/{slug}", "blog.show")]
+    public function show(string $slug): string
+    {
+        $post = $this->service->getPublishedBlogPostBySlug($slug);
+
+        if (!$post) {
+            redirect("/page-not-found");
+        }
+
+        header("HX-Push-Url: /blog/{$post["slug"]}");
+
+        return $this->render("home/blog/post.html", [
+            "post" => $post,
+        ]);
+    }
+
+    #[Get("/preview/{slug}", "blog.preview", ["auth"])]
+    public function preview(string $slug): string
     {
         $post = $this->service->getBlogPostBySlug($slug);
 

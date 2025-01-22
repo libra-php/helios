@@ -48,6 +48,17 @@ class BlogService
         return $reading_time;
     }
 
+    public function getPublishedBlogPostBySlug(string $slug): ?array
+    {
+        $post = $this->getBlogPostBySlug($slug);
+
+        if (!$post || $post['status'] != 'Published') {
+            return null;
+        }
+
+        return $post;
+    }
+
     public function getBlogPostBySlug(string $slug): ?array
     {
         $post = BlogPost::where("slug", $slug)->get();
@@ -60,6 +71,7 @@ class BlogService
 
         return [
             "id" => $post->id,
+            "status" => $post->status()->name,
             "author" => $post->user()->name,
             "cover" => $cover ? "/uploads/$cover" : null,
             "category" => $post->category()->name,
