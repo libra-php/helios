@@ -132,7 +132,7 @@ trait FormControls
 
     protected function editor(array $opts): string
     {
-        $opts["rows"] = 30;
+        $opts["rows"] = 20;
         $textarea = $this->textarea($opts);
         $opts["textarea"] = $textarea;
         return template("admin/module/controls/editor.html", $opts);

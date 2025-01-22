@@ -42,6 +42,7 @@ class ImagesModule extends ModuleController
         $this->dropdown_queries = [
             "blog_post_id" => "SELECT id as value, concat(created_at, ' - ', title) as label FROM blog_posts ORDER BY title",
         ];
+        $this->default_sort = "DESC";
         $this->validation_rules = [
             "blog_post_id" => ["required"],
             "image" => ["required"],

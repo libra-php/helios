@@ -115,6 +115,10 @@ a:active {
     max-width: 80px;
     max-height: 80px;
 }
+.editor textarea {
+    font-family: monospace;
+    font-size: 0.9rem;
+}
 
 /**
  * Table

@@ -23,6 +23,7 @@ class FilesModule extends ModuleController
         $this->table_format = [
             "created_at" => "ago",
         ];
+        $this->default_sort = "DESC";
     }
 
     protected function delete(int $id): bool
