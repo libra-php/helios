@@ -8,7 +8,7 @@ use StellarRouter\{Get, Group};
 #[Group(prefix: "/captcha")]
 class CaptchaController extends Controller
 {
-    #[Get("/", "captcha.index", ["captcha"])]
+    #[Get("/", "captcha.index")]
     public function captcha()
     {
         $captcha = getCaptcha();
