@@ -68,6 +68,7 @@ class PostsModule extends ModuleController
                 FROM blog_categories 
                 ORDER BY name",
         ];
+        $this->default_sort = "DESC";
         $this->default_values = [
             "comments_enabled" => 1,
             "category_id" => 1,
