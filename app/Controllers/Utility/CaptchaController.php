@@ -9,6 +9,12 @@ use StellarRouter\{Get, Group};
 class CaptchaController extends Controller
 {
     #[Get("/", "captcha.index")]
+    public function index(): string
+    {
+        return $this->render("components/captcha.html");
+    }
+
+    #[Get("/load", "captcha.captcha")]
     public function captcha()
     {
         $captcha = getCaptcha();
