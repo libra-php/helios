@@ -11,6 +11,7 @@ class CaptchaController extends Controller
     #[Get("/", "captcha.index")]
     public function index(): string
     {
+        setCaptcha();
         return $this->render("components/captcha.html");
     }
 

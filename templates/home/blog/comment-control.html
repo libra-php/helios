@@ -1,4 +1,4 @@
-<div id="comment-control" hx-trigger="load-comment-control from:body" hx-get="/blog/comment/control/{{ id }}" hx-swap="outerHTML" hx-target="this" hx-select="#comment-control">
+<div id="comment-control" class="mt-3" hx-trigger="load-comment-control from:body" hx-get="/blog/comment/control/{{ id }}" hx-swap="outerHTML" hx-target="this" hx-select="#comment-control">
     {% include "components/flash.html" %}
     <div id="pre-comment" onClick="hideBlogPreComment(); showBlogComment();">
         <label class="my-2" for="name">Post comment</label>
@@ -26,7 +26,7 @@
                 <button class="btn btn-success text-white">
                     Send
                 </button>
-                <button class="btn btn-danger text-white ms-1" type="button" onClick="showBlogPreComment(); hideBlogComment();">
+                <button class="btn btn-danger text-white ms-1" type="button" hx-trigger="click" hx-get="/blog/comment/control/{{ id }}" hx-swap="outerHTML" hx-target="#comment-control" hx-select="#comment-control">
                     Cancel
                 </button>
             </div>

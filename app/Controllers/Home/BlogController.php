@@ -127,7 +127,6 @@ class BlogController extends Controller
     #[Get("/comment/control/{post_id}", "blog.comments-control")]
     public function comments_control(int $post_id): string
     {
-        setCaptcha();
         return $this->render("home/blog/comment-control.html", [
             "id" => $post_id
         ]);

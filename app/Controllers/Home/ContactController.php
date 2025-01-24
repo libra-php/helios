@@ -12,7 +12,6 @@ class ContactController extends Controller
     #[Get("/contact", "contact.index")]
     public function index(): string
     {
-        setCaptcha();
         return $this->render("home/contact.html");
     }
 

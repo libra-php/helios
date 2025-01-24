@@ -50,7 +50,6 @@
     </div>
     {% if post.comments_enabled %}
         <div id="blog-comments">
-            <hr>
             <div hx-trigger="load" hx-get="/blog/comment/control/{{ post.id }}" hx-swap="outerHTML" hx-target="this" hx-select="#comment-control"></div>
             <div hx-trigger="load" hx-get="/blog/comments/{{ post.id }}" hx-swap="outerHTML" hx-target="this" hx-select="#comments"></div>
         </div>

@@ -5,12 +5,13 @@
 {% block view %}
 <div id="contact">
     <h1 class="mb-3"># Contact</h1>
+
+    {% include "components/flash.html" %}
+
     <div class="card glass p-2">
         <span>Got a question, idea, or just want to chat? Fill out the form below to send me a message directly—I’d love to hear from you!</span>
     </div>
 </div>
-
-{% include "components/flash.html" %}
 
 <div id="form" class="mt-4">
     <form method="POST">
