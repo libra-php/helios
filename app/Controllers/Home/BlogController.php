@@ -5,6 +5,7 @@ namespace App\Controllers\Home;
 use App\Models\BlogPost;
 use App\Models\EmailJob;
 use App\Services\BlogService;
+use App\Services\CaptchaService;
 use Helios\View\Flash;
 use Helios\Web\Controller;
 use StellarRouter\{Group, Get, Post};
@@ -12,22 +13,20 @@ use StellarRouter\{Group, Get, Post};
 #[Group(prefix: "/blog")]
 class BlogController extends Controller
 {
-    public function __construct(private BlogService $service)
-    {
-    }
+    public function __construct(private BlogService $blog_service, private CaptchaService $captcha_service) {}
 
     #[Get("/", "blog.index")]
     public function index(): string
     {
         return $this->render("home/blog/index.html", [
-            "posts" => $this->service->getBlogPosts(),
+            "posts" => $this->blog_service->getBlogPosts(),
         ]);
     }
 
     #[Get("/{slug}", "blog.show")]
     public function show(string $slug): string
     {
-        $post = $this->service->getPublishedBlogPostBySlug($slug);
+        $post = $this->blog_service->getPublishedBlogPostBySlug($slug);
 
         if (!$post) {
             redirect("/page-not-found");
@@ -43,7 +42,7 @@ class BlogController extends Controller
     #[Get("/preview/{slug}", "blog.preview", ["auth"])]
     public function preview(string $slug): string
     {
-        $post = $this->service->getBlogPostBySlug($slug);
+        $post = $this->blog_service->getBlogPostBySlug($slug);
 
         if (!$post) {
             redirect("/page-not-found");
@@ -68,9 +67,9 @@ class BlogController extends Controller
         ]);
 
         if ($valid) {
-            $captcha_success = $valid->captcha == getCaptcha();
+            $captcha_success = $valid->captcha == $this->captcha_service->getCaptcha();
             if ($captcha_success) {
-                $comment = $this->service->createComment(
+                $comment = $this->blog_service->createComment(
                     $post->id,
                     trim($valid->name),
                     trim($valid->comment)
@@ -89,7 +88,7 @@ class BlogController extends Controller
                         "send_at" => date("Y-m-d H:i:s"),
                     ]);
 
-                    $comment_count = $this->service->getBlogPostCommentCount($post_id);
+                    $comment_count = $this->blog_service->getBlogPostCommentCount($post_id);
                     if ($comment_count > 1) {
                         trigger("load-comment-control");
                     } else {
@@ -111,7 +110,7 @@ class BlogController extends Controller
     {
         return $this->render("home/blog/images.html", [
             "post_id" => $post_id,
-            "images" => $this->service->getBlogPostImages($post_id),
+            "images" => $this->blog_service->getBlogPostImages($post_id),
         ]);
     }
 
@@ -120,7 +119,7 @@ class BlogController extends Controller
     {
         return $this->render("home/blog/comments.html", [
             "post_id" => $post_id,
-            "comments" => $this->service->getBlogPostComments($post_id),
+            "comments" => $this->blog_service->getBlogPostComments($post_id),
         ]);
     }
 
@@ -135,6 +134,6 @@ class BlogController extends Controller
     #[Get("/comment/ts/{comment_id}", "blog.update-ts")]
     public function update_ts(int $comment_id): string
     {
-        return $this->service->getCommentTimestamp($comment_id);
+        return $this->blog_service->getCommentTimestamp($comment_id);
     }
 }

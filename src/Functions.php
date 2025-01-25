@@ -294,15 +294,3 @@ function email(): EmailSMTP
     $mailer->init();
     return $mailer;
 }
-
-function setCaptcha(): int
-{
-    $captcha = rand(1000, 9999);
-    session()->set("captcha", $captcha);
-    return $captcha;
-}
-
-function getCaptcha()
-{
-    return session()->get("captcha");
-}

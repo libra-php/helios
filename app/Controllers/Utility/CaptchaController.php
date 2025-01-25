@@ -2,23 +2,26 @@
 
 namespace App\Controllers\Utility;
 
+use App\Services\CaptchaService;
 use Helios\Web\Controller;
 use StellarRouter\{Get, Group};
 
 #[Group(prefix: "/captcha")]
 class CaptchaController extends Controller
 {
+    public function __construct(private CaptchaService $service) {}
+
     #[Get("/", "captcha.index")]
     public function index(): string
     {
-        setCaptcha();
+        $this->service->setCaptcha();
         return $this->render("components/captcha.html");
     }
 
     #[Get("/load", "captcha.captcha")]
     public function captcha()
     {
-        $captcha = getCaptcha();
+        $captcha = $this->service->getCaptcha();
         if (!$captcha) {
             return;
         }

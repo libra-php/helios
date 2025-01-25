@@ -3,12 +3,15 @@
 namespace App\Controllers\Home;
 
 use App\Models\EmailJob;
+use App\Services\CaptchaService;
 use Helios\View\Flash;
 use Helios\Web\Controller;
 use StellarRouter\{Get, Post};
 
 class ContactController extends Controller
 {
+    public function __construct(private CaptchaService $service) {}
+
     #[Get("/contact", "contact.index")]
     public function index(): string
     {
@@ -25,7 +28,7 @@ class ContactController extends Controller
         ]);
 
         if ($valid) {
-            $captcha_success = $valid->captcha == getCaptcha();
+            $captcha_success = $valid->captcha == $this->service->getCaptcha();
             if (!$captcha_success) {
                 Flash::add(
                     "warning",
