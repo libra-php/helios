@@ -18,8 +18,8 @@ class CaptchaController extends Controller
         return $this->render("components/captcha.html");
     }
 
-    #[Get("/load", "captcha.captcha")]
-    public function captcha()
+    #[Get("/load", "captcha.load")]
+    public function load()
     {
         $this->service->renderCaptcha();
     }
