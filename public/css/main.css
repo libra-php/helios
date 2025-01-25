@@ -352,9 +352,6 @@ a:active {
 #home #post #body {
     font-size: 1.1rem;
 }
-#home #post #body * {
-    color: #444 !important;
-}
 #home #posts h1 {
     font-size: 1.3rem;
 }
