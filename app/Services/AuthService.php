@@ -15,7 +15,9 @@ use Carbon\Carbon;
 
 class AuthService
 {
-    public function user(): ?User
+    private $auth_route = "profile"; // ProfileModule
+
+     public function user(): ?User
     {
         $session_uuid = session()->get("user_uuid");
         $cookie_uuid = request()->cookies->get("user_uuid");
@@ -67,7 +69,7 @@ class AuthService
                 "swap" => "outerHTML",
             ]);
         } else {
-            $route = moduleRoute("module.index", "profile");
+            $route = moduleRoute("module.index", $this->auth_route);
             redirect($route, [
                 "target" => "#password-reset",
                 "select" => "#admin",
@@ -213,7 +215,7 @@ class AuthService
                 "swap" => "outerHTML",
             ]);
         } else {
-            $route = moduleRoute("module.index", "profile");
+            $route = moduleRoute("module.index", $this->auth_route);
             redirect($route, [
                 "target" => "#sign-in",
                 "select" => "#admin",
@@ -285,7 +287,7 @@ class AuthService
                 "swap" => "outerHTML",
             ]);
         } else {
-            $route = moduleRoute("module.index", "profile");
+            $route = moduleRoute("module.index", $this->auth_route);
             redirect($route, [
                 "target" => "#register",
                 "select" => "#admin",
