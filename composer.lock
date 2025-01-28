@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "54618bdad4c1af7c3d13ce5aab978de0",
+    "content-hash": "60d8f462fd98cba79cbaa9ab2c023ef1",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -580,6 +580,53 @@
             "time": "2024-11-14T18:34:49+00:00"
         },
         {
+            "name": "libra-php/framework",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/libra-php/framework.git",
+                "reference": "09f28eb9c2301d00fc2e950064b96218ba640a55"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/libra-php/framework/zipball/09f28eb9c2301d00fc2e950064b96218ba640a55",
+                "reference": "09f28eb9c2301d00fc2e950064b96218ba640a55",
+                "shasum": ""
+            },
+            "require": {
+                "composer/class-map-generator": "^1.1",
+                "libra-php/lunar-pdo": "@dev",
+                "libra-php/stellar-router": "@dev",
+                "nesbot/carbon": "^3.7",
+                "ramsey/uuid": "^4.7",
+                "symfony/http-foundation": "^7.0",
+                "vlucas/phpdotenv": "^5.6"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Helios\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "William Hleucka",
+                    "email": "william.hleucka@gmail.com"
+                }
+            ],
+            "description": "The Helios Framework",
+            "support": {
+                "issues": "https://github.com/libra-php/framework/issues",
+                "source": "https://github.com/libra-php/framework/tree/main"
+            },
+            "time": "2025-01-28T02:43:08+00:00"
+        },
+        {
             "name": "libra-php/lunar-pdo",
             "version": "dev-main",
             "source": {
@@ -1004,16 +1051,16 @@
         },
         {
             "name": "php-di/invoker",
-            "version": "2.3.4",
+            "version": "2.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-DI/Invoker.git",
-                "reference": "33234b32dafa8eb69202f950a1fc92055ed76a86"
+                "reference": "59f15608528d8a8838d69b422a919fd6b16aa576"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-DI/Invoker/zipball/33234b32dafa8eb69202f950a1fc92055ed76a86",
-                "reference": "33234b32dafa8eb69202f950a1fc92055ed76a86",
+                "url": "https://api.github.com/repos/PHP-DI/Invoker/zipball/59f15608528d8a8838d69b422a919fd6b16aa576",
+                "reference": "59f15608528d8a8838d69b422a919fd6b16aa576",
                 "shasum": ""
             },
             "require": {
@@ -1047,7 +1094,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-DI/Invoker/issues",
-                "source": "https://github.com/PHP-DI/Invoker/tree/2.3.4"
+                "source": "https://github.com/PHP-DI/Invoker/tree/2.3.6"
             },
             "funding": [
                 {
@@ -1055,7 +1102,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-09-08T09:24:21+00:00"
+            "time": "2025-01-17T12:49:27+00:00"
         },
         {
             "name": "php-di/php-di",
@@ -4737,11 +4784,12 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "libra-php/lunar-pdo": 20,
-        "libra-php/stellar-router": 20
+        "libra-php/stellar-router": 20,
+        "libra-php/framework": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": {},
-    "platform-dev": {},
+    "platform": [],
+    "platform-dev": [],
     "plugin-api-version": "2.6.0"
 }

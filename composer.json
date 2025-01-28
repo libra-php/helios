@@ -4,10 +4,9 @@
     "license": "MIT",
     "autoload": {
         "files": [
-            "src/Functions.php"
+            "app/Functions.php"
         ],
         "psr-4": {
-            "Helios\\": "src/",
             "App\\": "app/"
         }
     },
@@ -20,6 +19,7 @@
     "require": {
         "libra-php/lunar-pdo": "@dev",
         "libra-php/stellar-router": "@dev",
+        "libra-php/framework": "@dev",
         "symfony/http-foundation": "^7.0",
         "composer/class-map-generator": "^1.1",
         "ramsey/uuid": "^4.7",
