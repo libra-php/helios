@@ -23,15 +23,6 @@ $scheduler->php($jobs . "/heartbeat.php")
 // Rotate logs
 $scheduler->php($jobs . "/rotate_logs.php")->monday();
 
-// Publish blog posts
-$scheduler->php($jobs . "/publish_blog.php")->everyMinute();
-
-// Send contact emails
-$scheduler->php($jobs . "/email_jobs.php", args: ['-t' => 'home_contact'])->everyMinute();
-
-// Blog comments
-$scheduler->php($jobs . "/email_jobs.php", args: ['-t' => 'blog_comment'])->everyMinute();
-
 // Send password reset emails
 $scheduler->php($jobs . "/email_jobs.php", args: ['-t' => 'password_reset'])->everyMinute();
 
